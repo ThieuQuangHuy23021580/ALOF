@@ -20,3 +20,5 @@ openai>=1.99.0
 
 rich
 colorama
+
+pytest
