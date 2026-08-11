@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 from backend.application.runtime.runtime_context import (
@@ -91,66 +92,84 @@ def test_default_component_executor_persists_artifact():
         "Hello Executor"
     )
 
-    def test_default_component_executor_does_not_persist_failed_component():
+    execution = runtime.component_executions.get(
+        "step_1",
+    )
 
-        class FailingComponent(Component):
+    assert execution is not None
 
-            component_id = "failing_executor_test"
+    assert execution.status.value == "completed"
 
-            name = "Failing Executor Test"
 
-            description = "Test failed execution."
+def test_default_component_executor_does_not_persist_failed_component():
 
-            def execute(
-                self,
-                context: ComponentContext,
-            ) -> ComponentResult:
+    class FailingComponent(Component):
 
-                raise RuntimeError(
-                    "Component execution failed.",
-                )
+        component_id = "failing_executor_test"
 
-        workflow = Workflow()
+        name = "Failing Executor Test"
 
-        node = WorkflowNode(
-            id="step_1",
-            component_id="failing_executor_test",
-            objective="Test failure",
-            expected_output="Artifact",
-        )
+        description = "Test failed execution."
 
-        workflow.add_node(
-            node,
-        )
+        def execute(
+            self,
+            context: ComponentContext,
+        ) -> ComponentResult:
 
-        runtime = RuntimeContext(
-            workflow=workflow,
-        )
-
-        context = ComponentContext(
-            runtime=runtime,
-            node=node,
-        )
-
-        executor = DefaultComponentExecutor()
-
-        try:
-
-            executor.execute(
-                component=FailingComponent(),
-                context=context,
+            raise RuntimeError(
+                "Component execution failed.",
             )
 
-            assert False, (
-                "Expected RuntimeError"
-            )
+    workflow = Workflow()
 
-        except RuntimeError as exc:
+    node = WorkflowNode(
+        id="step_1",
+        component_id="failing_executor_test",
+        objective="Test failure",
+        expected_output="Artifact",
+    )
 
-            assert str(exc) == (
-                "Component execution failed."
-            )
+    workflow.add_node(
+        node,
+    )
 
-        assert not runtime.has_artifact(
-            "step_1",
+    runtime = RuntimeContext(
+        workflow=workflow,
+    )
+
+    context = ComponentContext(
+        runtime=runtime,
+        node=node,
+    )
+
+    executor = DefaultComponentExecutor()
+
+    try:
+
+        executor.execute(
+            component=FailingComponent(),
+            context=context,
         )
+
+        assert False, (
+            "Expected RuntimeError"
+        )
+
+    except RuntimeError as exc:
+
+        assert str(exc) == (
+            "Component execution failed."
+        )
+
+    assert not runtime.has_artifact(
+        "step_1",
+    )
+
+    execution = runtime.component_executions.get(
+        "step_1",
+    )
+
+    assert execution is not None
+
+    assert execution.status.value == "failed"
+

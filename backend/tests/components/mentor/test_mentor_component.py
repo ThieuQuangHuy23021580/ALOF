@@ -15,6 +15,9 @@ from backend.core.component_context import (
 from backend.core.component_result import (
     ComponentResult,
 )
+from backend.core.dependency_context import (
+    DependencyContext,
+)
 from backend.domain.artifact.artifact_type import (
     ArtifactType,
 )
@@ -27,33 +30,25 @@ from backend.domain.workflow.workflow_node import (
 
 
 class FakeLLMProvider:
-    """
-    Fake provider for testing MentorComponent.
-    """
+    """Fake provider for testing MentorComponent."""
 
     def generate(
         self,
         messages: list[dict[str, str]],
     ) -> str:
-
-        return """
-        {
+        return {
             "title": "Python Basics",
             "content": "Python is a high-level programming language.",
-            "summary": "Introduction to Python."
+            "summary": "Introduction to Python.",
         }
-        """
 
 
 def test_mentor_component_execution():
-
     llm = LLMService(
         provider=FakeLLMProvider(),
     )
 
-    component = MentorComponent(
-        llm=llm,
-    )
+    component = MentorComponent()
 
     # ======================================================
     # Runtime
@@ -83,6 +78,11 @@ def test_mentor_component_execution():
     context = ComponentContext(
         runtime=runtime,
         node=node,
+        dependencies=DependencyContext(
+            dependencies={
+                "llm": llm,
+            },
+        ),
     )
 
     # ======================================================
@@ -121,3 +121,4 @@ def test_mentor_component_execution():
         result.artifact.producer
         == "mentor"
     )
+

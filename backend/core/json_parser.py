@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import json
-from typing import TypeVar
+from typing import Any, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
 from backend.core.parser import Parser
+
 
 T = TypeVar(
     "T",
@@ -16,6 +17,13 @@ T = TypeVar(
 class JsonParser(Parser[T]):
     """
     Generic JSON parser for Pydantic models.
+
+    Accepts:
+    - Raw JSON string.
+    - Already-decoded JSON object.
+
+    The parser is responsible only for converting
+    JSON data into the target Pydantic model.
     """
 
     def __init__(
@@ -27,20 +35,47 @@ class JsonParser(Parser[T]):
 
     def parse(
         self,
-        raw: str,
+        raw: str | dict[str, Any],
     ) -> T:
 
-        try:
+        # ======================================================
+        # Decode JSON
+        # ======================================================
 
-            data = json.loads(
-                raw,
+        if isinstance(
+            raw,
+            str,
+        ):
+
+            try:
+
+                data = json.loads(
+                    raw,
+                )
+
+            except json.JSONDecodeError as exc:
+
+                raise ValueError(
+                    "Invalid JSON response.",
+                ) from exc
+
+        elif isinstance(
+            raw,
+            dict,
+        ):
+
+            data = raw
+
+        else:
+
+            raise TypeError(
+                "JsonParser expects a JSON string "
+                "or dictionary.",
             )
 
-        except json.JSONDecodeError as exc:
-
-            raise ValueError(
-                "Invalid JSON response.",
-            ) from exc
+        # ======================================================
+        # Validate Schema
+        # ======================================================
 
         try:
 
