@@ -38,3 +38,20 @@ class RuntimeResult(BaseModel):
     ) -> None:
 
         self.metadata[key] = value
+
+    @property
+    def execution_count(self) -> int:
+        return len(self.execution_order)
+
+
+    @property
+    def artifact_count(self) -> int:
+        return len(self.artifacts)
+
+
+    @property
+    def last_node_id(self) -> str | None:
+        if not self.execution_order:
+            return None
+
+        return self.execution_order[-1]

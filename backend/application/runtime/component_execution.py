@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from backend.core.execution_status import ExecutionStatus
 
@@ -27,8 +27,10 @@ class ComponentExecution(BaseModel):
 
     error: str | None = None
 
-    metadata: dict[str, Any] = {}
-
+    metadata: dict[str, Any] = Field(
+        default_factory=dict,
+    )
+    
     def start(
         self,
     ) -> None:

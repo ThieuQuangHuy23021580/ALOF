@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-from abc import ABC
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 from .intent_result import IntentResult
 
 
 class IntentRecognizer(ABC):
     """
-    Recognizes the learner's intent.
+    Recognizes the learner's intent from an input message.
 
-    Implementations may use LLMs, embeddings,
-    classifiers or rule-based approaches.
+    Implementations may use an LLM, rules, embeddings,
+    classifiers or hybrid approaches.
     """
+
 
     @abstractmethod
     def recognize(
@@ -20,6 +20,6 @@ class IntentRecognizer(ABC):
         message: str,
     ) -> IntentResult:
         """
-        Recognize the learner intent.
+        Returns an IntentResult.
         """
         raise NotImplementedError

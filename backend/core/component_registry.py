@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Type
+from typing import Any, Type
 
 from .component import Component
 
@@ -38,13 +38,16 @@ class ComponentRegistry:
     def create(
         cls,
         component_id: str,
+        **dependencies: Any,
     ) -> Component:
 
         component = cls.get(
             component_id,
         )
 
-        return component()
+        return component(
+            **dependencies,
+        )
 
     @classmethod
     def get(

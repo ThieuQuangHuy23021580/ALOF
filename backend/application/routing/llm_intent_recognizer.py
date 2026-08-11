@@ -1,38 +1,50 @@
 from __future__ import annotations
 
+from backend.application.services.llm_service import (
+    LLMService,
+)
+
 from backend.application.routing.intent_recognizer import (
     IntentRecognizer,
 )
+
 from backend.application.routing.intent_result import (
     IntentResult,
 )
-from backend.application.services.llm_service import LLMService
+
 from backend.core.json_parser import JsonParser
 
 
-class LLMIntentRecognizer(IntentRecognizer):
+class LLMIntentRecognizer(
+    IntentRecognizer,
+):
     """
-    IntentRecognizer implementation based on an LLM.
+    IntentRecognizer implementation using LLM.
 
     Responsibilities
     ----------------
-    - Ask the LLM to identify the learner's intent.
-    - Parse the JSON response into an IntentResult.
+    - Send learner message to LLM.
+    - Parse JSON response.
+    - Return IntentResult.
     """
+
 
     SYSTEM_PROMPT = """
 You are an intent recognizer.
 
-Return ONLY one JSON object.
+Your task is to identify the learner's intention.
 
-Schema
+Return ONLY JSON.
+
+Schema:
 
 {
     "intent": "<intent>",
     "confidence": 0.0
 }
 
-Allowed intents
+
+Allowed intents:
 
 - explain
 - summarize
@@ -42,6 +54,7 @@ Allowed intents
 - flashcard
 - unknown
 """.strip()
+
 
     def __init__(
         self,
@@ -54,9 +67,11 @@ Allowed intents
             else LLMService()
         )
 
+
         self._parser = JsonParser(
             IntentResult,
         )
+
 
     def recognize(
         self,
@@ -74,10 +89,15 @@ Allowed intents
             },
         ]
 
+
         raw = self._llm.generate(
             messages,
         )
 
-        return self._parser.parse(
+
+        result = self._parser.parse(
             raw,
         )
+
+
+        return result

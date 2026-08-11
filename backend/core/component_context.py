@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 from typing import Any
@@ -11,6 +12,13 @@ from backend.domain.workflow.workflow_node import WorkflowNode
 class ComponentContext(BaseModel):
     """
     Execution context passed to a Component.
+
+    Contains:
+    - Runtime state.
+    - Current workflow node.
+    - Component inputs.
+    - Runtime dependencies.
+    - Component metadata.
     """
 
     runtime: RuntimeContext
@@ -18,6 +26,10 @@ class ComponentContext(BaseModel):
     node: WorkflowNode
 
     inputs: dict[str, Any] = Field(
+        default_factory=dict,
+    )
+
+    dependencies: dict[str, Any] = Field(
         default_factory=dict,
     )
 
@@ -36,6 +48,17 @@ class ComponentContext(BaseModel):
             default,
         )
 
+    def get_dependency(
+        self,
+        key: str,
+        default: Any = None,
+    ) -> Any:
+
+        return self.dependencies.get(
+            key,
+            default,
+        )
+
     def set_metadata(
         self,
         key: str,
@@ -43,3 +66,4 @@ class ComponentContext(BaseModel):
     ) -> None:
 
         self.metadata[key] = value
+

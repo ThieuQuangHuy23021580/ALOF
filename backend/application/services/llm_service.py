@@ -1,23 +1,19 @@
 from __future__ import annotations
 
-from backend.providers import ProviderFactory
-from backend.providers.base_provider import BaseProvider
+from backend.infrastructure.providers import (
+    ProviderFactory,
+    LLMProvider,
+)
 
 
 class LLMService:
     """
-    Thin service responsible for communicating with the configured LLM provider.
-
-    Responsibilities
-    ----------------
-    - Hold the current provider.
-    - Forward generation requests.
-    - Allow provider replacement (testing, multi-provider, etc.).
+    Application service for LLM access.
     """
 
     def __init__(
         self,
-        provider: BaseProvider | None = None,
+        provider: LLMProvider | None = None,
     ) -> None:
 
         self._provider = (
@@ -26,12 +22,14 @@ class LLMService:
             else ProviderFactory.create()
         )
 
+
     @property
     def provider(
         self,
-    ) -> BaseProvider:
+    ) -> LLMProvider:
 
         return self._provider
+
 
     def generate(
         self,
@@ -39,12 +37,13 @@ class LLMService:
     ) -> str:
 
         return self._provider.generate(
-            messages=messages,
+            messages,
         )
+
 
     def set_provider(
         self,
-        provider: BaseProvider,
+        provider: LLMProvider,
     ) -> None:
 
         self._provider = provider
