@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 from backend.application.services.llm_service import LLMService
@@ -16,6 +17,9 @@ class MentorComponent(Component):
     """
     Component responsible for explaining concepts
     and guiding learners.
+
+    Runtime dependencies are resolved through
+    ComponentContext.
     """
 
     component_id = "mentor"
@@ -28,14 +32,7 @@ class MentorComponent(Component):
 
     def __init__(
         self,
-        llm: LLMService | None = None,
     ) -> None:
-
-        self._llm = (
-            llm
-            if llm is not None
-            else LLMService()
-        )
 
         self._parser = JsonParser(
             ArtifactPayload,
@@ -46,6 +43,20 @@ class MentorComponent(Component):
         context: ComponentContext,
     ) -> ComponentResult:
 
+        llm = context.get_dependency(
+            "llm",
+        )
+
+        if not isinstance(
+            llm,
+            LLMService,
+        ):
+            raise TypeError(
+                "MentorComponent requires "
+                "an LLMService dependency "
+                "under key 'llm'."
+            )
+
         system_prompt = PromptManager.get(
             self.component_id,
         )
@@ -55,7 +66,7 @@ class MentorComponent(Component):
             system_prompt=system_prompt,
         )
 
-        raw_response = self._llm.generate(
+        raw_response = llm.generate(
             messages,
         )
 
@@ -75,4 +86,3 @@ class MentorComponent(Component):
             artifact=artifact,
         )
 
-  
