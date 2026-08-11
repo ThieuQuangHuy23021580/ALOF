@@ -1,21 +1,22 @@
+
 from __future__ import annotations
 
 from backend.application.application_factory import (
     ApplicationFactory,
 )
-from backend.application.services.learning_service import (
-    LearningService,
+from backend.application.orchestration.learning_orchestrator import (
+    LearningOrchestrator,
 )
 
 
-def test_create_learning_service():
+def test_create_orchestrator():
 
-    service = (
+    orchestrator = (
         ApplicationFactory
-        .create_learning_service()
+        .create_orchestrator()
     )
 
     assert isinstance(
-        service,
-        LearningService,
+        orchestrator,
+        LearningOrchestrator,
     )

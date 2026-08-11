@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 from typing import Any
@@ -15,6 +16,7 @@ from backend.core.component_registry import ComponentRegistry
 from backend.core.default_component_executor import (
     DefaultComponentExecutor,
 )
+from backend.core.dependency_context import DependencyContext
 from backend.core.execution_status import ExecutionStatus
 
 
@@ -99,6 +101,9 @@ class SequentialRuntime(Runtime):
                         inputs=self._build_component_inputs(
                             context,
                             node,
+                        ),
+                        dependencies=DependencyContext(
+                            dependencies=self._dependencies.copy(),
                         ),
                     )
 
@@ -187,3 +192,4 @@ class SequentialRuntime(Runtime):
                 inputs[parent.id] = artifact
 
         return inputs
+

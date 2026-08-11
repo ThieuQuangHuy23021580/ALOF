@@ -8,6 +8,8 @@ from pydantic import BaseModel, Field
 from backend.application.runtime.runtime_context import RuntimeContext
 from backend.domain.workflow.workflow_node import WorkflowNode
 
+from .dependency_context import DependencyContext
+
 
 class ComponentContext(BaseModel):
     """
@@ -29,8 +31,8 @@ class ComponentContext(BaseModel):
         default_factory=dict,
     )
 
-    dependencies: dict[str, Any] = Field(
-        default_factory=dict,
+    dependencies: DependencyContext = Field(
+        default_factory=DependencyContext,
     )
 
     metadata: dict[str, Any] = Field(

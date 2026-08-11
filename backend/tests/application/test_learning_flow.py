@@ -1,14 +1,24 @@
+
 from __future__ import annotations
 
-from backend.application.application_factory import (
-    ApplicationFactory,
-)
 from backend.application.orchestration.execution_request import (
     ExecutionRequest,
+)
+from backend.application.orchestration.learning_orchestrator import (
+    LearningOrchestrator,
+)
+from backend.application.planning.sequential_planner import (
+    SequentialPlanner,
+)
+from backend.application.planning.sequential_workflow_builder import (
+    SequentialWorkflowBuilder,
 )
 from backend.application.routing.router import Router
 from backend.application.routing.routing_result import (
     RoutingResult,
+)
+from backend.application.runtime.sequential_runtime import (
+    SequentialRuntime,
 )
 from backend.core.component import Component
 from backend.core.component_context import ComponentContext
@@ -77,7 +87,7 @@ class FakeMentorComponent(Component):
         )
 
 
-def test_learning_service_end_to_end():
+def test_learning_orchestrator_end_to_end():
 
     ComponentRegistry.clear()
 
@@ -85,11 +95,11 @@ def test_learning_service_end_to_end():
         FakeMentorComponent,
     )
 
-    service = (
-        ApplicationFactory
-        .create_learning_service(
-            router=FakeRouter(),
-        )
+    orchestrator = LearningOrchestrator(
+        router=FakeRouter(),
+        planner=SequentialPlanner(),
+        workflow_builder=SequentialWorkflowBuilder(),
+        runtime=SequentialRuntime(),
     )
 
     request = ExecutionRequest(
@@ -99,7 +109,7 @@ def test_learning_service_end_to_end():
         message="Explain Python",
     )
 
-    result = service.execute(
+    result = orchestrator.execute(
         request,
     )
 
@@ -125,3 +135,4 @@ def test_learning_service_end_to_end():
         result.final_artifact.producer
         == "fake_mentor"
     )
+
