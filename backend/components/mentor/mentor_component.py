@@ -75,33 +75,4 @@ class MentorComponent(Component):
             artifact=artifact,
         )
 
-    # def _build_dependency_context(
-    #     self,
-    #     context: ComponentContext,
-    # ) -> str:
-
-    #     if not context.inputs:
-    #         return ""
-
-    #     sections: list[str] = []
-
-    #     for node_id, artifact in context.inputs.items():
-
-    #         sections.append(
-    #             f"""
-    # Previous step: {node_id}
-
-    # Title:
-    # {artifact.title}
-
-    # Content:
-    # {artifact.content}
-
-    # Summary:
-    # {artifact.summary or ""}
-    # """.strip()
-    #         )
-
-    #     return "\n\n".join(
-    #         sections,
-    #     )
+  

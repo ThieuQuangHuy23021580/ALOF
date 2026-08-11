@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from typing import Any
@@ -10,13 +9,14 @@ from backend.application.runtime.sequential_scheduler import (
     SequentialScheduler,
 )
 
-from backend.core.component_context import ComponentContext
+from backend.core.component_context_builder import (
+    ComponentContextBuilder,
+)
 from backend.core.component_executor import ComponentExecutor
 from backend.core.component_registry import ComponentRegistry
 from backend.core.default_component_executor import (
     DefaultComponentExecutor,
 )
-from backend.core.dependency_context import DependencyContext
 from backend.core.execution_status import ExecutionStatus
 
 
@@ -27,12 +27,15 @@ class SequentialRuntime(Runtime):
     Responsibilities
     ----------------
     - Ask Scheduler for executable nodes.
-    - Create ComponentContext.
     - Resolve Components through ComponentRegistry.
+    - Build ComponentContext through ComponentContextBuilder.
     - Inject runtime-level dependencies.
     - Execute Components.
     - Track execution timeline.
     - Update runtime state.
+
+    The Runtime does not construct ComponentContext
+    details directly.
     """
 
     def __init__(
@@ -58,6 +61,12 @@ class SequentialRuntime(Runtime):
             dependencies.copy()
             if dependencies is not None
             else {}
+        )
+
+        self._context_builder = (
+            ComponentContextBuilder(
+                dependencies=self._dependencies,
+            )
         )
 
     def run(
@@ -95,16 +104,11 @@ class SequentialRuntime(Runtime):
                         **self._dependencies,
                     )
 
-                    component_context = ComponentContext(
-                        runtime=context,
-                        node=node,
-                        inputs=self._build_component_inputs(
-                            context,
-                            node,
-                        ),
-                        dependencies=DependencyContext(
-                            dependencies=self._dependencies.copy(),
-                        ),
+                    component_context = (
+                        self._context_builder.build(
+                            runtime=context,
+                            node=node,
+                        )
                     )
 
                     self._executor.execute(
@@ -168,28 +172,3 @@ class SequentialRuntime(Runtime):
             duration=context.execution_duration(),
             metadata=context.metadata,
         )
-
-    def _build_component_inputs(
-        self,
-        context: RuntimeContext,
-        node,
-    ) -> dict[str, Any]:
-
-        inputs: dict[str, Any] = {}
-
-        parents = context.workflow.parents(
-            node.id,
-        )
-
-        for parent in parents:
-
-            artifact = context.get_artifact(
-                parent.id,
-            )
-
-            if artifact is not None:
-
-                inputs[parent.id] = artifact
-
-        return inputs
-
