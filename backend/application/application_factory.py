@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 from backend.application.orchestration.learning_orchestrator import (
@@ -40,6 +41,13 @@ class ApplicationFactory:
     dependencies and infrastructure.
 
     It does not contain business logic.
+
+    Dependency responsibilities
+    ---------------------------
+    - Application services receive their dependencies
+      directly during construction.
+    - Components receive runtime dependencies through
+      ComponentContext / DependencyContext.
     """
 
     @staticmethod
@@ -59,6 +67,9 @@ class ApplicationFactory:
 
         # ======================================================
         # Routing
+        #
+        # LLMIntentRecognizer is an application-level service.
+        # Direct constructor injection is intentional here.
         # ======================================================
 
         intent_recognizer = LLMIntentRecognizer(
@@ -84,7 +95,7 @@ class ApplicationFactory:
         )
 
         # ======================================================
-        # Runtime Dependencies
+        # Runtime
         # ======================================================
 
         scheduler = SequentialScheduler()
@@ -94,7 +105,14 @@ class ApplicationFactory:
         )
 
         # ======================================================
-        # Runtime
+        # Runtime Dependencies
+        #
+        # These dependencies are NOT injected into Component
+        # constructors.
+        #
+        # SequentialRuntime passes them to
+        # ComponentContextBuilder, which creates a
+        # DependencyContext for each Component execution.
         # ======================================================
 
         runtime = SequentialRuntime(
@@ -115,3 +133,4 @@ class ApplicationFactory:
             workflow_builder=workflow_builder,
             runtime=runtime,
         )
+

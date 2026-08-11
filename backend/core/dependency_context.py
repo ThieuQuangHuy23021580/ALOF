@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 from typing import Any
@@ -46,6 +47,16 @@ class DependencyContext(BaseModel):
 
         self.dependencies[key] = value
 
+    def remove(
+        self,
+        key: str,
+    ) -> Any:
+
+        return self.dependencies.pop(
+            key,
+            None,
+        )
+
     def keys(
         self,
     ) -> list[str]:
@@ -53,3 +64,43 @@ class DependencyContext(BaseModel):
         return list(
             self.dependencies.keys(),
         )
+
+    def items(
+        self,
+    ) -> list[tuple[str, Any]]:
+
+        return list(
+            self.dependencies.items(),
+        )
+
+    def copy(
+        self,
+    ) -> DependencyContext:
+
+        return DependencyContext(
+            dependencies=self.dependencies.copy(),
+        )
+
+    def clear(
+        self,
+    ) -> None:
+
+        self.dependencies.clear()
+
+    def __contains__(
+        self,
+        key: str,
+    ) -> bool:
+
+        return self.has(
+            key,
+        )
+
+    def __len__(
+        self,
+    ) -> int:
+
+        return len(
+            self.dependencies,
+        )
+

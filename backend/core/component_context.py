@@ -21,6 +21,9 @@ class ComponentContext(BaseModel):
     - Component inputs.
     - Runtime dependencies.
     - Component metadata.
+
+    Components should access execution data only through
+    this context instead of depending directly on Runtime.
     """
 
     runtime: RuntimeContext
@@ -61,6 +64,15 @@ class ComponentContext(BaseModel):
             default,
         )
 
+    def has_dependency(
+        self,
+        key: str,
+    ) -> bool:
+
+        return self.dependencies.has(
+            key,
+        )
+
     def set_metadata(
         self,
         key: str,
@@ -68,4 +80,15 @@ class ComponentContext(BaseModel):
     ) -> None:
 
         self.metadata[key] = value
+
+    def get_metadata(
+        self,
+        key: str,
+        default: Any = None,
+    ) -> Any:
+
+        return self.metadata.get(
+            key,
+            default,
+        )
 

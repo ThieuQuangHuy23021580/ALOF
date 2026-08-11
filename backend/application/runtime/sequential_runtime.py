@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 from typing import Any
@@ -29,7 +30,7 @@ class SequentialRuntime(Runtime):
     - Ask Scheduler for executable nodes.
     - Resolve Components through ComponentRegistry.
     - Build ComponentContext through ComponentContextBuilder.
-    - Inject runtime-level dependencies.
+    - Inject runtime-level dependencies into ComponentContext.
     - Execute Components.
     - Track execution timeline.
     - Update runtime state.
@@ -101,7 +102,6 @@ class SequentialRuntime(Runtime):
 
                     component = ComponentRegistry.create(
                         node.component_id,
-                        **self._dependencies,
                     )
 
                     component_context = (
@@ -172,3 +172,4 @@ class SequentialRuntime(Runtime):
             duration=context.execution_duration(),
             metadata=context.metadata,
         )
+

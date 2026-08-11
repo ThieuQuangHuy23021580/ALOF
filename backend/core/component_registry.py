@@ -1,6 +1,7 @@
+
 from __future__ import annotations
 
-from typing import Any, Type
+from typing import Type
 
 from .component import Component
 
@@ -8,6 +9,15 @@ from .component import Component
 class ComponentRegistry:
     """
     Global registry of executable Components.
+
+    Responsibilities
+    ----------------
+    - Register Component classes.
+    - Resolve Component classes by component_id.
+    - Create Component instances.
+
+    Dependency injection is not handled by the registry.
+    Runtime dependencies are provided through ComponentContext.
     """
 
     _components: dict[str, Type[Component]] = {}
@@ -38,16 +48,13 @@ class ComponentRegistry:
     def create(
         cls,
         component_id: str,
-        **dependencies: Any,
     ) -> Component:
 
         component = cls.get(
             component_id,
         )
 
-        return component(
-            **dependencies,
-        )
+        return component()
 
     @classmethod
     def get(
@@ -96,3 +103,4 @@ class ComponentRegistry:
     ) -> None:
 
         cls._components.clear()
+
