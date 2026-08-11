@@ -12,6 +12,8 @@ class ArtifactType(StrEnum):
 
     LESSON = "lesson"
 
+    RESEARCH = "research"
+
     SUMMARY = "summary"
 
     ROADMAP = "roadmap"

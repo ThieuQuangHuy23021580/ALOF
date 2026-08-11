@@ -8,8 +8,8 @@ from backend.application.runtime.runtime_context import (
 from backend.application.services.llm_service import (
     LLMService,
 )
-from backend.components.mentor.mentor_component import (
-    MentorComponent,
+from backend.components.research.research_component import (
+    ResearchComponent,
 )
 from backend.core.component_context import (
     ComponentContext,
@@ -36,7 +36,7 @@ from backend.domain.workflow.workflow_node import (
 # ==========================================================
 
 class FakeLLMProvider:
-    """Fake provider for testing MentorComponent."""
+    """Fake provider for testing ResearchComponent."""
 
     def generate(
         self,
@@ -45,9 +45,41 @@ class FakeLLMProvider:
 
         return """
         {
-            "title": "Python Basics",
-            "content": "Python is a high-level programming language.",
-            "summary": "Introduction to Python."
+            "title": "Python Research",
+            "content": "Python is a high-level programming language used for general-purpose software development.",
+            "summary": "Objective research summary about Python."
+        }
+        """
+
+
+# ==========================================================
+# Invalid JSON Provider
+# ==========================================================
+
+class InvalidJSONProvider:
+
+    def generate(
+        self,
+        messages: list[dict[str, str]],
+    ) -> str:
+
+        return "not valid json"
+
+
+# ==========================================================
+# Invalid Schema Provider
+# ==========================================================
+
+class InvalidSchemaProvider:
+
+    def generate(
+        self,
+        messages: list[dict[str, str]],
+    ) -> str:
+
+        return """
+        {
+            "title": "Python Research"
         }
         """
 
@@ -56,7 +88,7 @@ class FakeLLMProvider:
 # Helpers
 # ==========================================================
 
-def create_mentor_context(
+def create_research_context(
     llm: LLMService | None = None,
 ) -> ComponentContext:
 
@@ -64,9 +96,9 @@ def create_mentor_context(
 
     node = WorkflowNode(
         id="step_1",
-        component_id="mentor",
-        objective="Explain Python",
-        expected_output="Lesson",
+        component_id="research",
+        objective="Research Python",
+        expected_output="Research",
     )
 
     workflow.add_node(
@@ -96,18 +128,18 @@ def create_mentor_context(
 
 
 # ==========================================================
-# Mentor Component Execution
+# Research Component Execution
 # ==========================================================
 
-def test_mentor_component_execution():
+def test_research_component_execution():
 
     llm = LLMService(
         provider=FakeLLMProvider(),
     )
 
-    component = MentorComponent()
+    component = ResearchComponent()
 
-    context = create_mentor_context(
+    context = create_research_context(
         llm=llm,
     )
 
@@ -122,27 +154,31 @@ def test_mentor_component_execution():
 
     assert (
         result.artifact.type
-        == ArtifactType.LESSON
+        == ArtifactType.RESEARCH
     )
 
     assert (
         result.artifact.title
-        == "Python Basics"
+        == "Python Research"
     )
 
     assert (
         result.artifact.content
-        == "Python is a high-level programming language."
+        == (
+            "Python is a high-level programming "
+            "language used for general-purpose "
+            "software development."
+        )
     )
 
     assert (
         result.artifact.summary
-        == "Introduction to Python."
+        == "Objective research summary about Python."
     )
 
     assert (
         result.artifact.producer
-        == "mentor"
+        == "research"
     )
 
 
@@ -150,11 +186,11 @@ def test_mentor_component_execution():
 # Dependency Injection
 # ==========================================================
 
-def test_mentor_component_requires_llm_dependency():
+def test_research_component_requires_llm_dependency():
 
-    component = MentorComponent()
+    component = ResearchComponent()
 
-    context = create_mentor_context()
+    context = create_research_context()
 
     with pytest.raises(
         TypeError,
@@ -165,15 +201,15 @@ def test_mentor_component_requires_llm_dependency():
         )
 
 
-def test_mentor_component_uses_llm_dependency_from_context():
+def test_research_component_uses_llm_dependency_from_context():
 
     llm = LLMService(
         provider=FakeLLMProvider(),
     )
 
-    component = MentorComponent()
+    component = ResearchComponent()
 
-    context = create_mentor_context(
+    context = create_research_context(
         llm=llm,
     )
 
@@ -183,36 +219,30 @@ def test_mentor_component_uses_llm_dependency_from_context():
 
     assert result.artifact is not None
 
-    assert result.artifact.producer == "mentor"
+    assert (
+        result.artifact.producer
+        == "research"
+    )
 
-    assert result.artifact.type == (
-        ArtifactType.LESSON
+    assert (
+        result.artifact.type
+        == ArtifactType.RESEARCH
     )
 
 
 # ==========================================================
-# Invalid LLM Response
+# Invalid JSON
 # ==========================================================
 
-class InvalidJSONProvider:
-
-    def generate(
-        self,
-        messages: list[dict[str, str]],
-    ) -> str:
-
-        return "not valid json"
-
-
-def test_mentor_component_rejects_invalid_json():
+def test_research_component_rejects_invalid_json():
 
     llm = LLMService(
         provider=InvalidJSONProvider(),
     )
 
-    component = MentorComponent()
+    component = ResearchComponent()
 
-    context = create_mentor_context(
+    context = create_research_context(
         llm=llm,
     )
 
@@ -226,32 +256,18 @@ def test_mentor_component_rejects_invalid_json():
 
 
 # ==========================================================
-# Invalid Artifact Payload
+# Invalid Schema
 # ==========================================================
 
-class InvalidSchemaProvider:
-
-    def generate(
-        self,
-        messages: list[dict[str, str]],
-    ) -> str:
-
-        return """
-        {
-            "title": "Python Basics"
-        }
-        """
-
-
-def test_mentor_component_rejects_invalid_schema():
+def test_research_component_rejects_invalid_schema():
 
     llm = LLMService(
         provider=InvalidSchemaProvider(),
     )
 
-    component = MentorComponent()
+    component = ResearchComponent()
 
-    context = create_mentor_context(
+    context = create_research_context(
         llm=llm,
     )
 
