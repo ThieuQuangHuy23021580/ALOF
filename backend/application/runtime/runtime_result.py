@@ -6,7 +6,9 @@ from pydantic import BaseModel, Field
 
 from backend.core.execution_status import ExecutionStatus
 from backend.domain.artifact.artifact import Artifact
-
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
 
 class RuntimeResult(BaseModel):
     """
@@ -30,6 +32,8 @@ class RuntimeResult(BaseModel):
     metadata: dict[str, Any] = Field(
         default_factory=dict,
     )
+
+    learning_state: LearningState | None = None
 
     def add_metadata(
         self,

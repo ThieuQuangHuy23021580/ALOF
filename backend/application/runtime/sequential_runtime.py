@@ -171,5 +171,6 @@ class SequentialRuntime(Runtime):
             execution_order=context.execution_order,
             duration=context.execution_duration(),
             metadata=context.metadata,
+            learning_state=context.learning_state,
         )
 

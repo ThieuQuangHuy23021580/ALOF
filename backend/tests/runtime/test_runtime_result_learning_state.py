@@ -1,0 +1,129 @@
+from __future__ import annotations
+
+from backend.application.runtime.runtime_context import (
+    RuntimeContext,
+)
+from backend.application.runtime.sequential_runtime import (
+    SequentialRuntime,
+)
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
+from backend.domain.workflow.workflow import (
+    Workflow,
+)
+
+
+def test_runtime_result_contains_learning_state():
+
+    learning_state = LearningState(
+        learner_id="learner-1",
+        current_knowledge={
+            "python": "basic",
+        },
+        progress={
+            "python": 0.4,
+        },
+    )
+
+    workflow = Workflow()
+
+    context = RuntimeContext(
+        workflow=workflow,
+        learning_state=learning_state,
+    )
+
+    runtime = SequentialRuntime()
+
+    result = runtime.build_result(
+        context,
+    )
+
+    assert (
+        result.learning_state
+        is learning_state
+    )
+
+
+def test_runtime_result_preserves_learning_state_data():
+
+    learning_state = LearningState(
+        learner_id="learner-1",
+        current_knowledge={
+            "python": "intermediate",
+        },
+        progress={
+            "python": 0.75,
+        },
+        metadata={
+            "level": "beginner",
+        },
+    )
+
+    workflow = Workflow()
+
+    context = RuntimeContext(
+        workflow=workflow,
+        learning_state=learning_state,
+    )
+
+    runtime = SequentialRuntime()
+
+    result = runtime.build_result(
+        context,
+    )
+
+    assert (
+        result.learning_state is not None
+    )
+
+    assert (
+        result.learning_state.learner_id
+        == "learner-1"
+    )
+
+    assert (
+        result.learning_state.get_knowledge(
+            "python",
+        )
+        == "intermediate"
+    )
+
+    assert (
+        result.learning_state.get_progress(
+            "python",
+        )
+        == 0.75
+    )
+
+    assert (
+        result.learning_state.get_metadata(
+            "level",
+        )
+        == "beginner"
+    )
+
+
+def test_runtime_result_contains_default_learning_state():
+
+    workflow = Workflow()
+
+    context = RuntimeContext(
+        workflow=workflow,
+    )
+
+    runtime = SequentialRuntime()
+
+    result = runtime.build_result(
+        context,
+    )
+
+    assert (
+        result.learning_state
+        is not None
+    )
+
+    assert (
+        result.learning_state.learner_id
+        == "default"
+    )

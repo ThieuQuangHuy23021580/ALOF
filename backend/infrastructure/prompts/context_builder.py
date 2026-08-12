@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from backend.core.component_context import ComponentContext
 
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
 
 class ContextBuilder:
     """
@@ -114,4 +117,6 @@ already provided by these artifacts.
             )
 
         return messages
+
+
 

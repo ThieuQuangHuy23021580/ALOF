@@ -11,6 +11,9 @@ from backend.domain.workflow.workflow import Workflow
 from backend.application.runtime.component_execution import (
     ComponentExecution,
 )
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
 
 class RuntimeContext(BaseModel):
     """
@@ -20,6 +23,12 @@ class RuntimeContext(BaseModel):
     workflow: Workflow
 
     state: ExecutionStatus = ExecutionStatus.CREATED
+
+    learning_state: LearningState = Field(
+    default_factory=lambda: LearningState(
+        learner_id="default",
+    ),
+)
 
     current_node: str | None = None
 

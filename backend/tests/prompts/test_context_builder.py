@@ -22,6 +22,9 @@ from backend.domain.workflow.workflow_node import (
 from backend.infrastructure.prompts.context_builder import (
     ContextBuilder,
 )
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
 
 
 def test_context_builder_includes_multiple_dependencies():
@@ -52,7 +55,7 @@ def test_context_builder_includes_multiple_dependencies():
     )
 
     planner_artifact = Artifact(
-        type=ArtifactType.PLAN,
+        type=ArtifactType.ROADMAP,
         title="Learning Plan",
         content="Plan content",
         summary="Plan summary",
@@ -86,3 +89,65 @@ def test_context_builder_includes_multiple_dependencies():
     assert "Plan content" in combined
     assert "Plan summary" in combined
 
+def test_context_builder_includes_learning_state():
+
+    workflow = Workflow()
+
+    node = WorkflowNode(
+        id="planner",
+        component_id="planner",
+        objective="Create adaptive Python roadmap",
+        expected_output="Roadmap",
+    )
+
+    workflow.add_node(
+        node,
+    )
+
+    learning_state = LearningState(
+        learner_id="learner-1",
+        current_knowledge={
+            "python": "basic",
+            "variables": "understood",
+        },
+        progress={
+            "python": 0.4,
+            "variables": 0.8,
+        },
+        metadata={
+            "level": "beginner",
+        },
+    )
+
+    runtime = RuntimeContext(
+        workflow=workflow,
+        learning_state=learning_state,
+    )
+
+    context = ComponentContext(
+        runtime=runtime,
+        node=node,
+    )
+
+    messages = ContextBuilder.build(
+        context=context,
+        system_prompt="You are a planner.",
+    )
+
+    combined = "\n".join(
+        message["content"]
+        for message in messages
+    )
+
+    assert "learner-1" in combined
+
+    assert "python" in combined
+    assert "basic" in combined
+
+    assert "variables" in combined
+    assert "understood" in combined
+
+    assert "0.4" in combined
+    assert "0.8" in combined
+
+    assert "beginner" in combined
