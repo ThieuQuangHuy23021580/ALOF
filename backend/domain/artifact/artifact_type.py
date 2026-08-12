@@ -18,6 +18,7 @@ class ArtifactType(StrEnum):
 
     ROADMAP = "roadmap"
 
+
     QUIZ = "quiz"
 
     FLASHCARD = "flashcard"
