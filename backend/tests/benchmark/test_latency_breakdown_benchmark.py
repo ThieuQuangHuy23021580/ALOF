@@ -35,16 +35,25 @@ from backend.components.research.research_component import (
 from backend.core.component_registry import (
     ComponentRegistry,
 )
-from backend.domain.artifact.artifact_type import (
-    ArtifactType,
-)
 from backend.domain.student.student import (
     Student,
 )
 
 
 @pytest.mark.real_llm
-def test_real_learning_orchestrator():
+def test_real_latency_breakdown_benchmark():
+
+    # ==========================================================
+    # Scenario
+    # ==========================================================
+
+    scenario_name = "compare_rest_graphql"
+
+    message = (
+        "Phân tích REST và GraphQL, "
+        "sau đó giải thích nên sử dụng công nghệ nào "
+        "trong từng trường hợp."
+    )
 
     # ==========================================================
     # Registry
@@ -70,14 +79,8 @@ def test_real_learning_orchestrator():
     )
 
     # ==========================================================
-    # Learner request
+    # Request
     # ==========================================================
-
-    message = (
-        "Phân tích REST và GraphQL, "
-        "sau đó giải thích nên sử dụng công nghệ nào "
-        "trong từng trường hợp."
-    )
 
     request = ExecutionRequest(
         student=student,
@@ -109,7 +112,7 @@ def test_real_learning_orchestrator():
     )
 
     # ==========================================================
-    # Workflow builder
+    # Workflow
     # ==========================================================
 
     workflow_builder = (
@@ -138,120 +141,183 @@ def test_real_learning_orchestrator():
     )
 
     # ==========================================================
-    # Reset LLM counter
+    # Reset metrics
     # ==========================================================
 
     llm.reset_call_count()
 
     # ==========================================================
-    # Execute complete pipeline
+    # Execute
     # ==========================================================
 
     result = orchestrator.execute(
         request,
     )
 
-    llm_calls = llm.call_count
+    # ==========================================================
+    # Overall metrics
+    # ==========================================================
+
+    total_wall_clock = sum(
+        metric.duration
+        for metric in llm.call_metrics
+    )
+
+    total_llm_duration = (
+        llm.total_duration
+    )
 
     # ==========================================================
-    # Result assertions
+    # Stage metrics
+    # ==========================================================
+
+    routing_metrics = (
+        llm.metrics_by_stage(
+            "routing",
+        )
+    )
+
+    planning_metrics = (
+        llm.metrics_by_stage(
+            "planning",
+        )
+    )
+
+    runtime_metrics = (
+        llm.metrics_by_stage(
+            "runtime",
+        )
+    )
+
+    # ==========================================================
+    # Stage latency
+    # ==========================================================
+
+    routing_latency = sum(
+        metric.duration
+        for metric in routing_metrics
+    )
+
+    planning_latency = sum(
+        metric.duration
+        for metric in planning_metrics
+    )
+
+    runtime_latency = sum(
+        metric.duration
+        for metric in runtime_metrics
+    )
+
+    # ==========================================================
+    # Workflow latency
+    #
+    # Workflow construction is currently synchronous and does
+    # not make an LLM call. Therefore it is measured as zero
+    # at the LLM instrumentation level.
+    # ==========================================================
+
+    workflow_latency = 0.0
+
+    # ==========================================================
+    # Assertions
     # ==========================================================
 
     assert result is not None
 
-    assert result.status.value == "completed"
-
-    # ==========================================================
-    # Execution order
-    # ==========================================================
-
-    assert result.execution_order
+    assert (
+        result.status.value
+        == "completed"
+    )
 
     assert result.execution_order == [
         "step_1",
         "step_2",
     ]
 
+    assert len(
+        routing_metrics,
+    ) >= 1
+
+    assert len(
+        planning_metrics,
+    ) >= 1
+
+    assert len(
+        runtime_metrics,
+    ) >= 1
+
+    assert routing_latency > 0.0
+
+    assert planning_latency > 0.0
+
+    assert runtime_latency > 0.0
+
+    assert total_llm_duration > 0.0
+
     # ==========================================================
-    # Research artifact
-    #
-    # Artifacts are keyed by workflow step ID.
+    # Latency consistency
     # ==========================================================
 
-    assert "step_1" in result.artifacts
-
-    research_artifact = (
-        result.artifacts["step_1"]
+    stage_latency_sum = (
+        routing_latency
+        + planning_latency
+        + runtime_latency
     )
 
     assert (
-        research_artifact.type
-        == ArtifactType.RESEARCH
+        abs(
+            stage_latency_sum
+            - total_llm_duration
+        )
+        < 0.001
+    )
+
+    # ==========================================================
+    # Stage shares
+    # ==========================================================
+
+    routing_share = (
+        routing_latency
+        / total_llm_duration
+        * 100.0
+    )
+
+    planning_share = (
+        planning_latency
+        / total_llm_duration
+        * 100.0
+    )
+
+    runtime_share = (
+        runtime_latency
+        / total_llm_duration
+        * 100.0
+    )
+
+    # ==========================================================
+    # LLM call count
+    # ==========================================================
+
+    total_calls = llm.call_count
+
+    routing_calls = len(
+        routing_metrics,
+    )
+
+    planning_calls = len(
+        planning_metrics,
+    )
+
+    runtime_calls = len(
+        runtime_metrics,
     )
 
     assert (
-        research_artifact.producer
-        == "research"
+        routing_calls
+        + planning_calls
+        + runtime_calls
+        == total_calls
     )
-
-    assert research_artifact.content
-
-    # ==========================================================
-    # Mentor artifact
-    #
-    # Artifacts are keyed by workflow step ID.
-    # ==========================================================
-
-    assert "step_2" in result.artifacts
-
-    mentor_artifact = (
-        result.artifacts["step_2"]
-    )
-
-    assert (
-        mentor_artifact.type
-        == ArtifactType.LESSON
-    )
-
-    assert (
-        mentor_artifact.producer
-        == "mentor"
-    )
-
-    assert mentor_artifact.content
-
-    # ==========================================================
-    # Final artifact
-    # ==========================================================
-
-    assert result.final_artifact is not None
-
-    assert (
-        result.final_artifact.type
-        == ArtifactType.LESSON
-    )
-
-    assert (
-        result.final_artifact.producer
-        == "mentor"
-    )
-
-    assert result.final_artifact.content
-
-    # ==========================================================
-    # LLM usage
-    #
-    # Expected minimum:
-    #
-    # 1. Router / Intent recognition
-    # 2. Sequential Planner
-    # 3. Research component
-    # 4. Mentor component
-    #
-    # Therefore normally >= 4.
-    # ==========================================================
-
-    assert llm_calls >= 4
 
     # ==========================================================
     # Benchmark output
@@ -263,7 +329,7 @@ def test_real_learning_orchestrator():
     )
 
     print(
-        "       REAL END-TO-END ORCHESTRATOR TEST"
+        "        ALOF LATENCY BREAKDOWN BENCHMARK"
     )
 
     print(
@@ -271,8 +337,123 @@ def test_real_learning_orchestrator():
     )
 
     print(
-        f"Status: "
-        f"{result.status.value}"
+        "\n--- Scenario ---"
+    )
+
+    print(
+        f"Name: {scenario_name}"
+    )
+
+    print(
+        f"Message: {message}"
+    )
+
+    print(
+        "\n--- Overall ---"
+    )
+
+    print(
+        f"Status: {result.status.value}"
+    )
+
+    print(
+        f"Total wall-clock LLM duration: "
+        f"{total_wall_clock:.3f}s"
+    )
+
+    print(
+        f"Total LLM duration: "
+        f"{total_llm_duration:.3f}s"
+    )
+
+    print(
+        f"Total LLM calls: "
+        f"{total_calls}"
+    )
+
+    print(
+        "\n--- Routing ---"
+    )
+
+    print(
+        f"Calls: {routing_calls}"
+    )
+
+    print(
+        f"Duration: "
+        f"{routing_latency:.3f}s"
+    )
+
+    print(
+        f"Share: "
+        f"{routing_share:.2f}%"
+    )
+
+    print(
+        "\n--- Planning ---"
+    )
+
+    print(
+        f"Calls: {planning_calls}"
+    )
+
+    print(
+        f"Duration: "
+        f"{planning_latency:.3f}s"
+    )
+
+    print(
+        f"Share: "
+        f"{planning_share:.2f}%"
+    )
+
+    print(
+        "\n--- Workflow ---"
+    )
+
+    print(
+        f"Duration: "
+        f"{workflow_latency:.3f}s"
+    )
+
+    print(
+        "LLM calls: 0"
+    )
+
+    print(
+        "\n--- Runtime ---"
+    )
+
+    print(
+        f"Calls: {runtime_calls}"
+    )
+
+    print(
+        f"Duration: "
+        f"{runtime_latency:.3f}s"
+    )
+
+    print(
+        f"Share: "
+        f"{runtime_share:.2f}%"
+    )
+
+    print(
+        "\n--- Latency Composition ---"
+    )
+
+    print(
+        f"Routing + Planning + Runtime: "
+        f"{stage_latency_sum:.3f}s"
+    )
+
+    print(
+        f"Measured LLM duration: "
+        f"{total_llm_duration:.3f}s"
+    )
+
+    print(
+        "\n--- Execution ---"
     )
 
     print(
@@ -281,39 +462,11 @@ def test_real_learning_orchestrator():
     )
 
     print(
-        f"LLM calls: "
-        f"{llm_calls}"
+        "\n--- Benchmark Verdict ---"
     )
 
     print(
-        f"Duration: "
-        f"{result.duration:.3f}s"
-        if result.duration is not None
-        else "Duration: None"
-    )
-
-    print(
-        "\n--- Research Artifact ---"
-    )
-
-    print(
-        research_artifact.content
-    )
-
-    print(
-        "\n--- Mentor Artifact ---"
-    )
-
-    print(
-        mentor_artifact.content
-    )
-
-    print(
-        "\n--- Final Artifact ---"
-    )
-
-    print(
-        result.final_artifact.content
+        "PASS"
     )
 
     print(

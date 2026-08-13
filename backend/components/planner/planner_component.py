@@ -79,6 +79,8 @@ class PlannerComponent(Component):
 
         raw_response = llm.generate(
             messages,
+            stage="runtime",
+            component="planner",
         )
 
         # ======================================================

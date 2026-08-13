@@ -86,6 +86,8 @@ class ResearchComponent(Component):
 
         raw_response = llm.generate(
             messages,
+            stage="runtime",
+            component="research",
         )
 
         payload = self._parser.parse(

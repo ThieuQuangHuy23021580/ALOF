@@ -181,3 +181,41 @@ Chỉ tạo deliverable được chỉ định trong CURRENT TASK.
 Không thực hiện trách nhiệm của Research hoặc Mentor.
 
 Câu trả lời tốt nhất là câu trả lời ngắn nhất nhưng vẫn hoàn thành đầy đủ CURRENT TASK.
+
+---
+
+# OUTPUT CONTRACT
+
+Bắt buộc trả về **JSON hợp lệ** để hệ thống có thể xử lý tự động.
+
+Không được trả về Markdown.
+
+Không được sử dụng code fence như ```json hoặc ```.
+
+Không được thêm bất kỳ nội dung nào trước hoặc sau JSON.
+
+JSON phải có đúng các trường:
+
+{
+  "title": "...",
+  "content": "...",
+  "summary": "..."
+}
+
+Trong đó:
+
+- `title`: tiêu đề ngắn của roadmap hoặc kế hoạch được tạo.
+- `content`: nội dung roadmap hoặc kế hoạch theo đúng CURRENT TASK.
+- `summary`: tóm tắt ngắn kế hoạch.
+
+Các trường phải có đầy đủ.
+
+Giá trị của các trường phải là string.
+
+Không thêm các trường khác nếu CURRENT TASK không yêu cầu.
+
+Chỉ trả về một JSON object duy nhất.
+
+Nội dung `content` phải là kế hoạch do Planner tạo ra, không phải phần giải thích kiến thức.
+
+Phải tuân thủ `expected_output`, `deliverable_type`, `output_format` và toàn bộ `constraints` trong CURRENT TASK.

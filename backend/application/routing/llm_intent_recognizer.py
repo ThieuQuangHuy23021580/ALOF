@@ -24,25 +24,33 @@ class LLMIntentRecognizer(
     Responsibilities
     ----------------
     - Send learner message to LLM.
+    - Identify one or more learner intents.
     - Parse JSON response.
     - Return IntentResult.
     """
 
-
     SYSTEM_PROMPT = """
-You are an intent recognizer.
+You are an intent recognizer for an adaptive learning system.
 
-Your task is to identify the learner's intention.
+Your task is to identify ALL meaningful learner intents
+contained in the user's request.
 
-Return ONLY JSON.
+A request may contain multiple intents.
+
+Do not force a multi-intent request into a single intent.
+
+Return ONLY valid JSON.
 
 Schema:
 
 {
-    "intent": "<intent>",
-    "confidence": 0.0
+    "intents": [
+        {
+            "intent": "<intent>",
+            "confidence": 0.0
+        }
+    ]
 }
-
 
 Allowed intents:
 
@@ -53,8 +61,24 @@ Allowed intents:
 - quiz
 - flashcard
 - unknown
-""".strip()
 
+Rules:
+
+1. Identify every meaningful intent in the request.
+2. Preserve the order in which the intents appear or are logically required.
+3. Do not add an intent that is not explicitly or strongly implied.
+4. If the request contains multiple intents, return multiple items.
+5. Confidence must be between 0.0 and 1.0.
+6. If no allowed intent matches, return:
+   {
+       "intents": [
+           {
+               "intent": "unknown",
+               "confidence": 1.0
+           }
+       ]
+   }
+""".strip()
 
     def __init__(
         self,
@@ -67,11 +91,9 @@ Allowed intents:
             else LLMService()
         )
 
-
         self._parser = JsonParser(
             IntentResult,
         )
-
 
     def recognize(
         self,
@@ -89,15 +111,12 @@ Allowed intents:
             },
         ]
 
-
         raw = self._llm.generate(
             messages,
+            stage="routing",
+
         )
 
-
-        result = self._parser.parse(
+        return self._parser.parse(
             raw,
         )
-
-
-        return result

@@ -10,10 +10,7 @@ from backend.application.routing.routing_result import (
 
 class ComponentSelector:
     """
-    Maps an IntentResult to a RoutingResult.
-
-    This class contains the application's routing policy,
-    translating learner intents into candidate components.
+    Maps recognized learner intents to candidate components.
     """
 
     _INTENT_MAPPING: dict[str, list[str]] = {
@@ -44,12 +41,41 @@ class ComponentSelector:
         intent: IntentResult,
     ) -> RoutingResult:
 
-        return RoutingResult(
-            intent=intent.intent,
-            confidence=intent.confidence,
-            candidate_components=self._INTENT_MAPPING.get(
-                intent.intent,
+        candidate_components: list[str] = []
+
+        confidences: list[float] = []
+
+        recognized_intents: list[str] = []
+
+        for item in intent.intents:
+
+            recognized_intents.append(
+                item.intent,
+            )
+
+            confidences.append(
+                item.confidence,
+            )
+
+            for component in self._INTENT_MAPPING.get(
+                item.intent,
                 [],
-            ).copy(),
+            ):
+
+                if component not in candidate_components:
+                    candidate_components.append(
+                        component,
+                    )
+
+        confidence = (
+            min(confidences)
+            if confidences
+            else 0.0
+        )
+
+        return RoutingResult(
+            intents=recognized_intents,
+            confidence=confidence,
+            candidate_components=candidate_components,
             metadata=intent.metadata.copy(),
         )

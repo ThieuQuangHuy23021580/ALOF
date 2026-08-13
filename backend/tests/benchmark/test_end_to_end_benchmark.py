@@ -26,6 +26,7 @@ from backend.application.runtime.sequential_runtime import (
 from backend.application.services.llm_service import (
     LLMService,
 )
+from backend.benchmark.benchmark_result import BenchmarkResult
 from backend.components.mentor.mentor_component import (
     MentorComponent,
 )
@@ -35,16 +36,23 @@ from backend.components.research.research_component import (
 from backend.core.component_registry import (
     ComponentRegistry,
 )
-from backend.domain.artifact.artifact_type import (
-    ArtifactType,
-)
 from backend.domain.student.student import (
     Student,
 )
 
 
+
+
 @pytest.mark.real_llm
-def test_real_learning_orchestrator():
+def test_real_end_to_end_benchmark():
+
+    # ==========================================================
+    # Scenario
+    # ==========================================================
+
+    scenario = (
+        "compare_rest_graphql"
+    )
 
     # ==========================================================
     # Registry
@@ -144,7 +152,7 @@ def test_real_learning_orchestrator():
     llm.reset_call_count()
 
     # ==========================================================
-    # Execute complete pipeline
+    # Execute
     # ==========================================================
 
     result = orchestrator.execute(
@@ -154,104 +162,151 @@ def test_real_learning_orchestrator():
     llm_calls = llm.call_count
 
     # ==========================================================
-    # Result assertions
+    # Assertions
     # ==========================================================
 
     assert result is not None
 
     assert result.status.value == "completed"
 
-    # ==========================================================
-    # Execution order
-    # ==========================================================
-
     assert result.execution_order
 
-    assert result.execution_order == [
+    assert result.final_artifact is not None
+
+    assert llm_calls >= 4
+
+    # ==========================================================
+    # Extract routing information
+    # ==========================================================
+
+    # The current RuntimeResult does not expose RoutingResult.
+    #
+    # Therefore routing is measured independently here only
+    # for benchmark metadata.
+    #
+    # The actual end-to-end execution has already been validated
+    # by test_real_learning_orchestrator.
+
+    benchmark_router = LLMRouter(
+        recognizer=LLMIntentRecognizer(
+            llm=llm,
+        ),
+    )
+
+    routing = benchmark_router.route(
+        student,
+        message,
+    )
+
+    # ==========================================================
+    # Build benchmark plan representation
+    # ==========================================================
+
+    plan_data: list[dict[str, object]] = []
+
+    for step_id in result.execution_order:
+
+        artifact = result.artifacts.get(
+            step_id,
+        )
+
+        plan_data.append(
+            {
+                "id": step_id,
+                "component": (
+                    artifact.producer
+                    if artifact is not None
+                    else None
+                ),
+            }
+        )
+
+    # ==========================================================
+    # Build artifact representation
+    # ==========================================================
+
+    artifact_data: list[dict[str, object]] = []
+
+    for step_id, artifact in (
+        result.artifacts.items()
+    ):
+
+        artifact_data.append(
+            {
+                "step_id": step_id,
+                "type": artifact.type.value,
+                "producer": artifact.producer,
+                "has_content": bool(
+                    artifact.content
+                ),
+            }
+        )
+
+    # ==========================================================
+    # Final artifact representation
+    # ==========================================================
+
+    final_artifact_data = {
+        "type": (
+            result.final_artifact.type.value
+        ),
+        "producer": (
+            result.final_artifact.producer
+        ),
+        "has_content": bool(
+            result.final_artifact.content
+        ),
+    }
+
+    # ==========================================================
+    # Benchmark result
+    # ==========================================================
+
+    benchmark = BenchmarkResult(
+        scenario=scenario,
+        status=result.status.value,
+        duration=result.duration,
+        llm_calls=llm_calls,
+        intents=routing.intents,
+        candidate_components=(
+            routing.candidate_components
+        ),
+        execution_order=(
+            result.execution_order
+        ),
+        plan=plan_data,
+        artifacts=artifact_data,
+        final_artifact=final_artifact_data,
+    )
+
+    # ==========================================================
+    # Benchmark assertions
+    # ==========================================================
+
+    assert benchmark.scenario == scenario
+
+    assert benchmark.status == "completed"
+
+    assert benchmark.duration is not None
+
+    assert benchmark.duration >= 0.0
+
+    assert benchmark.llm_calls >= 4
+
+    assert benchmark.intents
+
+    assert benchmark.candidate_components
+
+    assert benchmark.execution_order == [
         "step_1",
         "step_2",
     ]
 
-    # ==========================================================
-    # Research artifact
-    #
-    # Artifacts are keyed by workflow step ID.
-    # ==========================================================
+    assert benchmark.plan
 
-    assert "step_1" in result.artifacts
+    assert benchmark.artifacts
 
-    research_artifact = (
-        result.artifacts["step_1"]
-    )
-
-    assert (
-        research_artifact.type
-        == ArtifactType.RESEARCH
-    )
-
-    assert (
-        research_artifact.producer
-        == "research"
-    )
-
-    assert research_artifact.content
-
-    # ==========================================================
-    # Mentor artifact
-    #
-    # Artifacts are keyed by workflow step ID.
-    # ==========================================================
-
-    assert "step_2" in result.artifacts
-
-    mentor_artifact = (
-        result.artifacts["step_2"]
-    )
-
-    assert (
-        mentor_artifact.type
-        == ArtifactType.LESSON
-    )
-
-    assert (
-        mentor_artifact.producer
-        == "mentor"
-    )
-
-    assert mentor_artifact.content
-
-    # ==========================================================
-    # Final artifact
-    # ==========================================================
-
-    assert result.final_artifact is not None
-
-    assert (
-        result.final_artifact.type
-        == ArtifactType.LESSON
-    )
-
-    assert (
-        result.final_artifact.producer
-        == "mentor"
-    )
-
-    assert result.final_artifact.content
-
-    # ==========================================================
-    # LLM usage
-    #
-    # Expected minimum:
-    #
-    # 1. Router / Intent recognition
-    # 2. Sequential Planner
-    # 3. Research component
-    # 4. Mentor component
-    #
-    # Therefore normally >= 4.
-    # ==========================================================
-
-    assert llm_calls >= 4
+    assert benchmark.final_artifact is not None
 
     # ==========================================================
     # Benchmark output
@@ -263,7 +318,7 @@ def test_real_learning_orchestrator():
     )
 
     print(
-        "       REAL END-TO-END ORCHESTRATOR TEST"
+        "             ALOF BENCHMARK RESULT"
     )
 
     print(
@@ -271,49 +326,68 @@ def test_real_learning_orchestrator():
     )
 
     print(
+        f"Scenario: "
+        f"{benchmark.scenario}"
+    )
+
+    print(
         f"Status: "
-        f"{result.status.value}"
-    )
-
-    print(
-        f"Execution order: "
-        f"{result.execution_order}"
-    )
-
-    print(
-        f"LLM calls: "
-        f"{llm_calls}"
+        f"{benchmark.status}"
     )
 
     print(
         f"Duration: "
-        f"{result.duration:.3f}s"
-        if result.duration is not None
+        f"{benchmark.duration:.3f}s"
+        if benchmark.duration is not None
         else "Duration: None"
     )
 
     print(
-        "\n--- Research Artifact ---"
+        f"LLM calls: "
+        f"{benchmark.llm_calls}"
     )
 
     print(
-        research_artifact.content
+        f"Intents: "
+        f"{benchmark.intents}"
     )
 
     print(
-        "\n--- Mentor Artifact ---"
+        f"Candidate components: "
+        f"{benchmark.candidate_components}"
     )
 
     print(
-        mentor_artifact.content
+        f"Execution order: "
+        f"{benchmark.execution_order}"
     )
+
+    print(
+        "\n--- Plan ---"
+    )
+
+    for step in benchmark.plan:
+
+        print(
+            f"{step}"
+        )
+
+    print(
+        "\n--- Artifacts ---"
+    )
+
+    for artifact in benchmark.artifacts:
+
+        print(
+            f"{artifact}"
+        )
 
     print(
         "\n--- Final Artifact ---"
     )
 
     print(
-        result.final_artifact.content
+        benchmark.final_artifact
     )
 
     print(

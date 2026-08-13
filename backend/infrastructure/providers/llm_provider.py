@@ -21,3 +21,40 @@ class LLMProvider(ABC):
         Generate a completion from a chat conversation.
         """
         raise NotImplementedError
+
+    # ======================================================
+    # Usage metrics
+    # ======================================================
+
+    @property
+    @abstractmethod
+    def last_input_tokens(
+        self,
+    ) -> int:
+        """
+        Return input token usage from the most recent call.
+        """
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def last_output_tokens(
+        self,
+    ) -> int:
+        """
+        Return output token usage from the most recent call.
+        """
+        raise NotImplementedError
+
+    @property
+    def last_total_tokens(
+        self,
+    ) -> int:
+        """
+        Return total token usage from the most recent call.
+        """
+
+        return (
+            self.last_input_tokens
+            + self.last_output_tokens
+        )

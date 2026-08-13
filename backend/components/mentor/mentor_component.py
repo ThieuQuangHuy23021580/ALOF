@@ -68,6 +68,8 @@ class MentorComponent(Component):
 
         raw_response = llm.generate(
             messages,
+            stage="runtime",
+            component="mentor",
         )
 
         payload = self._parser.parse(

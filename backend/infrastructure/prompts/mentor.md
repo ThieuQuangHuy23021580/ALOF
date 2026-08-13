@@ -164,3 +164,43 @@ TASK INPUTS là kết quả đã hoàn thành.
 Chỉ tạo deliverable được chỉ định trong CURRENT TASK.
 
 Câu trả lời tốt nhất là câu trả lời ngắn nhất nhưng vẫn hoàn thành đầy đủ CURRENT TASK.
+
+---
+
+# OUTPUT CONTRACT
+
+Bắt buộc trả về **JSON hợp lệ** để hệ thống có thể xử lý tự động.
+
+Không được trả về Markdown.
+
+Không được sử dụng code fence như ```json hoặc ```.
+
+Không được thêm bất kỳ nội dung nào trước hoặc sau JSON.
+
+JSON phải có đúng các trường:
+
+{
+  "title": "...",
+  "content": "...",
+  "summary": "..."
+}
+
+Trong đó:
+
+- `title`: tiêu đề ngắn của bài học hoặc nội dung hướng dẫn.
+- `content`: nội dung bài học được tạo theo đúng CURRENT TASK và các TASK INPUTS.
+- `summary`: tóm tắt ngắn nội dung bài học.
+
+Các trường phải có đầy đủ.
+
+Giá trị của các trường phải là string.
+
+Không thêm các trường khác nếu CURRENT TASK không yêu cầu.
+
+Chỉ trả về một JSON object duy nhất.
+
+Nội dung `content` phải phục vụ việc giảng dạy và giúp người học hiểu nội dung được giao.
+
+Không đưa Research, Planning hoặc các deliverable của agent khác vào `content` như một deliverable riêng.
+
+Phải tuân thủ `expected_output`, `deliverable_type`, `output_format` và toàn bộ `constraints` trong CURRENT TASK.

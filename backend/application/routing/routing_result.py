@@ -9,12 +9,13 @@ class RoutingResult(BaseModel):
     """
     Output of the routing stage.
 
-    RoutingResult does not describe how to execute a
-    workflow. It only captures the user's intent and the
-    candidate components that may satisfy it.
+    RoutingResult captures the learner's intents
+    and candidate components.
     """
 
-    intent: str
+    intents: list[str] = Field(
+        default_factory=list,
+    )
 
     candidate_components: list[str] = Field(
         default_factory=list,
@@ -34,6 +35,16 @@ class RoutingResult(BaseModel):
         if component_id not in self.candidate_components:
             self.candidate_components.append(
                 component_id,
+            )
+
+    def add_intent(
+        self,
+        intent: str,
+    ) -> None:
+
+        if intent not in self.intents:
+            self.intents.append(
+                intent,
             )
 
     def set_metadata(
