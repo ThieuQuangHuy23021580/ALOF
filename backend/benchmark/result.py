@@ -7,20 +7,40 @@ from pydantic import BaseModel, Field
 
 class BenchmarkResult(BaseModel):
     """
-    Normalized result of one benchmark execution.
+    Standard result produced by a benchmark runner.
 
-    This model contains benchmark outcome data only.
-    Metrics are added in a later step.
+    This model is independent from any specific benchmark
+    implementation such as SILO-BENCH.
     """
 
     scenario_id: str
 
-    approach: str
+    scenario_name: str
 
     success: bool
 
-    output: str | None = None
+    agent_count: int
 
-    metadata: dict[str, Any] = Field(
+    duration_seconds: float
+
+    component_calls: int = 0
+
+    rounds: int = 0
+
+    llm_calls: int = 0
+
+    input_tokens: int = 0
+
+    output_tokens: int = 0
+
+    total_tokens: int = 0
+
+    communication_messages: int = 0
+
+    metrics: dict[str, float] = Field(
+        default_factory=dict,
+    )
+
+    details: dict[str, Any] = Field(
         default_factory=dict,
     )
