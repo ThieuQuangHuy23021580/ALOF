@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from backend.application.routing.routing_result import (
     RoutingResult,
 )
+from backend.domain.learning.learning_state import LearningState
 from backend.domain.student.student import Student
 
 
@@ -23,6 +24,12 @@ class PlanningRequest(BaseModel):
     message: str
 
     routing: RoutingResult
+
+    learning_state: LearningState = Field(
+        default_factory=lambda: LearningState(
+            learner_id="default",
+        ),
+    )
 
     metadata: dict[str, Any] = Field(
         default_factory=dict,

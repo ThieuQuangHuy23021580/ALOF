@@ -5,19 +5,24 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from backend.core.execution_status import ExecutionStatus
-from backend.domain.artifact.artifact import Artifact
-from backend.domain.workflow.workflow import Workflow
 from backend.application.runtime.component_execution import (
     ComponentExecution,
 )
+from backend.core.execution_status import ExecutionStatus
+from backend.domain.artifact.artifact import Artifact
 from backend.domain.learning.learning_state import (
     LearningState,
 )
+from backend.domain.student.student import Student
+from backend.domain.workflow.workflow import Workflow
+
 
 class RuntimeContext(BaseModel):
     """
     Holds the execution state of a workflow.
+
+    RuntimeContext represents the learner-specific state
+    of one workflow execution.
     """
 
     workflow: Workflow
@@ -25,10 +30,10 @@ class RuntimeContext(BaseModel):
     state: ExecutionStatus = ExecutionStatus.CREATED
 
     learning_state: LearningState = Field(
-    default_factory=lambda: LearningState(
-        learner_id="default",
-    ),
-)
+        default_factory=lambda: LearningState(
+            learner_id="default",
+        ),
+    )
 
     current_node: str | None = None
 
@@ -36,7 +41,10 @@ class RuntimeContext(BaseModel):
         default_factory=dict,
     )
 
-    component_executions: dict[str, ComponentExecution] = Field(
+    component_executions: dict[
+        str,
+        ComponentExecution,
+    ] = Field(
         default_factory=dict,
     )
 
@@ -51,6 +59,73 @@ class RuntimeContext(BaseModel):
     metadata: dict[str, Any] = Field(
         default_factory=dict,
     )
+
+    @classmethod
+    def from_student(
+        cls,
+        workflow: Workflow,
+        student: Student,
+    ) -> RuntimeContext:
+        """
+        Create a learner-specific RuntimeContext.
+
+        The RuntimeContext receives a snapshot of the
+        learner's current progress and preferences for
+        this execution.
+        """
+
+        learning_state = LearningState(
+            learner_id=student.id,
+            progress={
+                "completed_topics": float(
+                    student.learning_progress.completed_topics,
+                ),
+                "completed_sessions": float(
+                    student.learning_progress.completed_sessions,
+                ),
+                "mastered_topics": float(
+                    student.learning_progress.mastered_topics,
+                ),
+                "current_streak": float(
+                    student.learning_progress.current_streak,
+                ),
+                "total_learning_minutes": float(
+                    student.learning_progress.total_learning_minutes,
+                ),
+                "overall_mastery": (
+                    student.learning_progress.overall_mastery
+                ),
+            },
+            metadata={
+                "display_name": student.display_name,
+                "preferred_difficulty": (
+                    student.learning_preference.preferred_difficulty
+                ),
+                "preferred_pace": (
+                    student.learning_preference.preferred_pace
+                ),
+                "session_duration_minutes": (
+                    student.learning_preference.session_duration_minutes
+                ),
+                "include_examples": (
+                    student.learning_preference.include_examples
+                ),
+                "include_quiz": (
+                    student.learning_preference.include_quiz
+                ),
+                "include_flashcards": (
+                    student.learning_preference.include_flashcards
+                ),
+                "include_summary": (
+                    student.learning_preference.include_summary
+                ),
+            },
+        )
+
+        return cls(
+            workflow=workflow,
+            learning_state=learning_state,
+        )
 
     # ======================================================
     # Execution lifecycle
@@ -158,6 +233,10 @@ class RuntimeContext(BaseModel):
             default,
         )
 
+    # ======================================================
+    # Component execution
+    # ======================================================
+
     def start_component_execution(
         self,
         node_id: str,
@@ -173,7 +252,6 @@ class RuntimeContext(BaseModel):
 
         self.component_executions[node_id] = execution
 
-
     def complete_component_execution(
         self,
         node_id: str,
@@ -185,7 +263,6 @@ class RuntimeContext(BaseModel):
 
         if execution is not None:
             execution.complete()
-
 
     def fail_component_execution(
         self,

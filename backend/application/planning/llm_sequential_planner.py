@@ -11,6 +11,7 @@ from backend.application.services.llm_service import (
     LLMService,
 )
 from backend.core.json_parser import JsonParser
+from backend.domain.learning import learning_state
 from backend.infrastructure.prompts.manager import (
     PromptManager,
 )
@@ -87,9 +88,15 @@ class LLMSequentialPlanner(Planner):
     ) -> str:
 
         routing = request.routing
+        learning_state = request.learning_state
+
 
         candidate_components = json.dumps(
             routing.candidate_components,
+            ensure_ascii=False,
+        )
+        learner_state = json.dumps(
+            learning_state.model_dump(),
             ensure_ascii=False,
         )
 
@@ -105,4 +112,7 @@ Routing Confidence:
 
 Candidate Components:
 {candidate_components}
+
+Learner State:
+{learner_state}
 """.strip()

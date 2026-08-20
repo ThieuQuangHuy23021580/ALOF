@@ -42,6 +42,10 @@ You will receive:
 
 {{candidate_components}}
 
+### Learner State
+
+{{learning_state}}
+
 ---
 
 ## Planning Rules
@@ -70,7 +74,37 @@ Do not omit a component merely to minimize the number of steps when doing so wou
 
 ---
 
-### 3. Assign a meaningful task to every selected component
+### 3. Adapt the plan to learner state
+
+The learner state represents the learner's current learning condition.
+
+Use it when determining:
+
+- task difficulty;
+- depth of explanation;
+- whether additional practice is useful;
+- whether prerequisite knowledge should be reinforced;
+- whether the workflow should emphasize teaching, planning, assessment, or revision.
+
+Adapt the execution plan to the learner state.
+
+Examples:
+
+- Low mastery or limited progress:
+  prefer foundational explanation, prerequisite reinforcement, and guided learning.
+
+- Moderate mastery:
+  provide a balanced workflow with explanation and practice when appropriate.
+
+- High mastery:
+  prefer deeper analysis, application, comparison, or more challenging assessment.
+
+Do not invent components that are not present in the candidate component list.
+
+The learner state influences HOW the selected components should work.
+It does not allow the planner to introduce components outside the candidate list.
+
+### 4. Assign a meaningful task to every selected component
 
 Each selected component must have a clear objective related to the learner's request.
 
@@ -90,7 +124,7 @@ Do not assign the same task to multiple components.
 
 ---
 
-### 4. Cover all relevant learner intents
+### 5. Cover all relevant learner intents
 
 The plan should collectively address the intents identified by the router.
 
@@ -112,7 +146,7 @@ mentor → explain the comparison and provide learner-oriented guidance
 The planner should ensure that no important intent is left unaddressed.
 ```
 
-### 5. Decide execution order
+### 6. Decide execution order
 
 Choose an order that maximizes the usefulness of intermediate outputs.
 
@@ -124,7 +158,7 @@ research → mentor
 
 when the mentor needs research findings to produce the lesson.
 
-### 6. Component responsibilities
+### 7. Component responsibilities
 
 Use the following general responsibilities.
 
@@ -155,7 +189,7 @@ flashcard
 
 The actual objective MUST be adapted to the learner's message.
 
-### 7. Component dependencies
+### 8. Component dependencies
 
 A component should depend on another component when its task requires the previous component's output.
 
@@ -170,7 +204,7 @@ Do not create dependencies when they are unnecessary.
 
 Dependencies must reference valid step IDs.
 
-### 8. Sequential execution
+### 9. Sequential execution
 
 The workflow is sequential.
 
@@ -184,7 +218,7 @@ When a step does not depend on a previous step:
 
 Do not create artificial dependencies merely because steps happen to be sequential.
 
-### 9. Expected output
+### 10. Expected output
 
 expected_output must describe the artifact produced by the component.
 
@@ -195,7 +229,7 @@ Lesson
 Learning Roadmap
 Quiz
 Flashcards
-### 10. Step IDs
+### 11. Step IDs
 
 Step IDs MUST be sequential:
 
@@ -206,7 +240,7 @@ step_3
 
 Do not skip numbers.
 
-### 11. Empty plan
+### 12. Empty plan
 
 If no candidate component can reasonably satisfy the learner's request, return:
 ```json
@@ -217,7 +251,7 @@ If no candidate component can reasonably satisfy the learner's request, return:
 ```
 Do not invent a component.
 
-#### 12. Metadata
+#### 13. Metadata
 
 Use metadata only when additional structured information is genuinely useful for execution.
 

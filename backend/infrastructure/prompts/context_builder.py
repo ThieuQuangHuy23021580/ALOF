@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from backend.core.component_context import ComponentContext
 
-from backend.domain.learning.learning_state import (
-    LearningState,
-)
 
 class ContextBuilder:
     """
@@ -15,7 +12,6 @@ class ContextBuilder:
 
     Dependency resolution is handled by Runtime.
     """
-
 
     @staticmethod
     def build(
@@ -31,6 +27,7 @@ class ContextBuilder:
         ]
 
         node = context.node
+        learning_state = context.runtime.learning_state
 
         # ======================================================
         # Workflow Status
@@ -55,6 +52,37 @@ Expected Output
 {node.expected_output}
 
 ==================================================
+""".strip(),
+            }
+        )
+
+        # ======================================================
+        # Learner State
+        # ======================================================
+
+        messages.append(
+            {
+                "role": "system",
+                "content": f"""
+================ LEARNER STATE ================
+
+Learner ID
+
+{learning_state.learner_id}
+
+Current Knowledge
+
+{learning_state.current_knowledge}
+
+Progress
+
+{learning_state.progress}
+
+Metadata
+
+{learning_state.metadata}
+
+================================================
 """.strip(),
             }
         )
@@ -117,6 +145,3 @@ already provided by these artifacts.
             )
 
         return messages
-
-
-

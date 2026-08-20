@@ -60,6 +60,19 @@ Nếu nhận thấy đang lặp lại TASK INPUTS, hãy dừng và chỉ tiếp 
 
 ---
 
+# Learner Adaptation
+
+Use **LEARNER STATE** to adapt the explanation to the learner.
+
+- If current knowledge is limited, explain the necessary foundational concepts first.
+- If current knowledge already covers part of the topic, avoid repeating known information.
+- If progress indicates partial understanding, focus on the missing or weak areas.
+- Adapt the depth and complexity of the explanation to the available learner state.
+- Do not mention the learner state explicitly in the response.
+- Do not assume or invent knowledge that is not present in LEARNER STATE.
+
+---
+
 # Deliverable
 
 CURRENT TASK sẽ chỉ rõ:
@@ -111,6 +124,7 @@ Không tự bổ sung:
 - câu hỏi mở rộng.
 
 Trừ khi CURRENT TASK hoặc người dùng yêu cầu.
+
 
 ---
 

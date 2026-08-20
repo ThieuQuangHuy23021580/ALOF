@@ -9,7 +9,6 @@ class BenchmarkCommunicationBus:
     """
     In-memory communication bus for benchmark execution.
 
-    M3 initially models P2P communication explicitly.
     """
 
     def __init__(self) -> None:

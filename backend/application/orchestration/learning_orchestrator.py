@@ -49,15 +49,9 @@ class LearningOrchestrator:
     ) -> None:
 
         self._router = router
-
         self._planner = planner
-
-        self._workflow_builder = (
-            workflow_builder
-        )
-
+        self._workflow_builder = workflow_builder
         self._runtime = runtime
-
 
     def execute(
         self,
@@ -68,13 +62,10 @@ class LearningOrchestrator:
         # Routing
         # ==================================================
 
-        routing_result = (
-            self._router.route(
-                request.student,
-                request.message,
-            )
+        routing_result = self._router.route(
+            request.student,
+            request.message,
         )
-
 
         # ==================================================
         # Planning
@@ -84,35 +75,42 @@ class LearningOrchestrator:
             student=request.student,
             message=request.message,
             routing=routing_result,
+            learning_state=request.learning_state,
+
         )
 
-
-        plan = (
-            self._planner.plan(
-                planning_request,
-            )
+        plan = self._planner.plan(
+            planning_request,
         )
-
 
         # ==================================================
         # Workflow
         # ==================================================
 
-        workflow = (
-            self._workflow_builder.build(
-                plan,
-            )
+        workflow = self._workflow_builder.build(
+            plan,
         )
-
 
         # ==================================================
         # Runtime
         # ==================================================
 
-        context = RuntimeContext(
+        context = RuntimeContext.from_student(
             workflow=workflow,
+            student=request.student,
+        )
+        
+        context.learning_state = request.learning_state
+
+        context.set_metadata(
+            "message",
+            request.message,
         )
 
+        context.set_metadata(
+            "routing",
+            routing_result.model_dump(),
+        )
 
         return self._runtime.run(
             context,

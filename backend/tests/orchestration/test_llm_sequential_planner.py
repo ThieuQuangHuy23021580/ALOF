@@ -14,6 +14,9 @@ from backend.application.routing.routing_result import (
 from backend.application.services.llm_service import (
     LLMService,
 )
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
 from backend.domain.student.student import (
     Student,
 )
@@ -45,6 +48,26 @@ def test_real_llm_sequential_planner():
     )
 
     # ==========================================================
+    # Learning state
+    # ==========================================================
+
+    learning_state = LearningState(
+        learner_id="benchmark_student",
+        current_knowledge={
+            "rest": "intermediate",
+            "graphql": "basic",
+        },
+        progress={
+            "rest": 0.7,
+            "graphql": 0.4,
+        },
+        metadata={
+            "preferred_difficulty": "medium",
+            "preferred_pace": "normal",
+        },
+    )
+
+    # ==========================================================
     # Planning request
     # ==========================================================
 
@@ -56,6 +79,7 @@ def test_real_llm_sequential_planner():
             "trong từng trường hợp."
         ),
         routing=routing,
+        learning_state=learning_state,
     )
 
     # ==========================================================
@@ -155,6 +179,30 @@ def test_real_llm_sequential_planner():
     )
 
     print(
+        "\n--- Learning State ---"
+    )
+
+    print(
+        f"Learner ID: "
+        f"{learning_state.learner_id}"
+    )
+
+    print(
+        f"Current Knowledge: "
+        f"{learning_state.current_knowledge}"
+    )
+
+    print(
+        f"Progress: "
+        f"{learning_state.progress}"
+    )
+
+    print(
+        f"Metadata: "
+        f"{learning_state.metadata}"
+    )
+
+    print(
         "\n--- Generated Plan ---"
     )
 
@@ -182,7 +230,90 @@ def test_real_llm_sequential_planner():
             f"{step.depends_on}"
         )
 
-
     print(
         "=============================================="
     )
+
+
+def test_llm_sequential_planner_includes_learning_state_in_prompt():
+
+    # ==========================================================
+    # Student
+    # ==========================================================
+
+    student = Student(
+        id="learner-1",
+        display_name="Test Learner",
+    )
+
+    # ==========================================================
+    # Routing result
+    # ==========================================================
+
+    routing = RoutingResult(
+        intent="explain",
+        confidence=0.95,
+        candidate_components=[
+            "mentor",
+        ],
+    )
+
+    # ==========================================================
+    # Learning state
+    # ==========================================================
+
+    learning_state = LearningState(
+        learner_id="learner-1",
+        current_knowledge={
+            "python": "basic",
+        },
+        progress={
+            "python": 0.4,
+        },
+        metadata={
+            "preferred_difficulty": "medium",
+        },
+    )
+
+    # ==========================================================
+    # Planning request
+    # ==========================================================
+
+    request = PlanningRequest(
+        student=student,
+        message="Explain Python functions.",
+        routing=routing,
+        learning_state=learning_state,
+    )
+
+    # ==========================================================
+    # Planner
+    # ==========================================================
+
+    planner = LLMSequentialPlanner(
+        llm=LLMService(),
+    )
+
+    # ==========================================================
+    # Build prompt
+    # ==========================================================
+
+    prompt = planner._build_prompt(
+        request,
+    )
+
+    # ==========================================================
+    # Assertions
+    # ==========================================================
+
+    assert "Learner State:" in prompt
+
+    assert "learner-1" in prompt
+
+    assert "python" in prompt
+
+    assert "basic" in prompt
+
+    assert "0.4" in prompt
+
+    assert "medium" in prompt

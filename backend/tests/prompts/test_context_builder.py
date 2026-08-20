@@ -25,6 +25,10 @@ from backend.infrastructure.prompts.context_builder import (
 from backend.domain.learning.learning_state import (
     LearningState,
 )
+from backend.domain.learning.learning_state import LearningState
+
+
+
 
 
 def test_context_builder_includes_multiple_dependencies():
@@ -151,3 +155,56 @@ def test_context_builder_includes_learning_state():
     assert "0.8" in combined
 
     assert "beginner" in combined
+
+
+def test_context_builder_includes_learning_state():
+
+    workflow = Workflow()
+
+    node = WorkflowNode(
+        id="step_1",
+        component_id="mentor",
+        objective="Explain Python",
+        expected_output="Lesson",
+    )
+
+    workflow.add_node(node)
+
+    runtime = RuntimeContext(
+        workflow=workflow,
+    )
+
+    runtime.learning_state.update_knowledge(
+        "python",
+        "basic syntax",
+    )
+
+    runtime.learning_state.update_progress(
+        "python",
+        0.4,
+    )
+
+    context = ComponentContext(
+        runtime=runtime,
+        node=node,
+    )
+
+    messages = ContextBuilder.build(
+        context=context,
+        system_prompt="MENTOR PROMPT",
+    )
+
+    learner_state_message = next(
+        message
+        for message in messages
+        if "LEARNER STATE" in message["content"]
+    )
+
+    assert "basic syntax" in (
+        learner_state_message["content"]
+    )
+
+    assert "0.4" in (
+        learner_state_message["content"]
+    )
+    
