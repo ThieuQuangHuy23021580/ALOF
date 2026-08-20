@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     )
 
     max_output_tokens: int = Field(
-        default=1024,
+        default=2048,
         validation_alias="MAX_OUTPUT_TOKENS"
     )
 

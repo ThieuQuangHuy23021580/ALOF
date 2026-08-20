@@ -1,58 +1,61 @@
+from __future__ import annotations
+
 from backend.application.runtime.runtime_context import (
     RuntimeContext,
 )
-
 from backend.application.runtime.sequential_runtime import (
     SequentialRuntime,
 )
-
 from backend.core.component import Component
-
+from backend.core.component_context import ComponentContext
 from backend.core.component_registry import (
     ComponentRegistry,
 )
-
 from backend.core.component_result import (
     ComponentResult,
 )
-
 from backend.domain.artifact.artifact import (
     Artifact,
 )
-
 from backend.domain.artifact.artifact_type import (
     ArtifactType,
 )
-
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
 from backend.domain.workflow.workflow import (
     Workflow,
 )
-
 from backend.domain.workflow.workflow_node import (
     WorkflowNode,
 )
 
-from backend.domain.workflow.workflow_edge import (
-    WorkflowEdge,
-)
 
-class FakeComponent(Component):
+# ==========================================================
+# Fake Components
+# ==========================================================
 
-    component_id = "fake"
 
-    name = "Fake Component"
+class FakeResearchComponent(Component):
 
-    description = "Testing component"
+    component_id = "research"
+
+    name = "Fake Research"
+
+    description = "Fake research component for runtime testing."
 
     def execute(
         self,
-        context,
+        context: ComponentContext,
     ) -> ComponentResult:
 
         artifact = Artifact(
-            type=ArtifactType.RESPONSE,
-            title="Test",
-            content="Hello Runtime",
+            type=ArtifactType.RESEARCH,
+            title="REST vs GraphQL Research",
+            content=(
+                "REST uses resource-based endpoints. "
+                "GraphQL uses a flexible query language."
+            ),
             producer=self.component_id,
         )
 
@@ -61,203 +64,243 @@ class FakeComponent(Component):
         )
 
 
-def test_sequential_runtime_execution():
+class FakeMentorComponent(Component):
+
+    component_id = "mentor"
+
+    name = "Fake Mentor"
+
+    description = "Fake mentor component for runtime testing."
+
+    def execute(
+        self,
+        context: ComponentContext,
+    ) -> ComponentResult:
+
+        # ------------------------------------------------------
+        # Verify artifact propagation
+        # ------------------------------------------------------
+
+        research_artifact = context.get_input(
+            "step_1",
+        )
+
+        assert research_artifact is not None
+
+        assert (
+            research_artifact.content
+            == (
+                "REST uses resource-based endpoints. "
+                "GraphQL uses a flexible query language."
+            )
+        )
+
+        artifact = Artifact(
+            type=ArtifactType.RESPONSE,
+            title="REST vs GraphQL Lesson",
+            content=(
+                "Lesson based on: "
+                + research_artifact.content
+            ),
+            producer=self.component_id,
+        )
+
+        return ComponentResult(
+            artifact=artifact,
+        )
+
+
+# ==========================================================
+# Test
+# ==========================================================
+
+
+def test_sequential_runtime_executes_workflow_and_propagates_artifacts():
+
+    # ==========================================================
+    # Registry
+    # ==========================================================
 
     ComponentRegistry.clear()
 
     ComponentRegistry.register(
-        FakeComponent,
-    )
-
-
-    workflow = Workflow()
-
-
-    workflow.add_node(
-        WorkflowNode(
-            id="step_1",
-            component_id="fake",
-            objective="Generate response",
-        )
-    )
-
-
-    context = RuntimeContext(
-        workflow=workflow,
-    )
-
-
-    runtime = SequentialRuntime()
-
-
-    result = runtime.run(
-        context,
-    )
-
-
-    assert (
-        result.status.value
-        == "completed"
-    )
-
-
-    assert result.execution_order == [
-        "step_1"
-    ]
-
-
-    assert (
-        result.final_artifact is not None
-    )
-
-
-    assert (
-        result.final_artifact.content
-        == "Hello Runtime"
-    )
-
-
-    assert (
-        result.duration is not None
-    )
-
-def test_sequential_runtime_dependency_execution():
-
-    ComponentRegistry.clear()
-
-
-    class FirstComponent(Component):
-
-        component_id = "first"
-
-        name = "First"
-
-        description = "First step"
-
-
-        def execute(
-            self,
-            context,
-        ) -> ComponentResult:
-
-            artifact = Artifact(
-                type=ArtifactType.RESPONSE,
-                title="First",
-                content="First Result",
-                producer=self.component_id,
-            )
-
-            return ComponentResult(
-                artifact=artifact,
-            )
-
-
-    class SecondComponent(Component):
-
-        component_id = "second"
-
-        name = "Second"
-
-        description = "Second step"
-
-
-        def execute(
-            self,
-            context,
-        ) -> ComponentResult:
-
-            previous = (
-                context.runtime.get_artifact(
-                    "step_1",
-                )
-            )
-
-            assert previous is not None
-
-            artifact = Artifact(
-                type=ArtifactType.RESPONSE,
-                title="Second",
-                content=(
-                    "Second uses: "
-                    + previous.content
-                ),
-                producer=self.component_id,
-            )
-
-            return ComponentResult(
-                artifact=artifact,
-            )
-
-
-    ComponentRegistry.register(
-        FirstComponent,
+        FakeResearchComponent,
     )
 
     ComponentRegistry.register(
-        SecondComponent,
+        FakeMentorComponent,
     )
 
+    # ==========================================================
+    # Workflow
+    # ==========================================================
 
     workflow = Workflow()
 
+    research_node = WorkflowNode(
+        id="step_1",
+        component_id="research",
+        objective="Research REST and GraphQL.",
+        expected_output="Research Summary",
+    )
+
+    mentor_node = WorkflowNode(
+        id="step_2",
+        component_id="mentor",
+        objective=(
+            "Explain REST and GraphQL "
+            "using the research findings."
+        ),
+        expected_output="Lesson",
+        depends_on=[
+            "step_1",
+        ],
+    )
 
     workflow.add_node(
-        WorkflowNode(
-            id="step_1",
-            component_id="first",
-            objective="First task",
-        )
+        research_node,
     )
-
 
     workflow.add_node(
-        WorkflowNode(
-            id="step_2",
-            component_id="second",
-            objective="Second task",
-        )
+        mentor_node,
     )
 
+    # ==========================================================
+    # Runtime Context
+    # ==========================================================
 
-    workflow.add_edge(
-        WorkflowEdge(
-            from_node="step_1",
-            to_node="step_2",
-        )
-    )
-
-
-    context = RuntimeContext(
+    runtime_context = RuntimeContext(
         workflow=workflow,
+        learning_state=LearningState(
+            learner_id="learner-1",
+        ),
     )
 
+    # ==========================================================
+    # Runtime
+    # ==========================================================
 
     runtime = SequentialRuntime()
 
+    # ==========================================================
+    # Execute
+    # ==========================================================
 
     result = runtime.run(
-        context,
+        runtime_context,
     )
 
+    # ==========================================================
+    # Runtime Result
+    # ==========================================================
 
-    assert (
-        result.status.value
-        == "completed"
-    )
-
+    assert result.status.value == "completed"
 
     assert result.execution_order == [
         "step_1",
         "step_2",
     ]
 
+    assert result.execution_count == 2
 
-    assert (
-        result.final_artifact is not None
+    assert result.artifact_count == 2
+
+    # ==========================================================
+    # Research Artifact
+    # ==========================================================
+
+    research_artifact = (
+        result.artifacts.get(
+            "step_1",
+        )
     )
 
+    assert research_artifact is not None
 
     assert (
-        result.final_artifact.content
-        == "Second uses: First Result"
+        research_artifact.producer
+        == "research"
+    )
+
+    # ==========================================================
+    # Mentor Artifact
+    # ==========================================================
+
+    mentor_artifact = (
+        result.artifacts.get(
+            "step_2",
+        )
+    )
+
+    assert mentor_artifact is not None
+
+    assert (
+        mentor_artifact.producer
+        == "mentor"
+    )
+
+    assert (
+        "Lesson based on:"
+        in mentor_artifact.content
+    )
+
+    # ==========================================================
+    # Final Artifact
+    # ==========================================================
+
+    assert result.final_artifact is not None
+
+    assert (
+        result.final_artifact.producer
+        == "mentor"
+    )
+
+    # ==========================================================
+    # Component Execution
+    # ==========================================================
+
+    research_execution = (
+        runtime_context.component_executions.get(
+            "step_1",
+        )
+    )
+
+    mentor_execution = (
+        runtime_context.component_executions.get(
+            "step_2",
+        )
+    )
+
+    assert research_execution is not None
+
+    assert mentor_execution is not None
+
+    assert (
+        research_execution.status.value
+        == "completed"
+    )
+
+    assert (
+        mentor_execution.status.value
+        == "completed"
+    )
+
+    assert (
+        research_execution.started_at
+        is not None
+    )
+
+    assert (
+        research_execution.finished_at
+        is not None
+    )
+
+    assert (
+        mentor_execution.started_at
+        is not None
+    )
+
+    assert (
+        mentor_execution.finished_at
+        is not None
     )

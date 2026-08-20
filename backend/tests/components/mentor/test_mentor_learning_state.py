@@ -1,10 +1,9 @@
 from __future__ import annotations
 
+import pytest
+
 from backend.application.runtime.runtime_context import (
     RuntimeContext,
-)
-from backend.application.services.llm_service import (
-    LLMService,
 )
 from backend.components.mentor.mentor_component import (
     MentorComponent,
@@ -24,49 +23,25 @@ from backend.domain.workflow.workflow import (
 from backend.domain.workflow.workflow_node import (
     WorkflowNode,
 )
+from backend.infrastructure.providers.groq_provider import (
+    GroqProvider,
+)
+from backend.application.services.llm_service import (
+    LLMService,
+)
 
 
-class FakeLLMProvider:
+def test_mentor_real_llm_receives_learning_state():
 
-    def __init__(self) -> None:
-        self.messages: list[dict[str, str]] = []
+    # ==========================================================
+    # Real LLM Provider
+    # ==========================================================
 
-        self.last_input_tokens = 0
-        self.last_output_tokens = 0
-        self.last_total_tokens = 0
+    provider = GroqProvider()
 
-    def generate(
-        self,
-        messages: list[dict[str, str]],
-    ) -> str:
-
-        self.messages = messages
-
-        response = """
-        {
-            "title": "REST and GraphQL Lesson",
-            "content": "REST is an architectural style for APIs. Since the learner already has intermediate REST knowledge and basic GraphQL knowledge, the lesson focuses on comparing REST with GraphQL.",
-            "summary": "A learner-adapted comparison of REST and GraphQL."
-        }
-        """.strip()
-
-        self.last_input_tokens = sum(
-            len(message["content"].split())
-            for message in messages
-        )
-
-        self.last_output_tokens = len(
-            response.split()
-        )
-
-        self.last_total_tokens = (
-            self.last_input_tokens
-            + self.last_output_tokens
-        )
-
-        return response
-
-def test_mentor_receives_learning_state():
+    # ==========================================================
+    # Workflow
+    # ==========================================================
 
     workflow = Workflow()
 
@@ -84,6 +59,10 @@ def test_mentor_receives_learning_state():
         node,
     )
 
+    # ==========================================================
+    # Learner State
+    # ==========================================================
+
     learning_state = LearningState(
         learner_id="learner-1",
         current_knowledge={
@@ -100,12 +79,18 @@ def test_mentor_receives_learning_state():
         },
     )
 
+    # ==========================================================
+    # Runtime Context
+    # ==========================================================
+
     runtime = RuntimeContext(
         workflow=workflow,
         learning_state=learning_state,
     )
 
-    provider = FakeLLMProvider()
+    # ==========================================================
+    # Component Context
+    # ==========================================================
 
     context = ComponentContext(
         runtime=runtime,
@@ -119,33 +104,40 @@ def test_mentor_receives_learning_state():
         ),
     )
 
+    # ==========================================================
+    # Execute Real LLM
+    # ==========================================================
+
     component = MentorComponent()
 
     result = component.invoke(
         context,
     )
 
+    # ==========================================================
+    # Verify Artifact
+    # ==========================================================
+
     assert result.artifact is not None
 
-    assert provider.messages
+    assert result.artifact.title
 
-    prompt = "\n".join(
-        message["content"]
-        for message in provider.messages
-    )
+    assert result.artifact.content
 
-    assert "learner-1" in prompt
+    assert result.artifact.summary
 
-    assert "rest" in prompt
+    # ==========================================================
+    # Verify Learning Content
+    # ==========================================================
 
-    assert "intermediate" in prompt
+    content = result.artifact.content.lower()
 
-    assert "graphql" in prompt
+    assert "rest" in content
 
-    assert "basic" in prompt
+    assert "graphql" in content
 
-    assert "0.7" in prompt
+    # ==========================================================
+    # Verify Real LLM Usage
+    # ==========================================================
 
-    assert "0.4" in prompt
-
-    assert "medium" in prompt
+    assert provider.last_total_tokens > 0

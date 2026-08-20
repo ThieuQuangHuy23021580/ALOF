@@ -21,6 +21,10 @@ class WorkflowNode(BaseModel):
 
     expected_output: str = ""
 
+    depends_on: list[str] = Field(
+        default_factory=list,
+    )
+
     metadata: dict[str, Any] = Field(
         default_factory=dict,
     )

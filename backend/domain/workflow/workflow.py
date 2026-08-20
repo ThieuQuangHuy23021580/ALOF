@@ -11,7 +11,8 @@ class Workflow(BaseModel):
     Executable workflow graph.
 
     The workflow is immutable during runtime.
-    It only describes execution order.
+    It describes execution order and dependencies
+    between workflow nodes.
     """
 
     nodes: list[WorkflowNode] = Field(
@@ -63,6 +64,13 @@ class Workflow(BaseModel):
             for edge in self.edges
         }
 
+        destinations.update(
+            node.id
+            for node in self.nodes
+            for dependency in node.depends_on
+            if dependency
+        )
+
         return [
             node
             for node in self.nodes
@@ -74,16 +82,27 @@ class Workflow(BaseModel):
         node_id: str,
     ) -> list[WorkflowNode]:
 
+        node = self.get_node(
+            node_id,
+        )
+
+        if node is None:
+            return []
+
         parent_ids = {
             edge.from_node
             for edge in self.edges
             if edge.to_node == node_id
         }
 
+        parent_ids.update(
+            node.depends_on,
+        )
+
         return [
-            node
-            for node in self.nodes
-            if node.id in parent_ids
+            parent
+            for parent in self.nodes
+            if parent.id in parent_ids
         ]
 
     def children(
@@ -96,6 +115,12 @@ class Workflow(BaseModel):
             for edge in self.edges
             if edge.from_node == node_id
         }
+
+        child_ids.update(
+            node.id
+            for node in self.nodes
+            if node_id in node.depends_on
+        )
 
         return [
             node
@@ -145,9 +170,7 @@ class Workflow(BaseModel):
         self,
     ) -> bool:
 
-        return (
-            not self.nodes
-        )
+        return not self.nodes
 
     def contains(
         self,
