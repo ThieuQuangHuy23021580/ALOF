@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from backend.application.services.llm_service import LLMService
@@ -66,15 +65,44 @@ class MentorComponent(Component):
             system_prompt=system_prompt,
         )
 
+        # LongTutor / current learning request.
+        request_message = context.runtime.metadata.get(
+            "message",
+            "",
+        )
+
+        if request_message:
+            messages.append(
+                {
+                    "role": "user",
+                    "content": request_message,
+                }
+            )
+
         raw_response = llm.generate(
             messages,
             stage="runtime",
             component="mentor",
         )
 
-        payload = self._parser.parse(
-            raw_response,
-        )
+        print("\n===== MENTOR RAW RESPONSE =====")
+        print(raw_response)
+        print("================================\n")
+
+        try:
+            payload = self._parser.parse(
+                raw_response,
+            )
+        except (ValueError, TypeError):
+            payload = ArtifactPayload(
+                title="Mentor Response",
+                content=raw_response,
+                summary="",
+            )
+
+        print("\n===== MENTOR PAYLOAD =====")
+        print(payload.model_dump())
+        print("==========================\n")
 
         artifact = ArtifactFactory.create(
             type=ArtifactType.LESSON,
@@ -87,4 +115,3 @@ class MentorComponent(Component):
         return ComponentResult(
             artifact=artifact,
         )
-

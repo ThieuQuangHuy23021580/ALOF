@@ -116,6 +116,16 @@ class LearningOrchestrator:
         # 5. RUNTIME EXECUTION
         # ==================================================
 
+        print("ROUTING:", routing_result.model_dump())
+        print("PLAN:", plan.model_dump())
+        print("WORKFLOW NODES:", [
+            {
+                "id": node.id,
+                "component": node.component_id,
+            }
+            for node in workflow.nodes
+        ])
+
         return self._runtime.run(
             context,
         )

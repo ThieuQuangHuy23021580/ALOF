@@ -310,10 +310,32 @@ def test_llm_sequential_planner_includes_learning_state_in_prompt():
 
     assert "learner-1" in prompt
 
+    # ----------------------------------------------------------
+    # New LearningState structure
+    # ----------------------------------------------------------
+
+    assert "knowledge" in prompt
+
     assert "python" in prompt
 
-    assert "basic" in prompt
+    assert "mastery" in prompt
+
+    assert "0.2" in prompt
+
+    # ----------------------------------------------------------
+    # Progress
+    # ----------------------------------------------------------
+
+    assert "progress" in prompt
 
     assert "0.4" in prompt
+
+    # ----------------------------------------------------------
+    # Metadata
+    # ----------------------------------------------------------
+
+    assert "metadata" in prompt
+
+    assert "preferred_difficulty" in prompt
 
     assert "medium" in prompt

@@ -10,22 +10,22 @@ from backend.application.runtime.runtime_context import (
 from backend.application.services.llm_service import (
     LLMService,
 )
-from backend.benchmark.result import (
+from backend.benchmark.SiloBench.result import (
     BenchmarkResult,
 )
-from backend.benchmark.runner import (
+from backend.benchmark.SiloBench.runner import (
     BenchmarkRunner,
 )
-from backend.benchmark.silo_adapter import (
+from backend.benchmark.SiloBench.silo_adapter import (
     SILOBenchAdapter,
 )
-from backend.benchmark.scenario import (
+from backend.benchmark.SiloBench.scenario import (
     BenchmarkScenario,
 )
-from backend.benchmark.communication.bus import (
+from backend.benchmark.SiloBench.communication.bus import (
     BenchmarkCommunicationBus,
 )
-from backend.benchmark.communication.message import (
+from backend.benchmark.SiloBench.communication.message import (
     BenchmarkMessage,
 )
 from backend.core.component_context import (

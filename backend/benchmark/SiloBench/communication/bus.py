@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from backend.benchmark.communication.message import (
+from backend.benchmark.SiloBench.communication.message import (
     BenchmarkMessage,
 )
 

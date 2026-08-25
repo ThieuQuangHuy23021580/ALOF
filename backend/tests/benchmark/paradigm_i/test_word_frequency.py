@@ -3,10 +3,10 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from backend.benchmark.paradigms.paradigm_i.word_frequency import (
+from benchmark.SiloBench.paradigms.paradigm_i.word_frequency import (
     WordFrequencyBenchmarkRunner,
 )
-from backend.benchmark.silo_adapter import (
+from benchmark.SiloBench.silo_adapter import (
     SILOBenchAdapter,
 )
 from backend.core.component_bootstrap import (

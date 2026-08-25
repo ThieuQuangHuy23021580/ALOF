@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from backend.benchmark.scenario import BenchmarkScenario
+from backend.benchmark.SiloBench.scenario import BenchmarkScenario
 
 
 @dataclass

@@ -3,8 +3,8 @@ from __future__ import annotations
 from abc import ABC
 from abc import abstractmethod
 
-from backend.benchmark.result import BenchmarkResult
-from backend.benchmark.scenario import BenchmarkScenario
+from backend.benchmark.SiloBench.result import BenchmarkResult
+from backend.benchmark.SiloBench.scenario import BenchmarkScenario
 
 
 class BenchmarkRunner(ABC):

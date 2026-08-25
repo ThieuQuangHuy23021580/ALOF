@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from backend.benchmark.scenario import (
+from backend.benchmark.SiloBench.scenario import (
     BenchmarkScenario,
 )
 

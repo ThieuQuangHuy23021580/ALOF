@@ -36,12 +36,14 @@ def test_runtime_context_accepts_custom_learning_state():
 
     learning_state = LearningState(
         learner_id="learner-1",
-        current_knowledge={
-            "python": "basic",
-        },
         progress={
             "python": 0.5,
         },
+    )
+
+    learning_state.update_mastery(
+        "python",
+        0.3,
     )
 
     context = RuntimeContext(
@@ -60,10 +62,10 @@ def test_runtime_context_accepts_custom_learning_state():
     )
 
     assert (
-        context.learning_state.get_knowledge(
-            "python",
-        )
-        == "basic"
+        context.learning_state
+        .get_knowledge_state("python")
+        .mastery
+        == 0.3
     )
 
     assert (
@@ -82,9 +84,9 @@ def test_runtime_context_learning_state_can_be_updated():
         workflow=workflow,
     )
 
-    context.learning_state.update_knowledge(
+    context.learning_state.update_mastery(
         "python",
-        "intermediate",
+        0.75,
     )
 
     context.learning_state.update_progress(
@@ -93,10 +95,10 @@ def test_runtime_context_learning_state_can_be_updated():
     )
 
     assert (
-        context.learning_state.get_knowledge(
-            "python",
-        )
-        == "intermediate"
+        context.learning_state
+        .get_knowledge_state("python")
+        .mastery
+        == 0.75
     )
 
     assert (
@@ -119,9 +121,9 @@ def test_runtime_context_learning_states_are_isolated():
         workflow=workflow,
     )
 
-    first.learning_state.update_knowledge(
+    first.learning_state.update_mastery(
         "python",
-        "basic",
+        0.5,
     )
 
     first.learning_state.update_progress(
@@ -130,7 +132,7 @@ def test_runtime_context_learning_states_are_isolated():
     )
 
     assert (
-        second.learning_state.current_knowledge
+        second.learning_state.knowledge
         == {}
     )
 

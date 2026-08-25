@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from backend.application.runtime.runtime_context import (
@@ -13,6 +12,9 @@ from backend.domain.artifact.artifact import (
 from backend.domain.artifact.artifact_type import (
     ArtifactType,
 )
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
 from backend.domain.workflow.workflow import (
     Workflow,
 )
@@ -22,13 +24,6 @@ from backend.domain.workflow.workflow_node import (
 from backend.infrastructure.prompts.context_builder import (
     ContextBuilder,
 )
-from backend.domain.learning.learning_state import (
-    LearningState,
-)
-from backend.domain.learning.learning_state import LearningState
-
-
-
 
 
 def test_context_builder_includes_multiple_dependencies():
@@ -93,15 +88,16 @@ def test_context_builder_includes_multiple_dependencies():
     assert "Plan content" in combined
     assert "Plan summary" in combined
 
+
 def test_context_builder_includes_learning_state():
 
     workflow = Workflow()
 
     node = WorkflowNode(
-        id="planner",
-        component_id="planner",
-        objective="Create adaptive Python roadmap",
-        expected_output="Roadmap",
+        id="step_1",
+        component_id="mentor",
+        objective="Explain Python",
+        expected_output="Lesson",
     )
 
     workflow.add_node(
@@ -110,17 +106,31 @@ def test_context_builder_includes_learning_state():
 
     learning_state = LearningState(
         learner_id="learner-1",
-        current_knowledge={
-            "python": "basic",
-            "variables": "understood",
-        },
-        progress={
-            "python": 0.4,
-            "variables": 0.8,
-        },
-        metadata={
-            "level": "beginner",
-        },
+    )
+
+    learning_state.update_knowledge(
+        "python",
+        "basic syntax",
+    )
+
+    learning_state.update_knowledge(
+        "variables",
+        "understood",
+    )
+
+    learning_state.update_progress(
+        "python",
+        0.4,
+    )
+
+    learning_state.update_progress(
+        "variables",
+        0.8,
+    )
+
+    learning_state.set_metadata(
+        "level",
+        "beginner",
     )
 
     runtime = RuntimeContext(
@@ -135,7 +145,7 @@ def test_context_builder_includes_learning_state():
 
     messages = ContextBuilder.build(
         context=context,
-        system_prompt="You are a planner.",
+        system_prompt="You are a mentor.",
     )
 
     combined = "\n".join(
@@ -143,10 +153,12 @@ def test_context_builder_includes_learning_state():
         for message in messages
     )
 
+    assert "LEARNER STATE" in combined
+
     assert "learner-1" in combined
 
     assert "python" in combined
-    assert "basic" in combined
+    assert "basic syntax" in combined
 
     assert "variables" in combined
     assert "understood" in combined
@@ -157,7 +169,7 @@ def test_context_builder_includes_learning_state():
     assert "beginner" in combined
 
 
-def test_context_builder_includes_learning_state():
+def test_context_builder_includes_default_learning_state():
 
     workflow = Workflow()
 
@@ -168,20 +180,12 @@ def test_context_builder_includes_learning_state():
         expected_output="Lesson",
     )
 
-    workflow.add_node(node)
+    workflow.add_node(
+        node,
+    )
 
     runtime = RuntimeContext(
         workflow=workflow,
-    )
-
-    runtime.learning_state.update_knowledge(
-        "python",
-        "basic syntax",
-    )
-
-    runtime.learning_state.update_progress(
-        "python",
-        0.4,
     )
 
     context = ComponentContext(
@@ -200,11 +204,10 @@ def test_context_builder_includes_learning_state():
         if "LEARNER STATE" in message["content"]
     )
 
-    assert "basic syntax" in (
+    assert "default" in (
         learner_state_message["content"]
     )
 
-    assert "0.4" in (
+    assert "{}" in (
         learner_state_message["content"]
     )
-    

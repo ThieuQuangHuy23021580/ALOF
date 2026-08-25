@@ -8,17 +8,17 @@ from backend.application.runtime.runtime_context import (
 from backend.application.services.llm_service import (
     LLMService,
 )
-from backend.benchmark.communication import (
+from backend.benchmark.SiloBench.communication import (
     CommunicationMetrics,
     CommunicationTrace,
 )
-from backend.benchmark.result import (
+from backend.benchmark.SiloBench.result import (
     BenchmarkResult,
 )
-from backend.benchmark.runner import (
+from backend.benchmark.SiloBench.runner import (
     BenchmarkRunner,
 )
-from backend.benchmark.scenario import (
+from backend.benchmark.SiloBench.scenario import (
     BenchmarkScenario,
 )
 from backend.core.component_context import (
