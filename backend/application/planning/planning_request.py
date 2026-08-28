@@ -4,11 +4,18 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from backend.application.orchestration.adaptive_learning_result import (
+    AdaptiveLearningResult,
+)
 from backend.application.routing.routing_result import (
     RoutingResult,
 )
-from backend.domain.learning.learning_state import LearningState
-from backend.domain.student.student import Student
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
+from backend.domain.student.student import (
+    Student,
+)
 
 
 class PlanningRequest(BaseModel):
@@ -17,6 +24,10 @@ class PlanningRequest(BaseModel):
 
     Encapsulates all information required by a Planner
     to generate an execution plan.
+
+    Adaptive learning results are passed as one cohesive
+    object so that HistoricalEvidence, KnowledgeDiagnosis,
+    and AdaptiveTeachingAction remain consistent.
     """
 
     student: Student
@@ -31,9 +42,15 @@ class PlanningRequest(BaseModel):
         ),
     )
 
+    adaptive_learning: AdaptiveLearningResult
+
     metadata: dict[str, Any] = Field(
         default_factory=dict,
     )
+
+    # ======================================================
+    # Metadata
+    # ======================================================
 
     def set_metadata(
         self,

@@ -17,6 +17,7 @@ class SequentialPlanner(Planner):
     Responsibilities
     ----------------
     - Convert RoutingResult into a logical execution plan.
+    - Propagate adaptive teaching decisions into each relevant step.
     - Decide execution order.
     - Never build a Workflow.
     """
@@ -27,6 +28,8 @@ class SequentialPlanner(Planner):
     ) -> Plan:
 
         routing = request.routing
+        adaptive_learning = request.adaptive_learning
+        teaching_action = adaptive_learning.teaching_action
 
         plan = Plan()
 
@@ -49,8 +52,31 @@ class SequentialPlanner(Planner):
                 ),
             )
 
-            if previous_step is not None:
+            # ==================================================
+            # Adaptive teaching
+            # ==================================================
+            #
+            # The adaptive learning pipeline has already
+            # determined HOW this learner should be taught.
+            #
+            # The Planner must propagate that decision into
+            # the execution plan instead of silently dropping it.
+            #
+            if self._should_apply_adaptive_teaching(
+                component,
+            ):
+                step.set_adaptive_action(
+                    action=teaching_action.action,
+                    strategy=teaching_action.strategy,
+                    difficulty=teaching_action.difficulty,
+                    focus_concepts=teaching_action.focus_concepts,
+                )
 
+            # ==================================================
+            # Dependencies
+            # ==================================================
+
+            if previous_step is not None:
                 step.add_dependency(
                     previous_step,
                 )
@@ -63,6 +89,22 @@ class SequentialPlanner(Planner):
 
         return plan
 
+    def _should_apply_adaptive_teaching(
+        self,
+        component: str,
+    ) -> bool:
+        """
+        Determine whether adaptive teaching information
+        should be attached to the execution step.
+
+        Adaptive teaching decisions are primarily intended
+        for learner-facing teaching components.
+        """
+
+        return component in {
+            "mentor",
+        }
+
     def _objective(
         self,
         component: str,
@@ -73,7 +115,13 @@ class SequentialPlanner(Planner):
 
             case "mentor":
                 return (
-                    "Explain the requested topic clearly."
+                    "Explain the current question using only the evidence "
+                    "provided in the execution context. Do not infer, invent, "
+                    "or assume missing numerical values, diagram details, "
+                    "answers, or visual information. If the available evidence "
+                    "is insufficient to determine the answer, explicitly state "
+                    "that the answer cannot be determined from the provided "
+                    "evidence and explain what information is missing."
                 )
 
             case "research":

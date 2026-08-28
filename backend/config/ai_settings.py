@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     )
 
     model_name: str = Field(
-        default="openai/gpt-oss-120b",
+        default="qwen/qwen3.8-27b",
         validation_alias="MODEL_NAME"
     )
 

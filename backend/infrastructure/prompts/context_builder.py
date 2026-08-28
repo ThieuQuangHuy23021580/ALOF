@@ -5,12 +5,10 @@ from backend.core.component_context import ComponentContext
 
 class ContextBuilder:
     """
-    Build the prompt messages for a single Component execution.
+    Build compact LLM messages for a component execution.
 
-    ContextBuilder is responsible only for transforming
-    ComponentContext into LLM messages.
-
-    Dependency resolution is handled by Runtime.
+    The builder intentionally keeps the runtime context small.
+    Large learner-history payloads should not be duplicated here.
     """
 
     @staticmethod
@@ -30,29 +28,18 @@ class ContextBuilder:
         learning_state = context.runtime.learning_state
 
         # ======================================================
-        # Workflow Status
+        # Workflow
         # ======================================================
 
         messages.append(
             {
                 "role": "system",
-                "content": f"""
-================ CURRENT WORKFLOW ================
-
-Current Component
-
-{node.component_id}
-
-Objective
-
-{node.objective}
-
-Expected Output
-
-{node.expected_output}
-
-==================================================
-""".strip(),
+                "content": (
+                    "CURRENT TASK\n\n"
+                    f"Component: {node.component_id}\n"
+                    f"Objective: {node.objective}\n"
+                    f"Expected Output: {node.expected_output}"
+                ),
             }
         )
 
@@ -63,27 +50,12 @@ Expected Output
         messages.append(
             {
                 "role": "system",
-                "content": f"""
-================ LEARNER STATE ================
-
-Learner ID
-
-{learning_state.learner_id}
-
-Current Knowledge
-
-{learning_state.current_knowledge}
-
-Progress
-
-{learning_state.progress}
-
-Metadata
-
-{learning_state.metadata}
-
-================================================
-""".strip(),
+                "content": (
+                    "LEARNER STATE\n\n"
+                    f"Learner ID: {learning_state.learner_id}\n"
+                    f"Current Knowledge: {learning_state.current_knowledge}\n"
+                    f"Progress: {learning_state.progress}"
+                ),
             }
         )
 
@@ -91,56 +63,18 @@ Metadata
         # Dependency Artifacts
         # ======================================================
 
-        dependency_blocks: list[str] = []
-
         for node_id, artifact in context.inputs.items():
-
-            dependency_blocks.append(
-                f"""
-Source Node
-
-{node_id}
-
-Title
-
-{artifact.title}
-
-Artifact Type
-
-{artifact.type}
-
-Summary
-
-{artifact.summary}
-
-Content
-
-{artifact.content}
-""".strip()
-            )
-
-        if dependency_blocks:
 
             messages.append(
                 {
                     "role": "system",
-                    "content": f"""
-================ DEPENDENCY ARTIFACTS ================
-
-The following artifacts were produced by
-previous components and are available as inputs.
-
-Use them when relevant.
-
-Do not regenerate information that is
-already provided by these artifacts.
-
-------------------------------------------------------
-
-{chr(10).join(dependency_blocks)}
-
-======================================================
-""".strip(),
+                    "content": (
+                        "TASK INPUT\n\n"
+                        f"Source: {node_id}\n"
+                        f"Type: {artifact.type}\n"
+                        f"Title: {artifact.title}\n\n"
+                        f"{artifact.content}"
+                    ),
                 }
             )
 

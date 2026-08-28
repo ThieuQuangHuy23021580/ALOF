@@ -15,6 +15,9 @@ class SequentialWorkflowBuilder(
     """
     Converts a logical execution Plan
     into an executable sequential Workflow.
+
+    The builder preserves adaptive teaching
+    information from PlanStep into WorkflowNode.
     """
 
     def build(
@@ -36,6 +39,25 @@ class SequentialWorkflowBuilder(
                     component_id=step.component,
                     objective=step.objective,
                     expected_output=step.expected_output,
+                    depends_on=list(
+                        step.depends_on,
+                    ),
+
+                    # ==========================================
+                    # Adaptive teaching
+                    # ==========================================
+
+                    action=step.action,
+                    strategy=step.strategy,
+                    difficulty=step.difficulty,
+                    focus_concepts=list(
+                        step.focus_concepts,
+                    ),
+
+                    # ==========================================
+                    # Metadata
+                    # ==========================================
+
                     metadata=step.metadata.copy(),
                 )
             )

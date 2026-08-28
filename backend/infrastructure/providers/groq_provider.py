@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import time
 
 from openai import OpenAI
@@ -10,13 +11,16 @@ from backend.config import settings
 from .llm_provider import LLMProvider
 
 
+logger = logging.getLogger(__name__)
+
+
 class GroqProvider(
     LLMProvider,
 ):
     """
     Groq implementation of LLMProvider.
 
-    Uses the OpenAI-compatible Responses API.
+    Uses the OpenAI-compatible Chat Completions API.
     """
 
     def __init__(
@@ -69,7 +73,7 @@ class GroqProvider(
     ) -> str:
 
         retries = 3
-        delay = 1.0
+        retry_delay = 20.0
 
         for attempt in range(
             retries,
@@ -77,11 +81,32 @@ class GroqProvider(
 
             try:
 
-                response = self.client.responses.create(
-                    model=self.model,
-                    input=messages,
-                    temperature=settings.temperature,
-                    max_output_tokens=settings.max_output_tokens,
+                logger.info(
+                    "Groq request: messages=%d chars=%d",
+                    len(messages),
+                    sum(
+                        len(
+                            message.get(
+                                "content",
+                                "",
+                            )
+                        )
+                        for message in messages
+                    ),
+                )
+
+                response = (
+                    self.client.chat.completions.create(
+                        model=self.model,
+                        messages=messages,
+                        temperature=settings.temperature,
+                        max_completion_tokens=(
+                            settings.max_output_tokens
+                        ),
+                        response_format={
+                            "type": "json_object",
+                        },
+                    )
                 )
 
                 # --------------------------------------------------
@@ -95,7 +120,7 @@ class GroqProvider(
                     self._last_input_tokens = (
                         getattr(
                             usage,
-                            "input_tokens",
+                            "prompt_tokens",
                             0,
                         )
                         or 0
@@ -104,7 +129,7 @@ class GroqProvider(
                     self._last_output_tokens = (
                         getattr(
                             usage,
-                            "output_tokens",
+                            "completion_tokens",
                             0,
                         )
                         or 0
@@ -128,23 +153,138 @@ class GroqProvider(
                     self._last_output_tokens = 0
                     self._last_total_tokens = 0
 
-                return response.output_text
+                # --------------------------------------------------
+                # Extract final assistant content.
+                # --------------------------------------------------
 
-            except RateLimitError:
+                content = (
+                    response.choices[0]
+                    .message
+                    .content
+                ) or ""
 
-                if attempt == retries - 1:
+                logger.info(
+                    "Groq response received: "
+                    "input_tokens=%d output_tokens=%d "
+                    "total_tokens=%d",
+                    self._last_input_tokens,
+                    self._last_output_tokens,
+                    self._last_total_tokens,
+                )
+
+                return content
+
+            except RateLimitError as exc:
+
+                status_code = getattr(
+                    exc,
+                    "status_code",
+                    None,
+                )
+
+                error_message = str(
+                    exc,
+                )
+
+                lower_message = (
+                    error_message.lower()
+                )
+
+                # --------------------------------------------------
+                # Request entity too large.
+                #
+                # This is not a temporary rate limit.
+                # Do not retry.
+                # --------------------------------------------------
+
+                if status_code == 413:
+
+                    logger.error(
+                        "Groq request rejected: "
+                        "request entity too large."
+                    )
+
                     raise
 
-                print(
-                    f"[Groq] Rate limit exceeded. "
-                    f"Retrying in {delay:.1f}s..."
+                # --------------------------------------------------
+                # Daily token quota exhausted.
+                #
+                # Retrying immediately will not help.
+                # --------------------------------------------------
+
+                if (
+                    "tokens per day"
+                    in lower_message
+                ):
+
+                    logger.error(
+                        "Groq request rejected: "
+                        "daily token quota exhausted."
+                    )
+
+                    raise
+
+                # --------------------------------------------------
+                # Temporary TPM rate limit.
+                #
+                # Retry after a fixed 20 seconds.
+                # --------------------------------------------------
+
+                if (
+                    status_code == 429
+                    and "tokens per minute"
+                    in lower_message
+                ):
+
+                    if attempt == retries - 1:
+
+                        logger.error(
+                            "Groq TPM rate limit persisted "
+                            "after %d attempts.",
+                            retries,
+                        )
+
+                        raise
+
+                    logger.warning(
+                        "Groq TPM rate limit reached. "
+                        "Retrying attempt %d/%d in %.1fs.",
+                        attempt + 1,
+                        retries,
+                        retry_delay,
+                    )
+
+                    time.sleep(
+                        retry_delay,
+                    )
+
+                    continue
+
+                # --------------------------------------------------
+                # Other temporary rate limits.
+                # --------------------------------------------------
+
+                if attempt == retries - 1:
+
+                    logger.error(
+                        "Groq rate limit persisted "
+                        "after %d attempts.",
+                        retries,
+                    )
+
+                    raise
+
+                logger.warning(
+                    "Groq rate limit. "
+                    "Retrying attempt %d/%d in %.1fs.",
+                    attempt + 1,
+                    retries,
+                    retry_delay,
                 )
 
                 time.sleep(
-                    delay,
+                    retry_delay,
                 )
-
-                delay *= 2
 
         raise RuntimeError(
             "Failed to generate response."

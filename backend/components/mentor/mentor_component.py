@@ -1,4 +1,5 @@
 from __future__ import annotations
+import logging
 
 from backend.application.services.llm_service import LLMService
 from backend.core.component import Component
@@ -11,6 +12,7 @@ from backend.domain.artifact.factory import ArtifactFactory
 from backend.infrastructure.prompts.context_builder import ContextBuilder
 from backend.infrastructure.prompts.manager import PromptManager
 
+logger = logging.getLogger(__name__)
 
 class MentorComponent(Component):
     """
@@ -65,7 +67,6 @@ class MentorComponent(Component):
             system_prompt=system_prompt,
         )
 
-        # LongTutor / current learning request.
         request_message = context.runtime.metadata.get(
             "message",
             "",
@@ -75,7 +76,10 @@ class MentorComponent(Component):
             messages.append(
                 {
                     "role": "user",
-                    "content": request_message,
+                    "content": (
+                        "CURRENT QUESTION / ORIGINAL REQUEST\n\n"
+                        f"{request_message}\n\n"
+                    ),
                 }
             )
 
@@ -85,9 +89,11 @@ class MentorComponent(Component):
             component="mentor",
         )
 
-        print("\n===== MENTOR RAW RESPONSE =====")
-        print(raw_response)
-        print("================================\n")
+        logger.debug(
+            "Mentor raw response received: %d chars",
+            len(raw_response),
+        )
+
 
         try:
             payload = self._parser.parse(
@@ -100,9 +106,13 @@ class MentorComponent(Component):
                 summary="",
             )
 
-        print("\n===== MENTOR PAYLOAD =====")
-        print(payload.model_dump())
-        print("==========================\n")
+        logger.debug(
+            "Mentor payload parsed: title=%r content_chars=%d summary_chars=%d",
+            payload.title,
+            len(payload.content),
+            len(payload.summary),
+        )
+
 
         artifact = ArtifactFactory.create(
             type=ArtifactType.LESSON,

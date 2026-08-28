@@ -5,6 +5,9 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from backend.application.orchestration.adaptive_learning_result import (
+    AdaptiveLearningResult,
+)
 from backend.application.runtime.component_execution import (
     ComponentExecution,
 )
@@ -16,6 +19,15 @@ from backend.domain.learning.learning_state import (
 from backend.domain.student.student import Student
 from backend.domain.workflow.workflow import Workflow
 
+from backend.domain.learning.adaptive_teaching_action import (
+    AdaptiveTeachingAction,
+)
+from backend.domain.learning.historical_evidence import (
+    HistoricalEvidence,
+)
+from backend.domain.learning.knowledge_diagnosis import (
+    KnowledgeDiagnosis,
+)
 
 class RuntimeContext(BaseModel):
     """
@@ -34,6 +46,14 @@ class RuntimeContext(BaseModel):
             learner_id="default",
         ),
     )
+
+    historical_evidence: HistoricalEvidence | None = None
+
+    knowledge_diagnosis: KnowledgeDiagnosis | None = None
+
+    adaptive_teaching_action: AdaptiveTeachingAction | None = None
+
+    adaptive_learning: AdaptiveLearningResult | None = None
 
     current_node: str | None = None
 
@@ -68,10 +88,6 @@ class RuntimeContext(BaseModel):
     ) -> RuntimeContext:
         """
         Create a learner-specific RuntimeContext.
-
-        The RuntimeContext receives a snapshot of the
-        learner's current progress and preferences for
-        this execution.
         """
 
         learning_state = LearningState(
@@ -126,6 +142,29 @@ class RuntimeContext(BaseModel):
             workflow=workflow,
             learning_state=learning_state,
         )
+
+    # ======================================================
+    # Adaptive learning
+    # ======================================================
+
+    def set_adaptive_learning(
+        self,
+        result: AdaptiveLearningResult,
+    ) -> None:
+        """
+        Store the adaptive-learning result for this
+        workflow execution.
+        """
+
+        self.adaptive_learning = result
+
+    def has_adaptive_learning(self) -> bool:
+        """
+        Return whether adaptive-learning analysis
+        has been completed.
+        """
+
+        return self.adaptive_learning is not None
 
     # ======================================================
     # Execution lifecycle
@@ -278,3 +317,46 @@ class RuntimeContext(BaseModel):
             execution.fail(
                 error,
             )
+
+    # ======================================================
+    # Adaptive learning
+    # ======================================================
+
+    def set_historical_evidence(
+        self,
+        evidence: HistoricalEvidence,
+    ) -> None:
+
+        self.historical_evidence = evidence
+
+    def set_knowledge_diagnosis(
+        self,
+        diagnosis: KnowledgeDiagnosis,
+    ) -> None:
+
+        self.knowledge_diagnosis = diagnosis
+
+    def set_adaptive_teaching_action(
+        self,
+        action: AdaptiveTeachingAction,
+    ) -> None:
+
+        self.adaptive_teaching_action = action
+
+    def get_historical_evidence(
+        self,
+    ) -> HistoricalEvidence | None:
+
+        return self.historical_evidence
+
+    def get_knowledge_diagnosis(
+        self,
+    ) -> KnowledgeDiagnosis | None:
+
+        return self.knowledge_diagnosis
+
+    def get_adaptive_teaching_action(
+        self,
+    ) -> AdaptiveTeachingAction | None:
+
+        return self.adaptive_teaching_action

@@ -9,6 +9,9 @@ from backend.domain.artifact.artifact import Artifact
 from backend.domain.learning.learning_state import (
     LearningState,
 )
+from backend.application.orchestration.adaptive_learning_result import (
+    AdaptiveLearningResult,
+)
 
 class RuntimeResult(BaseModel):
     """
@@ -35,6 +38,8 @@ class RuntimeResult(BaseModel):
 
     learning_state: LearningState | None = None
 
+    adaptive_learning: AdaptiveLearningResult | None = None
+    
     def add_metadata(
         self,
         key: str,
