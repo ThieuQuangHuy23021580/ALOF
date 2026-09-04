@@ -6,9 +6,9 @@ from backend.application.services.llm_service import (
 from backend.core.component import Component
 from backend.core.component_context import ComponentContext
 from backend.core.component_result import ComponentResult
-from backend.core.dependency_context import DependencyContext
 from backend.core.json_parser import JsonParser
 from backend.domain.artifact.artifact import Artifact
+from backend.domain.artifact.artifact_payload import ArtifactPayload
 from backend.domain.artifact.artifact_type import ArtifactType
 from backend.infrastructure.prompts.context_builder import (
     ContextBuilder,
@@ -16,7 +16,6 @@ from backend.infrastructure.prompts.context_builder import (
 from backend.infrastructure.prompts.manager import (
     PromptManager,
 )
-from backend.domain.artifact.artifact_payload import ArtifactPayload
 
 
 class PlannerComponent(Component):
@@ -34,6 +33,16 @@ class PlannerComponent(Component):
         "from the current task and available inputs."
     )
 
+    def __init__(
+        self,
+    ) -> None:
+
+        self._parser = JsonParser(
+            ArtifactPayload,
+        )
+
+        self._context_builder = ContextBuilder()
+
     def execute(
         self,
         context: ComponentContext,
@@ -43,7 +52,7 @@ class PlannerComponent(Component):
         # Dependency
         # ======================================================
 
-        llm = context.dependencies.get(
+        llm = context.get_dependency(
             "llm",
         )
 
@@ -61,14 +70,14 @@ class PlannerComponent(Component):
         # ======================================================
 
         system_prompt = PromptManager.get(
-            "planner",
+            self.component_id,
         )
 
         # ======================================================
         # Context
         # ======================================================
 
-        messages = ContextBuilder.build(
+        messages = self._context_builder.build(
             context=context,
             system_prompt=system_prompt,
         )
@@ -87,11 +96,7 @@ class PlannerComponent(Component):
         # Parse
         # ======================================================
 
-        parser = JsonParser(
-            ArtifactPayload,
-        )
-
-        payload = parser.parse(
+        payload = self._parser.parse(
             raw_response,
         )
 

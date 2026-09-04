@@ -55,13 +55,7 @@ class SequentialPlanner(Planner):
             # ==================================================
             # Adaptive teaching
             # ==================================================
-            #
-            # The adaptive learning pipeline has already
-            # determined HOW this learner should be taught.
-            #
-            # The Planner must propagate that decision into
-            # the execution plan instead of silently dropping it.
-            #
+
             if self._should_apply_adaptive_teaching(
                 component,
             ):
@@ -96,14 +90,9 @@ class SequentialPlanner(Planner):
         """
         Determine whether adaptive teaching information
         should be attached to the execution step.
-
-        Adaptive teaching decisions are primarily intended
-        for learner-facing teaching components.
         """
 
-        return component in {
-            "mentor",
-        }
+        return component == "mentor"
 
     def _objective(
         self,
@@ -115,18 +104,19 @@ class SequentialPlanner(Planner):
 
             case "mentor":
                 return (
-                    "Explain the current question using only the evidence "
-                    "provided in the execution context. Do not infer, invent, "
-                    "or assume missing numerical values, diagram details, "
-                    "answers, or visual information. If the available evidence "
-                    "is insufficient to determine the answer, explicitly state "
-                    "that the answer cannot be determined from the provided "
-                    "evidence and explain what information is missing."
-                )
-
-            case "research":
-                return (
-                    "Analyze and organize the requested topic."
+                    "Explain and solve the current learner question "
+                    "using the available execution context and evidence. "
+                    "Adapt the explanation to the learner's diagnosed "
+                    "knowledge level, weaknesses, misconceptions, and "
+                    "teaching strategy. For comparison or reasoning tasks, "
+                    "analyze the relevant concepts directly and provide "
+                    "a clear, evidence-based explanation. Do not infer, "
+                    "invent, or assume missing numerical values, diagram "
+                    "details, answers, or visual information. If the "
+                    "available evidence is insufficient to determine the "
+                    "answer, explicitly state that the answer cannot be "
+                    "determined from the provided evidence and explain "
+                    "what information is missing."
                 )
 
             case "planner":
@@ -158,9 +148,6 @@ class SequentialPlanner(Planner):
 
             case "mentor":
                 return "Lesson"
-
-            case "research":
-                return "Research Summary"
 
             case "planner":
                 return "Learning Roadmap"

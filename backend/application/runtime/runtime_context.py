@@ -152,11 +152,37 @@ class RuntimeContext(BaseModel):
         result: AdaptiveLearningResult,
     ) -> None:
         """
-        Store the adaptive-learning result for this
-        workflow execution.
+        Store the complete adaptive-learning result and expose
+        every intermediate stage for debugging / benchmarking.
         """
 
         self.adaptive_learning = result
+
+        # Preserve intermediate objects inside RuntimeContext.
+        self.historical_evidence = result.evidence
+        self.knowledge_diagnosis = result.diagnosis
+        self.adaptive_teaching_action = result.teaching_action
+
+        # Expose JSON-serializable metadata for benchmark auditing.
+        self.set_metadata(
+            "historical_evidence",
+            result.evidence.model_dump(mode="json"),
+        )
+
+        self.set_metadata(
+            "knowledge_diagnosis",
+            result.diagnosis.model_dump(mode="json"),
+        )
+
+        self.set_metadata(
+            "adaptive_teaching_action",
+            result.teaching_action.model_dump(mode="json"),
+        )
+
+        self.set_metadata(
+            "adaptive_learning",
+            result.model_dump(mode="json"),
+        )
 
     def has_adaptive_learning(self) -> bool:
         """

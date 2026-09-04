@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 from backend.application.orchestration.adaptive_learning_pipeline import (
@@ -24,6 +25,9 @@ from backend.application.runtime.runtime_context import (
 from backend.application.runtime.runtime_result import (
     RuntimeResult,
 )
+from backend.application.services.memory_query_service import (
+    MemoryQueryService,
+)
 
 
 class LearningOrchestrator:
@@ -42,6 +46,8 @@ class LearningOrchestrator:
             ↓
         Workflow Building
             ↓
+        Runtime Context
+            ↓
         Runtime Execution
             ↓
         RuntimeResult
@@ -54,6 +60,7 @@ class LearningOrchestrator:
         workflow_builder: WorkflowBuilder,
         runtime: Runtime,
         adaptive_learning_pipeline: AdaptiveLearningPipeline | None = None,
+        memory_query_service: MemoryQueryService | None = None,
     ) -> None:
 
         self._router = router
@@ -66,6 +73,65 @@ class LearningOrchestrator:
             if adaptive_learning_pipeline is not None
             else AdaptiveLearningPipeline()
         )
+
+        self._memory_query_service = (
+            memory_query_service
+            if memory_query_service is not None
+            else MemoryQueryService()
+        )
+
+    @staticmethod
+    def _json_safe(
+        value: object,
+    ) -> object:
+        """
+        Convert nested runtime metadata into JSON-safe values.
+
+        Handles:
+        - Pydantic models;
+        - datetime/date-like objects;
+        - dictionaries;
+        - lists/tuples;
+        - nested combinations of the above.
+        """
+
+        if hasattr(
+            value,
+            "model_dump",
+        ):
+            return LearningOrchestrator._json_safe(
+                value.model_dump()
+            )
+
+        if isinstance(
+            value,
+            dict,
+        ):
+            return {
+                str(key): LearningOrchestrator._json_safe(
+                    item
+                )
+                for key, item in value.items()
+            }
+
+        if isinstance(
+            value,
+            (list, tuple),
+        ):
+            return [
+                LearningOrchestrator._json_safe(
+                    item
+                )
+                for item in value
+            ]
+
+        if hasattr(
+            value,
+            "isoformat",
+        ):
+            return value.isoformat()
+
+        return value
 
     def execute(
         self,
@@ -174,6 +240,176 @@ class LearningOrchestrator:
             routing_result.model_dump(),
         )
 
+        context.set_metadata(
+            "historical_evidence",
+            self._json_safe(
+                adaptive_learning.evidence,
+            ),
+        )
+
+        context.set_metadata(
+            "knowledge_diagnosis",
+            self._json_safe(
+                adaptive_learning.diagnosis,
+            ),
+        )
+
+        context.set_metadata(
+            "adaptive_teaching_action",
+            self._json_safe(
+                adaptive_learning.teaching_action,
+            ),
+        )
+
+        context.set_metadata(
+            "adaptive_learning",
+            self._json_safe(
+                adaptive_learning,
+            ),
+        )
+
+        # ==================================================
+        # 6.1 HISTORICAL EVIDENCE / LONGTUTOR METADATA
+        # ==================================================
+        #
+        # Preserve externally supplied historical evidence
+        # inside the in-memory RuntimeContext.
+        #
+        # No repository.
+        # No database.
+        # No Gold answers.
+        #
+        # The Runtime/ContextBuilder will consume this metadata
+        # through the canonical EvidenceSelector.
+        # ==================================================
+
+        request_metadata = request.metadata or {}
+
+        for key in (
+            "history_info",
+            "history",
+            "related_history",
+            "longtutor_features",
+        ):
+            value = request_metadata.get(key)
+
+            if value is not None:
+                context.set_metadata(
+                    key,
+                    value,
+                )
+
+        # ==================================================
+        # 6.2 MEMORY RETRIEVAL
+        # ==================================================
+        #
+        # Each memory query is retrieved independently.
+        #
+        # The retrieval mode is intentionally separated from
+        # answer generation:
+        #
+        #   context -> bounded Top-K evidence
+        #   all     -> complete canonical evidence
+        #
+        # No Gold answer is ever passed to MemoryQueryService.
+        # ==================================================
+
+        memory_queries = request_metadata.get(
+            "gold_memory_queries",
+            [],
+        )
+
+        if not isinstance(
+            memory_queries,
+            list,
+        ):
+            memory_queries = []
+
+        memory_retrieval = []
+
+        for item in memory_queries:
+
+            if isinstance(
+                item,
+                dict,
+            ):
+                query = item.get(
+                    "query",
+                    item.get(
+                        "question",
+                        "",
+                    ),
+                )
+
+            elif isinstance(
+                item,
+                str,
+            ):
+                query = item
+
+            else:
+                query = ""
+
+            query = str(
+                query
+                if query is not None
+                else "",
+            ).strip()
+
+            if not query:
+                continue
+
+            retrieval_mode = (
+                self._memory_query_service.infer_mode(
+                    query,
+                )
+            )
+
+            retrieval = (
+                self._memory_query_service.retrieve(
+                    learning_state=request.learning_state,
+                    query=query,
+                    history_info=context.get_metadata(
+                        "history_info",
+                        [],
+                    ),
+                    related_history=context.get_metadata(
+                        "related_history",
+                        [],
+                    ),
+                    mode=retrieval_mode,
+                )
+            )
+
+            memory_retrieval.append(
+                {
+                    "query": query,
+                    "mode": retrieval["mode"],
+                    "evidence": retrieval["history"],
+                    "related_evidence": retrieval[
+                        "related_history"
+                    ],
+                    "stats": retrieval["stats"],
+                }
+            )
+
+        # ==================================================
+        # IMPORTANT:
+        # Serialize memory retrieval at the application
+        # boundary before it enters RuntimeContext.
+        #
+        # This prevents LearningInteraction / datetime /
+        # nested Pydantic objects from reaching Runner JSON
+        # serialization.
+        # ==================================================
+
+        context.set_metadata(
+            "memory_retrieval",
+            self._json_safe(
+                memory_retrieval,
+            ),
+        )
+
         # ==================================================
         # 7. DEBUG
         # ==================================================
@@ -220,9 +456,69 @@ class LearningOrchestrator:
         )
 
         # ==================================================
+        # 7.1 DEBUG RUNTIME EVIDENCE
+        # ==================================================
+
+        history_info = context.get_metadata(
+            "history_info",
+            [],
+        )
+
+        history = context.get_metadata(
+            "history",
+            [],
+        )
+
+        related_history = context.get_metadata(
+            "related_history",
+            [],
+        )
+
+        longtutor_features = context.get_metadata(
+            "longtutor_features",
+            {},
+        )
+
+        print(
+            "RUNTIME HISTORY INFO:",
+            len(history_info)
+            if isinstance(
+                history_info,
+                list,
+            )
+            else 0,
+        )
+
+        print(
+            "RUNTIME HISTORY:",
+            len(history)
+            if isinstance(
+                history,
+                list,
+            )
+            else 0,
+        )
+
+        print(
+            "RUNTIME RELATED HISTORY:",
+            len(related_history)
+            if isinstance(
+                related_history,
+                list,
+            )
+            else 0,
+        )
+
+        print(
+            "RUNTIME LONGTUTOR FEATURES:",
+            bool(longtutor_features),
+        )
+
+        # ==================================================
         # 8. RUNTIME EXECUTION
         # ==================================================
 
         return self._runtime.run(
             context,
         )
+

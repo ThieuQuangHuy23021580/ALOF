@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import logging
 
 from backend.application.services.llm_service import LLMService
@@ -13,6 +14,7 @@ from backend.infrastructure.prompts.context_builder import ContextBuilder
 from backend.infrastructure.prompts.manager import PromptManager
 
 logger = logging.getLogger(__name__)
+
 
 class MentorComponent(Component):
     """
@@ -39,6 +41,8 @@ class MentorComponent(Component):
             ArtifactPayload,
         )
 
+        self._context_builder = ContextBuilder()
+
     def execute(
         self,
         context: ComponentContext,
@@ -62,7 +66,7 @@ class MentorComponent(Component):
             self.component_id,
         )
 
-        messages = ContextBuilder.build(
+        messages = self._context_builder.build(
             context=context,
             system_prompt=system_prompt,
         )
@@ -94,7 +98,6 @@ class MentorComponent(Component):
             len(raw_response),
         )
 
-
         try:
             payload = self._parser.parse(
                 raw_response,
@@ -112,7 +115,6 @@ class MentorComponent(Component):
             len(payload.content),
             len(payload.summary),
         )
-
 
         artifact = ArtifactFactory.create(
             type=ArtifactType.LESSON,

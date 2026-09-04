@@ -26,7 +26,7 @@ class ConceptDiagnosis(BaseModel):
 
     mastery: float = 0.0
 
-    level: KnowledgeLevel = KnowledgeLevel.UNKNOWN
+    level: KnowledgeLevel = KnowledgeLevel.BEGINNER
 
     attempts: int = 0
 

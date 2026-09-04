@@ -47,6 +47,8 @@ class QuizComponent(Component):
             ArtifactPayload,
         )
 
+        self._context_builder = ContextBuilder()
+
     def execute(
         self,
         context: ComponentContext,
@@ -78,7 +80,7 @@ class QuizComponent(Component):
             self.component_id,
         )
 
-        messages = ContextBuilder.build(
+        messages = self._context_builder.build(
             context=context,
             system_prompt=system_prompt,
         )

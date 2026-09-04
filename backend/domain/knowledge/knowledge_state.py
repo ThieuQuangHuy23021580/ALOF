@@ -23,7 +23,7 @@ class KnowledgeState(BaseModel):
 
     mastery: float = 0.0
 
-    level: KnowledgeLevel = KnowledgeLevel.UNKNOWN
+    level: KnowledgeLevel = KnowledgeLevel.BEGINNER
 
     attempts: int = 0
 
@@ -43,10 +43,6 @@ class KnowledgeState(BaseModel):
         self,
         correct: bool,
     ) -> None:
-        """
-        Record one learner interaction with this concept.
-        """
-
         self.attempts += 1
 
         if correct:
@@ -65,10 +61,12 @@ class KnowledgeState(BaseModel):
             / self.attempts
         )
 
-        self.last_interaction_at = (
-            datetime.now(UTC)
-        )
+        # Keep mastery synchronized with the current
+        # observed learning performance.
+        self.mastery = self.recent_accuracy
+        self.level = self._infer_level()
 
+        self.last_interaction_at = datetime.now(UTC)
     def update_mastery(
         self,
         value: float,
@@ -100,16 +98,10 @@ class KnowledgeState(BaseModel):
         value before any interaction is recorded.
         """
 
-        if self.mastery <= 0.0:
-            return KnowledgeLevel.UNKNOWN
-
         if self.mastery < 0.4:
             return KnowledgeLevel.BEGINNER
 
         if self.mastery < 0.7:
             return KnowledgeLevel.INTERMEDIATE
 
-        if self.mastery < 0.9:
-            return KnowledgeLevel.ADVANCED
-
-        return KnowledgeLevel.MASTERED
+        return KnowledgeLevel.ADVANCED

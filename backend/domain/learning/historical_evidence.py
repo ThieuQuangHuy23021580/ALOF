@@ -18,6 +18,12 @@ class HistoricalEvidence(BaseModel):
     between raw learner interactions and knowledge
     state diagnosis.
 
+    It preserves the semantic distinction between:
+
+    - relevant interactions;
+    - recent interactions;
+    - related-concept interactions.
+
     It does not perform diagnosis itself.
     """
 
@@ -30,6 +36,10 @@ class HistoricalEvidence(BaseModel):
     )
 
     recent_interactions: list[LearningInteraction] = Field(
+        default_factory=list,
+    )
+
+    related_interactions: list[LearningInteraction] = Field(
         default_factory=list,
     )
 
@@ -56,7 +66,8 @@ class HistoricalEvidence(BaseModel):
         interaction: LearningInteraction,
     ) -> None:
         """
-        Add an interaction as relevant historical evidence.
+        Add an interaction as directly relevant
+        historical evidence.
         """
 
         self.relevant_interactions.append(
@@ -68,10 +79,26 @@ class HistoricalEvidence(BaseModel):
         interaction: LearningInteraction,
     ) -> None:
         """
-        Add an interaction to the recent-history evidence.
+        Add an interaction to recent-history evidence.
         """
 
         self.recent_interactions.append(
+            interaction,
+        )
+
+    def add_related_interaction(
+        self,
+        interaction: LearningInteraction,
+    ) -> None:
+        """
+        Add an interaction as related-concept evidence.
+
+        Related evidence is intentionally kept separate
+        from directly relevant evidence so downstream
+        selectors can preserve source semantics.
+        """
+
+        self.related_interactions.append(
             interaction,
         )
 
@@ -129,12 +156,13 @@ class HistoricalEvidence(BaseModel):
     def interaction_count(self) -> int:
         """
         Return the total number of selected historical
-        interactions.
+        interactions across all evidence categories.
         """
 
         return (
             len(self.relevant_interactions)
             + len(self.recent_interactions)
+            + len(self.related_interactions)
         )
 
     @property

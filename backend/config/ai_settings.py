@@ -13,11 +13,11 @@ class Settings(BaseSettings):
     )
 
     groq_api_key: str = Field(
-        validation_alias="NEW_GROQ_API_KEY"
+        validation_alias="GROQ_API_KEY_1"
     )
 
     model_name: str = Field(
-        default="qwen/qwen3.8-27b",
+        default="openai/gpt-oss-120b",
         validation_alias="MODEL_NAME"
     )
 

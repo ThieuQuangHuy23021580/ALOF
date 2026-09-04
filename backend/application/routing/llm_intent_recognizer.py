@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 from backend.application.services.llm_service import (
@@ -62,14 +63,104 @@ Allowed intents:
 - flashcard
 - unknown
 
+Intent definitions:
+
+- explain
+  Use this intent when the learner asks for an explanation,
+  solution, guidance, reasoning, or help with a specific
+  learning problem.
+
+  This includes:
+  - solving a specific mathematical problem;
+  - calculating a numerical result;
+  - simplifying an expression;
+  - solving an equation;
+  - solving a geometry problem;
+  - solving a fraction or percentage problem;
+  - determining an answer to an academic exercise;
+  - asking how or why a solution works.
+
+  A request to solve an existing learner problem is an
+  "explain" intent, even when the learner does not explicitly
+  use words such as "explain" or "show me how".
+
+- summarize
+  Use this intent when the learner asks to condense,
+  summarize, or extract the main points from information.
+
+- compare
+  Use this intent when the learner explicitly asks to compare
+  two or more concepts, methods, objects, or ideas.
+
+- roadmap
+  Use this intent when the learner asks for a learning plan,
+  study plan, roadmap, sequence of topics, or structured path
+  toward a learning goal.
+
+- quiz
+  Use this intent ONLY when the learner asks the system to
+  GENERATE quiz questions or a quiz.
+
+  A quiz-generation request commonly asks for:
+  - multiple questions;
+  - answer choices;
+  - options such as A/B/C/D;
+  - multiple-choice questions;
+  - a test or assessment to be generated.
+
+  Do NOT classify an existing learner problem as "quiz".
+  For example, "Tính 428 + 376." is NOT a quiz request.
+  It is an "explain" request because the learner wants help
+  solving an existing problem.
+
+- flashcard
+  Use this intent when the learner asks the system to
+  generate flashcards for learning or revision.
+
+- unknown
+  Use this intent only when the request does not meaningfully
+  match any of the allowed intents.
+
 Rules:
 
 1. Identify every meaningful intent in the request.
-2. Preserve the order in which the intents appear or are logically required.
-3. Do not add an intent that is not explicitly or strongly implied.
-4. If the request contains multiple intents, return multiple items.
+
+2. Preserve the order in which the intents appear or are
+   logically required.
+
+3. Do not add an intent that is not explicitly or strongly
+   implied.
+
+4. If the request contains multiple intents, return multiple
+   items.
+
 5. Confidence must be between 0.0 and 1.0.
-6. If no allowed intent matches, return:
+
+6. A request to solve, calculate, evaluate, simplify, or
+   determine the result of a specific academic problem should
+   be classified as "explain".
+
+7. A mathematical calculation by itself is still a learning
+   request. For example:
+
+   "Tính 428 + 376."
+   -> "explain"
+
+   "Tính 2/5 + 1/10."
+   -> "explain"
+
+   "Tính 17 × 8."
+   -> "explain"
+
+   "Giải phương trình 5x - 4 = 21."
+   -> "explain"
+
+8. "quiz" is reserved for generating quiz/assessment content.
+   It must not be used merely because the learner's message
+   contains a mathematical question.
+
+9. If no allowed intent matches, return:
+
    {
        "intents": [
            {
@@ -114,9 +205,9 @@ Rules:
         raw = self._llm.generate(
             messages,
             stage="routing",
-
         )
 
         return self._parser.parse(
             raw,
         )
+

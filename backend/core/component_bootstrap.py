@@ -9,13 +9,19 @@ from __future__ import annotations
 # from backend.components.benchmark.global_max.global_max_llm_component import (
 #     GlobalMaxLLMComponent,
 # )
-from backend.components.flashcard.flashcard_component import FlashcardComponent
+
+from backend.components.flashcard.flashcard_component import (
+    FlashcardComponent,
+)
 from backend.components.mentor.mentor_component import (
     MentorComponent,
 )
-from backend.components.planner.planner_component import PlannerComponent
-from backend.components.quiz.quiz_component import QuizComponent
-from backend.components.research.research_component import ResearchComponent
+from backend.components.planner.planner_component import (
+    PlannerComponent,
+)
+from backend.components.quiz.quiz_component import (
+    QuizComponent,
+)
 from backend.core.component_registry import (
     ComponentRegistry,
 )
@@ -31,7 +37,6 @@ def register_components() -> None:
 
     registrations = [
         MentorComponent,
-        ResearchComponent,
         PlannerComponent,
         QuizComponent,
         FlashcardComponent,
@@ -40,7 +45,7 @@ def register_components() -> None:
         # WordFrequencyLLMComponent,
         # WordFrequencyAggregatorComponent,
         # DistributedVoteLLMComponent,
-        # DistributedVoteAggregatorComponent
+        # DistributedVoteAggregatorComponent,
     ]
 
     for component in registrations:

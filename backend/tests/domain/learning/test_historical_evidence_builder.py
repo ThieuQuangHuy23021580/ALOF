@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 from backend.domain.learning.historical_evidence_builder import (
     HistoricalEvidenceBuilder,
@@ -13,374 +13,212 @@ from backend.domain.learning.learning_state import (
 )
 
 
-def _interaction(
-    learner_id: str,
-    question_id: str,
-    concept_ids: list[str],
-    days_ago: int,
-    correct: bool | None = True,
-) -> LearningInteraction:
+def test_builder_includes_external_history():
+    state = LearningState(
+        learner_id="student-1",
+    )
 
-    return LearningInteraction(
-        learner_id=learner_id,
-        question_id=question_id,
-        question=f"Question {question_id}",
-        answer="Answer",
-        correct=correct,
-        concept_ids=concept_ids,
-        timestamp=(
-            datetime.now(UTC)
-            - timedelta(days=days_ago)
+    interaction = LearningInteraction(
+        learner_id="student-1",
+        question_id="q-native",
+        question="Native question",
+        answer="42",
+        correct=True,
+        concept_ids=["algebra"],
+        timestamp=datetime(
+            2026,
+            1,
+            1,
+            tzinfo=UTC,
         ),
     )
 
+    state.add_interaction(interaction)
 
-def test_builder_creates_empty_evidence():
+    history_info = [
+        {
+            "question_id": "q-history",
+            "question": "What is x + 2 = 5?",
+            "answer": "3",
+            "correct": True,
+            "concept_ids": ["algebra"],
+            "timestamp": "2026-01-02T10:00:00Z",
+        }
+    ]
 
-    state = LearningState(
-        learner_id="learner-1",
-    )
+    related_history = [
+        {
+            "question_id": "q-related",
+            "question": "Solve 2x = 10",
+            "answer": "5",
+            "correct": True,
+            "concept_ids": ["equation"],
+            "timestamp": "2026-01-03T10:00:00Z",
+        }
+    ]
 
     builder = HistoricalEvidenceBuilder()
 
     evidence = builder.build(
         learning_state=state,
-        current_question="Current question",
+        current_question="Solve x + 2 = 5",
+        related_concept_ids=["algebra"],
+        history_info=history_info,
+        related_history=related_history,
     )
 
-    assert (
-        evidence.learner_id
-        == "learner-1"
-    )
+    assert evidence.learner_id == "student-1"
 
-    assert (
-        evidence.current_question
-        == "Current question"
-    )
+    assert evidence.has_evidence
 
-    assert (
-        evidence.recent_interactions
-        == []
-    )
+    assert evidence.get_metadata(
+        "external_history_count"
+    ) == 1
 
-    assert (
-        evidence.relevant_interactions
-        == []
-    )
+    assert evidence.get_metadata(
+        "external_related_history_count"
+    ) == 1
 
-    assert (
-        evidence.has_evidence
-        is False
-    )
+    assert evidence.get_metadata(
+        "external_evidence_count"
+    ) == 2
+
+    relevant_questions = [
+        interaction.question
+        for interaction in evidence.relevant_interactions
+    ]
+
+    related_questions = [
+        interaction.question
+        for interaction in evidence.related_interactions
+    ]
+
+    assert "What is x + 2 = 5?" in relevant_questions
+    assert "Solve 2x = 10" in related_questions
 
 
-def test_builder_selects_recent_interactions():
-
+def test_builder_normalizes_external_history_to_learning_interaction():
     state = LearningState(
-        learner_id="learner-1",
+        learner_id="student-1",
     )
 
-    for index in range(7):
+    history_info = [
+        {
+            "qid": 152,
+            "content": "下图中有个平行四边形．",
+            "student_answer": "平行四边形",
+            "is_correct": True,
+            "conceptIds": ["parallel"],
+            "createdAt": "2021-05-22T10:07:35Z",
+        }
+    ]
 
-        state.interactions.append(
-            _interaction(
-                learner_id="learner-1",
-                question_id=f"q-{index}",
-                concept_ids=[
-                    "python",
-                ],
-                days_ago=7 - index,
-            )
-        )
-
-    builder = HistoricalEvidenceBuilder(
-        recent_limit=3,
-    )
+    builder = HistoricalEvidenceBuilder()
 
     evidence = builder.build(
         learning_state=state,
+        current_question="平行四边形是什么？",
+        related_concept_ids=["parallel"],
+        history_info=history_info,
+    )
+
+    assert len(evidence.relevant_interactions) == 1
+
+    interaction = evidence.relevant_interactions[0]
+
+    assert isinstance(
+        interaction,
+        LearningInteraction,
+    )
+
+    assert interaction.learner_id == "student-1"
+    assert interaction.question_id == "152"
+    assert interaction.question == "下图中有个平行四边形．"
+    assert interaction.answer == "平行四边形"
+    assert interaction.correct is True
+    assert interaction.concept_ids == ["parallel"]
+
+
+def test_builder_does_not_propagate_gold_fields():
+    state = LearningState(
+        learner_id="student-1",
+    )
+
+    history_info = [
+        {
+            "question_id": "q1",
+            "question": "What is 1 + 1?",
+            "answer": "2",
+            "correct": True,
+            "concept_ids": ["arithmetic"],
+            "gold_memory_queries": [
+                {
+                    "query": "What did the student answer?",
+                    "answer": "2",
+                }
+            ],
+            "gold_answer": "2",
+            "gold_answers": ["2"],
+        }
+    ]
+
+    builder = HistoricalEvidenceBuilder()
+
+    evidence = builder.build(
+        learning_state=state,
+        current_question="What is 1 + 1?",
+        related_concept_ids=["arithmetic"],
+        history_info=history_info,
+    )
+
+    assert len(evidence.relevant_interactions) == 1
+
+    interaction = evidence.relevant_interactions[0]
+
+    assert "gold_memory_queries" not in interaction.metadata
+    assert "gold_answer" not in interaction.metadata
+    assert "gold_answers" not in interaction.metadata
+
+
+def test_builder_keeps_native_learning_state_evidence():
+    state = LearningState(
+        learner_id="student-1",
+    )
+
+    interaction = LearningInteraction(
+        learner_id="student-1",
+        question_id="native-q1",
+        question="Solve x + 1 = 2",
+        answer="1",
+        correct=True,
+        concept_ids=["algebra"],
+        timestamp=datetime(
+            2026,
+            1,
+            1,
+            tzinfo=UTC,
+        ),
+    )
+
+    state.add_interaction(interaction)
+
+    builder = HistoricalEvidenceBuilder()
+
+    evidence = builder.build(
+        learning_state=state,
+        current_question="Solve x + 1 = 2",
+        related_concept_ids=["algebra"],
     )
 
     assert len(
         evidence.recent_interactions
-    ) == 3
-
-    assert [
-        interaction.question_id
-        for interaction
-        in evidence.recent_interactions
-    ] == [
-        "q-4",
-        "q-5",
-        "q-6",
-    ]
-
-
-def test_builder_selects_relevant_interactions():
-
-    state = LearningState(
-        learner_id="learner-1",
-    )
-
-    related = _interaction(
-        learner_id="learner-1",
-        question_id="q-python",
-        concept_ids=[
-            "python",
-            "functions",
-        ],
-        days_ago=10,
-    )
-
-    unrelated = _interaction(
-        learner_id="learner-1",
-        question_id="q-math",
-        concept_ids=[
-            "algebra",
-        ],
-        days_ago=2,
-    )
-
-    state.interactions.extend(
-        [
-            related,
-            unrelated,
-        ]
-    )
-
-    builder = HistoricalEvidenceBuilder()
-
-    evidence = builder.build(
-        learning_state=state,
-        current_question="Explain Python functions.",
-        related_concept_ids=[
-            "functions",
-        ],
-    )
+    ) == 1
 
     assert (
-        evidence.relevant_interactions
-        == [related]
+        evidence.recent_interactions[0].question_id
+        == "native-q1"
     )
 
-    assert (
-        unrelated
-        not in evidence.relevant_interactions
-    )
-
-
-def test_builder_collects_related_concepts():
-
-    state = LearningState(
-        learner_id="learner-1",
-    )
-
-    state.interactions.append(
-        _interaction(
-            learner_id="learner-1",
-            question_id="q-1",
-            concept_ids=[
-                "python",
-                "functions",
-            ],
-            days_ago=1,
-        )
-    )
-
-    builder = HistoricalEvidenceBuilder()
-
-    evidence = builder.build(
-        learning_state=state,
-    )
-
-    assert (
-        evidence.related_concept_ids
-        == [
-            "python",
-            "functions",
-        ]
-    )
-
-
-def test_builder_does_not_duplicate_related_concepts():
-
-    state = LearningState(
-        learner_id="learner-1",
-    )
-
-    state.interactions.extend(
-        [
-            _interaction(
-                learner_id="learner-1",
-                question_id="q-1",
-                concept_ids=[
-                    "python",
-                    "functions",
-                ],
-                days_ago=2,
-            ),
-            _interaction(
-                learner_id="learner-1",
-                question_id="q-2",
-                concept_ids=[
-                    "python",
-                    "loops",
-                ],
-                days_ago=1,
-            ),
-        ]
-    )
-
-    builder = HistoricalEvidenceBuilder()
-
-    evidence = builder.build(
-        learning_state=state,
-    )
-
-    assert (
-        evidence.related_concept_ids
-        == [
-            "python",
-            "functions",
-            "loops",
-        ]
-    )
-
-
-def test_builder_metadata():
-
-    state = LearningState(
-        learner_id="learner-1",
-    )
-
-    state.interactions.append(
-        _interaction(
-            learner_id="learner-1",
-            question_id="q-1",
-            concept_ids=[
-                "python",
-            ],
-            days_ago=1,
-        )
-    )
-
-    builder = HistoricalEvidenceBuilder(
-        recent_limit=5,
-    )
-
-    evidence = builder.build(
-        learning_state=state,
-    )
-
-    assert (
-        evidence.get_metadata(
-            "selection_strategy",
-        )
-        == "recent_and_related_concepts"
-    )
-
-    assert (
-        evidence.get_metadata(
-            "recent_limit",
-        )
-        == 5
-    )
-
-    assert (
-        evidence.get_metadata(
-            "source_interaction_count",
-        )
-        == 1
-    )
-
-    assert (
-        evidence.get_metadata(
-            "recent_interaction_count",
-        )
-        == 1
-    )
-
-
-def test_builder_handles_related_concepts_without_history():
-
-    state = LearningState(
-        learner_id="learner-1",
-    )
-
-    builder = HistoricalEvidenceBuilder()
-
-    evidence = builder.build(
-        learning_state=state,
-        current_question="Python functions",
-        related_concept_ids=[
-            "functions",
-        ],
-    )
-
-    assert (
-        evidence.current_question
-        == "Python functions"
-    )
-
-    assert (
-        evidence.related_concept_ids
-        == []
-    )
-
-    assert (
-        evidence.has_evidence
-        is False
-    )
-
-
-def test_builder_is_deterministic():
-
-    state = LearningState(
-        learner_id="learner-1",
-    )
-
-    state.interactions.extend(
-        [
-            _interaction(
-                learner_id="learner-1",
-                question_id="q-1",
-                concept_ids=[
-                    "python",
-                ],
-                days_ago=3,
-            ),
-            _interaction(
-                learner_id="learner-1",
-                question_id="q-2",
-                concept_ids=[
-                    "functions",
-                ],
-                days_ago=2,
-            ),
-            _interaction(
-                learner_id="learner-1",
-                question_id="q-3",
-                concept_ids=[
-                    "python",
-                ],
-                days_ago=1,
-            ),
-        ]
-    )
-
-    builder = HistoricalEvidenceBuilder(
-        recent_limit=2,
-    )
-
-    first = builder.build(
-        learning_state=state,
-    )
-
-    second = builder.build(
-        learning_state=state,
-    )
-
-    assert (
-        first.model_dump()
-        == second.model_dump()
-    )
+    assert evidence.get_metadata(
+        "source_interaction_count"
+    ) == 1

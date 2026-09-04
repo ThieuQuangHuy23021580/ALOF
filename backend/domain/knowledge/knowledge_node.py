@@ -24,7 +24,7 @@ class KnowledgeNode(BaseModel):
 
     description: str = ""
 
-    level: KnowledgeLevel = KnowledgeLevel.UNKNOWN
+    level: KnowledgeLevel = KnowledgeLevel.BEGINNER
 
     prerequisites: list[str] = Field(
         default_factory=list,

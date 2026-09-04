@@ -21,7 +21,6 @@ class ComponentSelector:
             "mentor",
         ],
         "compare": [
-            "research",
             "mentor",
         ],
         "roadmap": [
@@ -61,7 +60,6 @@ class ComponentSelector:
                 item.intent,
                 [],
             ):
-
                 if component not in candidate_components:
                     candidate_components.append(
                         component,
