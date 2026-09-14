@@ -269,7 +269,7 @@ class LearningOrchestrator:
         )
 
         # ==================================================
-        # 6.1 HISTORICAL EVIDENCE / LONGTUTOR METADATA
+        # 6.1 HISTORICAL EVIDENCE 
         # ==================================================
         #
         # Preserve externally supplied historical evidence

@@ -1,0 +1,4016 @@
+{
+  "total_cases": 50,
+  "successful_cases": 50,
+  "execution_success_rate": 1.0,
+  "semantic_pass_cases": 22,
+  "semantic_pass_rate": 0.44,
+  "memory": {
+    "evaluated_cases": 50,
+    "pass_cases": 22,
+    "pass_rate": 0.44,
+    "mean_f1": 0.9224
+  },
+  "diagnosis": {
+    "evaluated_cases": 50,
+    "pass_cases": 50,
+    "pass_rate": 1.0,
+    "not_exposed_cases": 0
+  },
+  "strategy": {
+    "evaluated_cases": 50,
+    "pass_cases": 50,
+    "pass_rate": 1.0,
+    "not_exposed_cases": 0
+  },
+  "response": {
+    "evaluated_cases": 50,
+    "pass_cases": 50,
+    "pass_rate": 1.0
+  },
+  "cases": [
+    {
+      "case_id": "adaptive_st_051",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst051a",
+            "qst051b",
+            "qst051d",
+            "qst051f",
+            "qst051h"
+          ],
+          "actual": [
+            "qst051f",
+            "qst051h",
+            "qst051d",
+            "qst051a",
+            "qst051b"
+          ],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched": [
+            "qst051a",
+            "qst051b",
+            "qst051d",
+            "qst051f",
+            "qst051h"
+          ],
+          "missing": [],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "ohms_law",
+              "actual": "ohms_law",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 404,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_052",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst052a",
+            "qst052b",
+            "qst052d",
+            "qst052f",
+            "qst052h"
+          ],
+          "actual": [
+            "qst052h",
+            "qst052f",
+            "qst052b",
+            "qst052d",
+            "qst052a"
+          ],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched": [
+            "qst052a",
+            "qst052b",
+            "qst052d",
+            "qst052f",
+            "qst052h"
+          ],
+          "missing": [],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "dna_replication",
+              "actual": "dna_replication",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 439,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_053",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst053a",
+            "qst053b",
+            "qst053d",
+            "qst053f",
+            "qst053h"
+          ],
+          "actual": [
+            "qst053h",
+            "qst053f",
+            "qst053d",
+            "qst053b",
+            "qst053a"
+          ],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched": [
+            "qst053a",
+            "qst053b",
+            "qst053d",
+            "qst053f",
+            "qst053h"
+          ],
+          "missing": [],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "sql_query",
+              "actual": "sql_query",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 669,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_054",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst054a",
+            "qst054b",
+            "qst054d",
+            "qst054f",
+            "qst054h"
+          ],
+          "actual": [
+            "qst054h",
+            "qst054f",
+            "qst054d",
+            "qst054b",
+            "qst054a"
+          ],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched": [
+            "qst054a",
+            "qst054b",
+            "qst054d",
+            "qst054f",
+            "qst054h"
+          ],
+          "missing": [],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "supply_demand",
+              "actual": "supply_demand",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 453,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_055",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst055a",
+            "qst055b",
+            "qst055d",
+            "qst055f",
+            "qst055h"
+          ],
+          "actual": [
+            "qst055h",
+            "qst055f",
+            "qst055d",
+            "qst055a",
+            "qst055b"
+          ],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched": [
+            "qst055a",
+            "qst055b",
+            "qst055d",
+            "qst055f",
+            "qst055h"
+          ],
+          "missing": [],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "verb_tense",
+              "actual": "verb_tense",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 1599,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_056",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst056a",
+            "qst056b",
+            "qst056d",
+            "qst056f",
+            "qst056h"
+          ],
+          "actual": [
+            "qst056h",
+            "qst056f",
+            "qst056d",
+            "qst056a",
+            "qst056b"
+          ],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched": [
+            "qst056a",
+            "qst056b",
+            "qst056d",
+            "qst056f",
+            "qst056h"
+          ],
+          "missing": [],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "reaction_balancing",
+              "actual": "reaction_balancing",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 736,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_057",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst057a",
+            "qst057b",
+            "qst057d",
+            "qst057f",
+            "qst057h"
+          ],
+          "actual": [
+            "qst057h",
+            "qst057f",
+            "qst057a",
+            "qst057d",
+            "qst057b"
+          ],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched": [
+            "qst057a",
+            "qst057b",
+            "qst057d",
+            "qst057f",
+            "qst057h"
+          ],
+          "missing": [],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "acceleration",
+              "actual": "acceleration",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 347,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_058",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst058a",
+            "qst058b",
+            "qst058d",
+            "qst058f",
+            "qst058h"
+          ],
+          "actual": [
+            "qst058h",
+            "qst058f",
+            "qst058d",
+            "qst058b",
+            "qst058a"
+          ],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched": [
+            "qst058a",
+            "qst058b",
+            "qst058d",
+            "qst058f",
+            "qst058h"
+          ],
+          "missing": [],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "cellular_transport",
+              "actual": "cellular_transport",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 493,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_059",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst059a",
+            "qst059b",
+            "qst059d",
+            "qst059f",
+            "qst059h"
+          ],
+          "actual": [
+            "qst059h",
+            "qst059f",
+            "qst059d",
+            "qst059a",
+            "qst059b"
+          ],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched": [
+            "qst059a",
+            "qst059b",
+            "qst059d",
+            "qst059f",
+            "qst059h"
+          ],
+          "missing": [],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "opportunity_cost",
+              "actual": "opportunity_cost",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 498,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_060",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst060a",
+            "qst060b",
+            "qst060d",
+            "qst060f",
+            "qst060h"
+          ],
+          "actual": [
+            "qst060h",
+            "qst060f",
+            "qst060d",
+            "qst060a",
+            "qst060b"
+          ],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched": [
+            "qst060a",
+            "qst060b",
+            "qst060d",
+            "qst060f",
+            "qst060h"
+          ],
+          "missing": [],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "historical_evidence",
+              "actual": "historical_evidence",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 378,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_061",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst061a",
+            "qst061b",
+            "qst061c",
+            "qst061d"
+          ],
+          "actual": [
+            "qst061d",
+            "qst061c",
+            "qst061b",
+            "qst061a",
+            "qst061g"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst061a",
+            "qst061b",
+            "qst061c",
+            "qst061d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst061g"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "fraction_addition",
+              "actual": "fraction_addition",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 490,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_062",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst062a",
+            "qst062b",
+            "qst062c",
+            "qst062d"
+          ],
+          "actual": [
+            "qst062a",
+            "qst062d",
+            "qst062c",
+            "qst062b",
+            "qst062h"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst062a",
+            "qst062b",
+            "qst062c",
+            "qst062d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst062h"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "chemical_equilibrium",
+              "actual": "chemical_equilibrium",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 323,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_063",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst063a",
+            "qst063b",
+            "qst063c",
+            "qst063d"
+          ],
+          "actual": [
+            "qst063d",
+            "qst063a",
+            "qst063c",
+            "qst063b",
+            "qst063f"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst063a",
+            "qst063b",
+            "qst063c",
+            "qst063d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst063f"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "conditional_statement",
+              "actual": "conditional_statement",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 418,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_064",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst064a",
+            "qst064b",
+            "qst064c",
+            "qst064d"
+          ],
+          "actual": [
+            "qst064d",
+            "qst064c",
+            "qst064b",
+            "qst064a",
+            "qst064g"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst064a",
+            "qst064b",
+            "qst064c",
+            "qst064d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst064g"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "latitude_longitude",
+              "actual": "latitude_longitude",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 386,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_065",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst065a",
+            "qst065b",
+            "qst065c",
+            "qst065d"
+          ],
+          "actual": [
+            "qst065c",
+            "qst065d",
+            "qst065b",
+            "qst065a",
+            "qst065i"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst065a",
+            "qst065b",
+            "qst065c",
+            "qst065d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst065i"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "mean_median_mode",
+              "actual": "mean_median_mode",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 363,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_066",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst066a",
+            "qst066b",
+            "qst066c",
+            "qst066d"
+          ],
+          "actual": [
+            "qst066d",
+            "qst066c",
+            "qst066b",
+            "qst066a",
+            "qst066h"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst066a",
+            "qst066b",
+            "qst066c",
+            "qst066d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst066h"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "passive_voice",
+              "actual": "passive_voice",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 755,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_067",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst067a",
+            "qst067b",
+            "qst067c",
+            "qst067d"
+          ],
+          "actual": [
+            "qst067d",
+            "qst067c",
+            "qst067a",
+            "qst067b",
+            "qst067i"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst067a",
+            "qst067b",
+            "qst067c",
+            "qst067d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst067i"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "stoichiometry",
+              "actual": "stoichiometry",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 438,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_068",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst068a",
+            "qst068b",
+            "qst068c",
+            "qst068d"
+          ],
+          "actual": [
+            "qst068d",
+            "qst068a",
+            "qst068c",
+            "qst068b",
+            "qst068h"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst068a",
+            "qst068b",
+            "qst068c",
+            "qst068d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst068h"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "newtons_second_law",
+              "actual": "newtons_second_law",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 292,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_069",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst069a",
+            "qst069b",
+            "qst069c",
+            "qst069d"
+          ],
+          "actual": [
+            "qst069a",
+            "qst069d",
+            "qst069c",
+            "qst069b",
+            "qst069h"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst069a",
+            "qst069b",
+            "qst069c",
+            "qst069d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst069h"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "gene_expression",
+              "actual": "gene_expression",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 431,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_070",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst070a",
+            "qst070b",
+            "qst070c",
+            "qst070d"
+          ],
+          "actual": [
+            "qst070d",
+            "qst070c",
+            "qst070b",
+            "qst070a",
+            "qst070i"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst070a",
+            "qst070b",
+            "qst070c",
+            "qst070d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst070i"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "market_equilibrium",
+              "actual": "market_equilibrium",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 285,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_071",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst071a",
+            "qst071b",
+            "qst071c",
+            "qst071d"
+          ],
+          "actual": [
+            "qst071b",
+            "qst071d",
+            "qst071c",
+            "qst071a",
+            "qst071i"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst071a",
+            "qst071b",
+            "qst071c",
+            "qst071d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst071i"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "linear_inequality",
+              "actual": "linear_inequality",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 211,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_072",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": true,
+          "expected": [
+            "qst072a",
+            "qst072b",
+            "qst072c",
+            "qst072d"
+          ],
+          "actual": [
+            "qst072d",
+            "qst072c",
+            "qst072b",
+            "qst072a",
+            "qst072i"
+          ],
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889,
+          "matched": [
+            "qst072a",
+            "qst072b",
+            "qst072c",
+            "qst072d"
+          ],
+          "missing": [],
+          "extra": [
+            "qst072i"
+          ]
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "molar_mass",
+              "actual": "molar_mass",
+              "pass": true
+            },
+            "level": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "beginner",
+              "actual": "beginner",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 532,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": true,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": true
+    },
+    {
+      "case_id": "adaptive_st_073",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst073a",
+            "qst073b",
+            "qst073c",
+            "qst073d",
+            "qst073e",
+            "qst073f"
+          ],
+          "actual": [
+            "qst073e",
+            "qst073f",
+            "qst073c",
+            "qst073d",
+            "qst073a"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst073a",
+            "qst073c",
+            "qst073d",
+            "qst073e",
+            "qst073f"
+          ],
+          "missing": [
+            "qst073b"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "photosynthesis",
+              "actual": "photosynthesis",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 294,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_074",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst074a",
+            "qst074b",
+            "qst074c",
+            "qst074d",
+            "qst074e",
+            "qst074f"
+          ],
+          "actual": [
+            "qst074f",
+            "qst074d",
+            "qst074b",
+            "qst074e",
+            "qst074c"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst074b",
+            "qst074c",
+            "qst074d",
+            "qst074e",
+            "qst074f"
+          ],
+          "missing": [
+            "qst074a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "algorithm_complexity",
+              "actual": "algorithm_complexity",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 303,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_075",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst075a",
+            "qst075b",
+            "qst075c",
+            "qst075d",
+            "qst075e",
+            "qst075f"
+          ],
+          "actual": [
+            "qst075e",
+            "qst075c",
+            "qst075f",
+            "qst075a",
+            "qst075d"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst075a",
+            "qst075c",
+            "qst075d",
+            "qst075e",
+            "qst075f"
+          ],
+          "missing": [
+            "qst075b"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "population_distribution",
+              "actual": "population_distribution",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 1525,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_076",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst076a",
+            "qst076b",
+            "qst076c",
+            "qst076d",
+            "qst076e",
+            "qst076f"
+          ],
+          "actual": [
+            "qst076f",
+            "qst076d",
+            "qst076b",
+            "qst076e",
+            "qst076c"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst076b",
+            "qst076c",
+            "qst076d",
+            "qst076e",
+            "qst076f"
+          ],
+          "missing": [
+            "qst076a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "fraction_comparison",
+              "actual": "fraction_comparison",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 341,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_077",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst077a",
+            "qst077b",
+            "qst077c",
+            "qst077d",
+            "qst077e",
+            "qst077f"
+          ],
+          "actual": [
+            "qst077e",
+            "qst077c",
+            "qst077a",
+            "qst077f",
+            "qst077d"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst077a",
+            "qst077c",
+            "qst077d",
+            "qst077e",
+            "qst077f"
+          ],
+          "missing": [
+            "qst077b"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "acid_base",
+              "actual": "acid_base",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 376,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_078",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst078a",
+            "qst078b",
+            "qst078c",
+            "qst078d",
+            "qst078e",
+            "qst078f"
+          ],
+          "actual": [
+            "qst078f",
+            "qst078e",
+            "qst078d",
+            "qst078c",
+            "qst078a"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst078a",
+            "qst078c",
+            "qst078d",
+            "qst078e",
+            "qst078f"
+          ],
+          "missing": [
+            "qst078b"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "loop",
+              "actual": "loop",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 784,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_079",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst079a",
+            "qst079b",
+            "qst079c",
+            "qst079d",
+            "qst079e",
+            "qst079f"
+          ],
+          "actual": [
+            "qst079f",
+            "qst079d",
+            "qst079e",
+            "qst079b",
+            "qst079c"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst079b",
+            "qst079c",
+            "qst079d",
+            "qst079e",
+            "qst079f"
+          ],
+          "missing": [
+            "qst079a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "cause_and_effect",
+              "actual": "cause_and_effect",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 1524,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_080",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst080a",
+            "qst080b",
+            "qst080c",
+            "qst080d",
+            "qst080e",
+            "qst080f"
+          ],
+          "actual": [
+            "qst080f",
+            "qst080d",
+            "qst080b",
+            "qst080e",
+            "qst080c"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst080b",
+            "qst080c",
+            "qst080d",
+            "qst080e",
+            "qst080f"
+          ],
+          "missing": [
+            "qst080a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "velocity",
+              "actual": "velocity",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 521,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_081",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst081a",
+            "qst081b",
+            "qst081c",
+            "qst081d",
+            "qst081e",
+            "qst081f"
+          ],
+          "actual": [
+            "qst081e",
+            "qst081f",
+            "qst081c",
+            "qst081d",
+            "qst081a"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst081a",
+            "qst081c",
+            "qst081d",
+            "qst081e",
+            "qst081f"
+          ],
+          "missing": [
+            "qst081b"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "quadratic_formula",
+              "actual": "quadratic_formula",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 294,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_082",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst082a",
+            "qst082b",
+            "qst082c",
+            "qst082d",
+            "qst082e",
+            "qst082f"
+          ],
+          "actual": [
+            "qst082f",
+            "qst082d",
+            "qst082e",
+            "qst082c",
+            "qst082b"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst082b",
+            "qst082c",
+            "qst082d",
+            "qst082e",
+            "qst082f"
+          ],
+          "missing": [
+            "qst082a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "ph_scale",
+              "actual": "ph_scale",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 252,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_083",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst083a",
+            "qst083b",
+            "qst083c",
+            "qst083d",
+            "qst083e",
+            "qst083f"
+          ],
+          "actual": [
+            "qst083f",
+            "qst083e",
+            "qst083d",
+            "qst083c",
+            "qst083b"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst083b",
+            "qst083c",
+            "qst083d",
+            "qst083e",
+            "qst083f"
+          ],
+          "missing": [
+            "qst083a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "conditional_sentence",
+              "actual": "conditional_sentence",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 483,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_084",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst084a",
+            "qst084b",
+            "qst084c",
+            "qst084d",
+            "qst084e",
+            "qst084f"
+          ],
+          "actual": [
+            "qst084e",
+            "qst084f",
+            "qst084c",
+            "qst084d",
+            "qst084a"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst084a",
+            "qst084c",
+            "qst084d",
+            "qst084e",
+            "qst084f"
+          ],
+          "missing": [
+            "qst084b"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "motion_graphs",
+              "actual": "motion_graphs",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 627,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_085",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst085a",
+            "qst085b",
+            "qst085c",
+            "qst085d",
+            "qst085e",
+            "qst085f"
+          ],
+          "actual": [
+            "qst085e",
+            "qst085c",
+            "qst085a",
+            "qst085f",
+            "qst085d"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst085a",
+            "qst085c",
+            "qst085d",
+            "qst085e",
+            "qst085f"
+          ],
+          "missing": [
+            "qst085b"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "natural_selection",
+              "actual": "natural_selection",
+              "pass": true
+            },
+            "level": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "advanced",
+              "actual": "advanced",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 1558,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_086",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst086a",
+            "qst086b",
+            "qst086d",
+            "qst086e",
+            "qst086g",
+            "qst086h"
+          ],
+          "actual": [
+            "qst086h",
+            "qst086e",
+            "qst086g",
+            "qst086b",
+            "qst086d"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst086b",
+            "qst086d",
+            "qst086e",
+            "qst086g",
+            "qst086h"
+          ],
+          "missing": [
+            "qst086a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "proportion",
+              "actual": "proportion",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 408,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_087",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst087a",
+            "qst087b",
+            "qst087d",
+            "qst087e",
+            "qst087g",
+            "qst087h"
+          ],
+          "actual": [
+            "qst087h",
+            "qst087e",
+            "qst087b",
+            "qst087g",
+            "qst087d"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst087b",
+            "qst087d",
+            "qst087e",
+            "qst087g",
+            "qst087h"
+          ],
+          "missing": [
+            "qst087a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "chemical_formula",
+              "actual": "chemical_formula",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 524,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_088",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst088a",
+            "qst088b",
+            "qst088d",
+            "qst088e",
+            "qst088g",
+            "qst088h"
+          ],
+          "actual": [
+            "qst088e",
+            "qst088h",
+            "qst088b",
+            "qst088d",
+            "qst088g"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst088b",
+            "qst088d",
+            "qst088e",
+            "qst088g",
+            "qst088h"
+          ],
+          "missing": [
+            "qst088a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "function",
+              "actual": "function",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 231,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_089",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst089a",
+            "qst089b",
+            "qst089d",
+            "qst089e",
+            "qst089g",
+            "qst089h"
+          ],
+          "actual": [
+            "qst089g",
+            "qst089h",
+            "qst089d",
+            "qst089e",
+            "qst089a"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst089a",
+            "qst089d",
+            "qst089e",
+            "qst089g",
+            "qst089h"
+          ],
+          "missing": [
+            "qst089b"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "historical_perspective",
+              "actual": "historical_perspective",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 615,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_090",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst090a",
+            "qst090b",
+            "qst090d",
+            "qst090e",
+            "qst090g",
+            "qst090h"
+          ],
+          "actual": [
+            "qst090h",
+            "qst090g",
+            "qst090e",
+            "qst090d",
+            "qst090b"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst090b",
+            "qst090d",
+            "qst090e",
+            "qst090g",
+            "qst090h"
+          ],
+          "missing": [
+            "qst090a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "climate_patterns",
+              "actual": "climate_patterns",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 599,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_091",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst091a",
+            "qst091b",
+            "qst091d",
+            "qst091e",
+            "qst091g",
+            "qst091h"
+          ],
+          "actual": [
+            "qst091h",
+            "qst091g",
+            "qst091e",
+            "qst091d",
+            "qst091b"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst091b",
+            "qst091d",
+            "qst091e",
+            "qst091g",
+            "qst091h"
+          ],
+          "missing": [
+            "qst091a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "percentage",
+              "actual": "percentage",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 348,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_092",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst092a",
+            "qst092b",
+            "qst092d",
+            "qst092e",
+            "qst092g",
+            "qst092h"
+          ],
+          "actual": [
+            "qst092h",
+            "qst092e",
+            "qst092b",
+            "qst092g",
+            "qst092d"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst092b",
+            "qst092d",
+            "qst092e",
+            "qst092g",
+            "qst092h"
+          ],
+          "missing": [
+            "qst092a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "ionic_bond",
+              "actual": "ionic_bond",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 924,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_093",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst093a",
+            "qst093b",
+            "qst093d",
+            "qst093e",
+            "qst093g",
+            "qst093h"
+          ],
+          "actual": [
+            "qst093h",
+            "qst093e",
+            "qst093b",
+            "qst093g",
+            "qst093d"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst093b",
+            "qst093d",
+            "qst093e",
+            "qst093g",
+            "qst093h"
+          ],
+          "missing": [
+            "qst093a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "array",
+              "actual": "array",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 325,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_094",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst094a",
+            "qst094b",
+            "qst094d",
+            "qst094e",
+            "qst094g",
+            "qst094h"
+          ],
+          "actual": [
+            "qst094h",
+            "qst094e",
+            "qst094g",
+            "qst094b",
+            "qst094d"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst094b",
+            "qst094d",
+            "qst094e",
+            "qst094g",
+            "qst094h"
+          ],
+          "missing": [
+            "qst094a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "ecosystem",
+              "actual": "ecosystem",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 516,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_095",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst095a",
+            "qst095b",
+            "qst095d",
+            "qst095e",
+            "qst095g",
+            "qst095h"
+          ],
+          "actual": [
+            "qst095h",
+            "qst095g",
+            "qst095e",
+            "qst095d",
+            "qst095b"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst095b",
+            "qst095d",
+            "qst095e",
+            "qst095g",
+            "qst095h"
+          ],
+          "missing": [
+            "qst095a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "opportunity_cost",
+              "actual": "opportunity_cost",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 547,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_096",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst096a",
+            "qst096b",
+            "qst096d",
+            "qst096e",
+            "qst096g",
+            "qst096h"
+          ],
+          "actual": [
+            "qst096h",
+            "qst096e",
+            "qst096g",
+            "qst096b",
+            "qst096d"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst096b",
+            "qst096d",
+            "qst096e",
+            "qst096g",
+            "qst096h"
+          ],
+          "missing": [
+            "qst096a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "kinetic_energy",
+              "actual": "kinetic_energy",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 470,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_097",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst097a",
+            "qst097b",
+            "qst097d",
+            "qst097e",
+            "qst097g",
+            "qst097h"
+          ],
+          "actual": [
+            "qst097h",
+            "qst097g",
+            "qst097e",
+            "qst097d",
+            "qst097b"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst097b",
+            "qst097d",
+            "qst097e",
+            "qst097g",
+            "qst097h"
+          ],
+          "missing": [
+            "qst097a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "reading_comprehension",
+              "actual": "reading_comprehension",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 412,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_098",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst098a",
+            "qst098b",
+            "qst098d",
+            "qst098e",
+            "qst098g",
+            "qst098h"
+          ],
+          "actual": [
+            "qst098h",
+            "qst098e",
+            "qst098g",
+            "qst098b",
+            "qst098d"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst098b",
+            "qst098d",
+            "qst098e",
+            "qst098g",
+            "qst098h"
+          ],
+          "missing": [
+            "qst098a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "map_interpretation",
+              "actual": "map_interpretation",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 383,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_099",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst099a",
+            "qst099b",
+            "qst099d",
+            "qst099e",
+            "qst099g",
+            "qst099h"
+          ],
+          "actual": [
+            "qst099e",
+            "qst099h",
+            "qst099d",
+            "qst099b",
+            "qst099g"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst099b",
+            "qst099d",
+            "qst099e",
+            "qst099g",
+            "qst099h"
+          ],
+          "missing": [
+            "qst099a"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "exponentiation",
+              "actual": "exponentiation",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 478,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    },
+    {
+      "case_id": "adaptive_st_100",
+      "execution_success": true,
+      "dimensions": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "expected": [
+            "qst100a",
+            "qst100b",
+            "qst100d",
+            "qst100e",
+            "qst100g",
+            "qst100h"
+          ],
+          "actual": [
+            "qst100g",
+            "qst100h",
+            "qst100d",
+            "qst100e",
+            "qst100a"
+          ],
+          "precision": 1.0,
+          "recall": 0.8333,
+          "f1": 0.9091,
+          "matched": [
+            "qst100a",
+            "qst100d",
+            "qst100e",
+            "qst100g",
+            "qst100h"
+          ],
+          "missing": [
+            "qst100b"
+          ],
+          "extra": []
+        },
+        "diagnosis": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "concept": {
+              "expected": "cell_structure",
+              "actual": "cell_structure",
+              "pass": true
+            },
+            "level": {
+              "expected": "intermediate",
+              "actual": "intermediate",
+              "pass": true
+            }
+          }
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": true,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "medium",
+              "pass": true
+            }
+          }
+        },
+        "response": {
+          "status": "evaluated",
+          "prediction_available": true,
+          "prediction_length": 478,
+          "expected_direct_answer": null,
+          "direct_answer_violation": false,
+          "pass": true
+        }
+      },
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "semantic_pass": false
+    }
+  ]
+}

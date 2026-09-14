@@ -1,0 +1,827 @@
+{
+  "registry_name": "ALOF Benchmark Concept Registry",
+  "registry_version": "1.0",
+  "purpose": "Controlled canonical vocabulary for ALOF benchmark dataset generation.",
+  "canonical_naming_rules": {
+    "language": "English",
+    "format": "lowercase_snake_case",
+    "stable_id": true,
+    "question_specific_ids_allowed": false,
+    "learner_state_ids_allowed": false,
+    "strategy_or_difficulty_ids_allowed": false
+  },
+  "concept_count": 100,
+  "domains": [
+    "biology",
+    "chemistry",
+    "computer_science",
+    "economics",
+    "geography",
+    "history",
+    "languages",
+    "mathematics",
+    "physics"
+  ],
+  "concepts": [
+    {
+      "concept_id": "fraction_addition",
+      "canonical_name": "fraction_addition",
+      "domain": "mathematics",
+      "topic": "fractions",
+      "description": "Adding two or more fractions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "fraction_subtraction",
+      "canonical_name": "fraction_subtraction",
+      "domain": "mathematics",
+      "topic": "fractions",
+      "description": "Subtracting one fraction from another.",
+      "status": "active"
+    },
+    {
+      "concept_id": "fraction_multiplication",
+      "canonical_name": "fraction_multiplication",
+      "domain": "mathematics",
+      "topic": "fractions",
+      "description": "Multiplying fractions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "fraction_division",
+      "canonical_name": "fraction_division",
+      "domain": "mathematics",
+      "topic": "fractions",
+      "description": "Dividing fractions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "common_denominator",
+      "canonical_name": "common_denominator",
+      "domain": "mathematics",
+      "topic": "fractions",
+      "description": "Finding a common denominator for fractions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "fraction_comparison",
+      "canonical_name": "fraction_comparison",
+      "domain": "mathematics",
+      "topic": "fractions",
+      "description": "Comparing the values of fractions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "equivalent_fractions",
+      "canonical_name": "equivalent_fractions",
+      "domain": "mathematics",
+      "topic": "fractions",
+      "description": "Identifying and generating equivalent fractions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "percentage",
+      "canonical_name": "percentage",
+      "domain": "mathematics",
+      "topic": "arithmetic",
+      "description": "Understanding and calculating percentages.",
+      "status": "active"
+    },
+    {
+      "concept_id": "ratio",
+      "canonical_name": "ratio",
+      "domain": "mathematics",
+      "topic": "arithmetic",
+      "description": "Comparing quantities using ratios.",
+      "status": "active"
+    },
+    {
+      "concept_id": "proportion",
+      "canonical_name": "proportion",
+      "domain": "mathematics",
+      "topic": "arithmetic",
+      "description": "Solving relationships involving proportional quantities.",
+      "status": "active"
+    },
+    {
+      "concept_id": "linear_equation",
+      "canonical_name": "linear_equation",
+      "domain": "mathematics",
+      "topic": "algebra",
+      "description": "Solving equations of first degree.",
+      "status": "active"
+    },
+    {
+      "concept_id": "linear_inequality",
+      "canonical_name": "linear_inequality",
+      "domain": "mathematics",
+      "topic": "algebra",
+      "description": "Solving inequalities involving linear expressions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "quadratic_equation",
+      "canonical_name": "quadratic_equation",
+      "domain": "mathematics",
+      "topic": "algebra",
+      "description": "Solving equations of second degree.",
+      "status": "active"
+    },
+    {
+      "concept_id": "quadratic_formula",
+      "canonical_name": "quadratic_formula",
+      "domain": "mathematics",
+      "topic": "algebra",
+      "description": "Using the quadratic formula to solve quadratic equations.",
+      "status": "active"
+    },
+    {
+      "concept_id": "polynomial_operations",
+      "canonical_name": "polynomial_operations",
+      "domain": "mathematics",
+      "topic": "algebra",
+      "description": "Adding, subtracting, and multiplying polynomials.",
+      "status": "active"
+    },
+    {
+      "concept_id": "exponentiation",
+      "canonical_name": "exponentiation",
+      "domain": "mathematics",
+      "topic": "arithmetic",
+      "description": "Working with powers and exponents.",
+      "status": "active"
+    },
+    {
+      "concept_id": "square_root",
+      "canonical_name": "square_root",
+      "domain": "mathematics",
+      "topic": "arithmetic",
+      "description": "Understanding and calculating square roots.",
+      "status": "active"
+    },
+    {
+      "concept_id": "probability",
+      "canonical_name": "probability",
+      "domain": "mathematics",
+      "topic": "statistics_and_probability",
+      "description": "Calculating the likelihood of events.",
+      "status": "active"
+    },
+    {
+      "concept_id": "mean_median_mode",
+      "canonical_name": "mean_median_mode",
+      "domain": "mathematics",
+      "topic": "statistics_and_probability",
+      "description": "Calculating and interpreting common measures of central tendency.",
+      "status": "active"
+    },
+    {
+      "concept_id": "rectangle_area",
+      "canonical_name": "rectangle_area",
+      "domain": "mathematics",
+      "topic": "geometry",
+      "description": "Calculating the area of rectangles.",
+      "status": "active"
+    },
+    {
+      "concept_id": "distance_displacement",
+      "canonical_name": "distance_displacement",
+      "domain": "physics",
+      "topic": "kinematics",
+      "description": "Distinguishing distance from displacement.",
+      "status": "active"
+    },
+    {
+      "concept_id": "speed",
+      "canonical_name": "speed",
+      "domain": "physics",
+      "topic": "kinematics",
+      "description": "Calculating and interpreting speed.",
+      "status": "active"
+    },
+    {
+      "concept_id": "velocity",
+      "canonical_name": "velocity",
+      "domain": "physics",
+      "topic": "kinematics",
+      "description": "Calculating and interpreting velocity.",
+      "status": "active"
+    },
+    {
+      "concept_id": "acceleration",
+      "canonical_name": "acceleration",
+      "domain": "physics",
+      "topic": "kinematics",
+      "description": "Understanding changes in velocity over time.",
+      "status": "active"
+    },
+    {
+      "concept_id": "motion_graphs",
+      "canonical_name": "motion_graphs",
+      "domain": "physics",
+      "topic": "kinematics",
+      "description": "Interpreting position, velocity, and motion graphs.",
+      "status": "active"
+    },
+    {
+      "concept_id": "force",
+      "canonical_name": "force",
+      "domain": "physics",
+      "topic": "mechanics",
+      "description": "Understanding force as an interaction that changes motion.",
+      "status": "active"
+    },
+    {
+      "concept_id": "newtons_first_law",
+      "canonical_name": "newtons_first_law",
+      "domain": "physics",
+      "topic": "mechanics",
+      "description": "Applying Newton's first law of motion.",
+      "status": "active"
+    },
+    {
+      "concept_id": "newtons_second_law",
+      "canonical_name": "newtons_second_law",
+      "domain": "physics",
+      "topic": "mechanics",
+      "description": "Relating force, mass, and acceleration.",
+      "status": "active"
+    },
+    {
+      "concept_id": "newtons_third_law",
+      "canonical_name": "newtons_third_law",
+      "domain": "physics",
+      "topic": "mechanics",
+      "description": "Applying Newton's third law of motion.",
+      "status": "active"
+    },
+    {
+      "concept_id": "work",
+      "canonical_name": "work",
+      "domain": "physics",
+      "topic": "mechanics",
+      "description": "Understanding mechanical work.",
+      "status": "active"
+    },
+    {
+      "concept_id": "kinetic_energy",
+      "canonical_name": "kinetic_energy",
+      "domain": "physics",
+      "topic": "energy",
+      "description": "Understanding energy associated with motion.",
+      "status": "active"
+    },
+    {
+      "concept_id": "potential_energy",
+      "canonical_name": "potential_energy",
+      "domain": "physics",
+      "topic": "energy",
+      "description": "Understanding stored potential energy.",
+      "status": "active"
+    },
+    {
+      "concept_id": "momentum",
+      "canonical_name": "momentum",
+      "domain": "physics",
+      "topic": "mechanics",
+      "description": "Understanding linear momentum.",
+      "status": "active"
+    },
+    {
+      "concept_id": "electric_current",
+      "canonical_name": "electric_current",
+      "domain": "physics",
+      "topic": "electricity",
+      "description": "Understanding electric current in circuits.",
+      "status": "active"
+    },
+    {
+      "concept_id": "ohms_law",
+      "canonical_name": "ohms_law",
+      "domain": "physics",
+      "topic": "electricity",
+      "description": "Relating voltage, current, and resistance.",
+      "status": "active"
+    },
+    {
+      "concept_id": "atomic_structure",
+      "canonical_name": "atomic_structure",
+      "domain": "chemistry",
+      "topic": "general_chemistry",
+      "description": "Understanding the structure of atoms.",
+      "status": "active"
+    },
+    {
+      "concept_id": "periodic_table",
+      "canonical_name": "periodic_table",
+      "domain": "chemistry",
+      "topic": "general_chemistry",
+      "description": "Interpreting organization and trends in the periodic table.",
+      "status": "active"
+    },
+    {
+      "concept_id": "chemical_bond",
+      "canonical_name": "chemical_bond",
+      "domain": "chemistry",
+      "topic": "chemical_bonding",
+      "description": "Understanding chemical bonding between atoms.",
+      "status": "active"
+    },
+    {
+      "concept_id": "ionic_bond",
+      "canonical_name": "ionic_bond",
+      "domain": "chemistry",
+      "topic": "chemical_bonding",
+      "description": "Understanding ionic bonding.",
+      "status": "active"
+    },
+    {
+      "concept_id": "covalent_bond",
+      "canonical_name": "covalent_bond",
+      "domain": "chemistry",
+      "topic": "chemical_bonding",
+      "description": "Understanding covalent bonding.",
+      "status": "active"
+    },
+    {
+      "concept_id": "chemical_formula",
+      "canonical_name": "chemical_formula",
+      "domain": "chemistry",
+      "topic": "chemical_language",
+      "description": "Interpreting and constructing chemical formulas.",
+      "status": "active"
+    },
+    {
+      "concept_id": "chemical_equation",
+      "canonical_name": "chemical_equation",
+      "domain": "chemistry",
+      "topic": "chemical_reactions",
+      "description": "Representing chemical reactions with equations.",
+      "status": "active"
+    },
+    {
+      "concept_id": "reaction_balancing",
+      "canonical_name": "reaction_balancing",
+      "domain": "chemistry",
+      "topic": "chemical_reactions",
+      "description": "Balancing chemical equations.",
+      "status": "active"
+    },
+    {
+      "concept_id": "mole_concept",
+      "canonical_name": "mole_concept",
+      "domain": "chemistry",
+      "topic": "quantitative_chemistry",
+      "description": "Understanding the mole as a counting unit.",
+      "status": "active"
+    },
+    {
+      "concept_id": "molar_mass",
+      "canonical_name": "molar_mass",
+      "domain": "chemistry",
+      "topic": "quantitative_chemistry",
+      "description": "Calculating molar mass.",
+      "status": "active"
+    },
+    {
+      "concept_id": "stoichiometry",
+      "canonical_name": "stoichiometry",
+      "domain": "chemistry",
+      "topic": "quantitative_chemistry",
+      "description": "Calculating quantitative relationships in chemical reactions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "acid_base",
+      "canonical_name": "acid_base",
+      "domain": "chemistry",
+      "topic": "solutions_and_acids",
+      "description": "Understanding acids and bases.",
+      "status": "active"
+    },
+    {
+      "concept_id": "ph_scale",
+      "canonical_name": "ph_scale",
+      "domain": "chemistry",
+      "topic": "solutions_and_acids",
+      "description": "Interpreting pH and acidity/basicity.",
+      "status": "active"
+    },
+    {
+      "concept_id": "chemical_equilibrium",
+      "canonical_name": "chemical_equilibrium",
+      "domain": "chemistry",
+      "topic": "chemical_reactions",
+      "description": "Understanding dynamic equilibrium in reversible reactions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "oxidation_reduction",
+      "canonical_name": "oxidation_reduction",
+      "domain": "chemistry",
+      "topic": "chemical_reactions",
+      "description": "Understanding oxidation and reduction processes.",
+      "status": "active"
+    },
+    {
+      "concept_id": "cell_structure",
+      "canonical_name": "cell_structure",
+      "domain": "biology",
+      "topic": "cell_biology",
+      "description": "Understanding the structures and functions of cells.",
+      "status": "active"
+    },
+    {
+      "concept_id": "cell_membrane",
+      "canonical_name": "cell_membrane",
+      "domain": "biology",
+      "topic": "cell_biology",
+      "description": "Understanding the structure and transport role of cell membranes.",
+      "status": "active"
+    },
+    {
+      "concept_id": "cellular_transport",
+      "canonical_name": "cellular_transport",
+      "domain": "biology",
+      "topic": "cell_biology",
+      "description": "Understanding movement of substances across cell membranes.",
+      "status": "active"
+    },
+    {
+      "concept_id": "mitosis",
+      "canonical_name": "mitosis",
+      "domain": "biology",
+      "topic": "cell_division",
+      "description": "Understanding mitotic cell division.",
+      "status": "active"
+    },
+    {
+      "concept_id": "meiosis",
+      "canonical_name": "meiosis",
+      "domain": "biology",
+      "topic": "cell_division",
+      "description": "Understanding meiotic cell division.",
+      "status": "active"
+    },
+    {
+      "concept_id": "dna_structure",
+      "canonical_name": "dna_structure",
+      "domain": "biology",
+      "topic": "genetics",
+      "description": "Understanding DNA structure.",
+      "status": "active"
+    },
+    {
+      "concept_id": "dna_replication",
+      "canonical_name": "dna_replication",
+      "domain": "biology",
+      "topic": "genetics",
+      "description": "Understanding how DNA is replicated.",
+      "status": "active"
+    },
+    {
+      "concept_id": "gene_expression",
+      "canonical_name": "gene_expression",
+      "domain": "biology",
+      "topic": "genetics",
+      "description": "Understanding how genetic information is expressed.",
+      "status": "active"
+    },
+    {
+      "concept_id": "genetics",
+      "canonical_name": "genetics",
+      "domain": "biology",
+      "topic": "genetics",
+      "description": "Understanding inheritance and genetic variation.",
+      "status": "active"
+    },
+    {
+      "concept_id": "natural_selection",
+      "canonical_name": "natural_selection",
+      "domain": "biology",
+      "topic": "evolution",
+      "description": "Understanding natural selection as a mechanism of evolution.",
+      "status": "active"
+    },
+    {
+      "concept_id": "photosynthesis",
+      "canonical_name": "photosynthesis",
+      "domain": "biology",
+      "topic": "plant_biology",
+      "description": "Understanding conversion of light energy into chemical energy in plants.",
+      "status": "active"
+    },
+    {
+      "concept_id": "cellular_respiration",
+      "canonical_name": "cellular_respiration",
+      "domain": "biology",
+      "topic": "cellular_metabolism",
+      "description": "Understanding cellular energy production.",
+      "status": "active"
+    },
+    {
+      "concept_id": "ecosystem",
+      "canonical_name": "ecosystem",
+      "domain": "biology",
+      "topic": "ecology",
+      "description": "Understanding interactions among organisms and their environment.",
+      "status": "active"
+    },
+    {
+      "concept_id": "food_chain",
+      "canonical_name": "food_chain",
+      "domain": "biology",
+      "topic": "ecology",
+      "description": "Understanding transfer of energy through feeding relationships.",
+      "status": "active"
+    },
+    {
+      "concept_id": "homeostasis",
+      "canonical_name": "homeostasis",
+      "domain": "biology",
+      "topic": "physiology",
+      "description": "Understanding regulation of stable internal conditions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "variable",
+      "canonical_name": "variable",
+      "domain": "computer_science",
+      "topic": "programming",
+      "description": "Understanding variables and stored values in programs.",
+      "status": "active"
+    },
+    {
+      "concept_id": "data_type",
+      "canonical_name": "data_type",
+      "domain": "computer_science",
+      "topic": "programming",
+      "description": "Understanding types of data handled by programs.",
+      "status": "active"
+    },
+    {
+      "concept_id": "conditional_statement",
+      "canonical_name": "conditional_statement",
+      "domain": "computer_science",
+      "topic": "programming",
+      "description": "Using conditions to control program execution.",
+      "status": "active"
+    },
+    {
+      "concept_id": "loop",
+      "canonical_name": "loop",
+      "domain": "computer_science",
+      "topic": "programming",
+      "description": "Using repetition constructs in programs.",
+      "status": "active"
+    },
+    {
+      "concept_id": "function",
+      "canonical_name": "function",
+      "domain": "computer_science",
+      "topic": "programming",
+      "description": "Defining and using reusable functions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "recursion",
+      "canonical_name": "recursion",
+      "domain": "computer_science",
+      "topic": "programming",
+      "description": "Solving problems through recursive function calls.",
+      "status": "active"
+    },
+    {
+      "concept_id": "algorithm",
+      "canonical_name": "algorithm",
+      "domain": "computer_science",
+      "topic": "algorithms",
+      "description": "Understanding step-by-step computational procedures.",
+      "status": "active"
+    },
+    {
+      "concept_id": "algorithm_complexity",
+      "canonical_name": "algorithm_complexity",
+      "domain": "computer_science",
+      "topic": "algorithms",
+      "description": "Analyzing computational complexity of algorithms.",
+      "status": "active"
+    },
+    {
+      "concept_id": "array",
+      "canonical_name": "array",
+      "domain": "computer_science",
+      "topic": "data_structures",
+      "description": "Understanding indexed collections of values.",
+      "status": "active"
+    },
+    {
+      "concept_id": "linked_list",
+      "canonical_name": "linked_list",
+      "domain": "computer_science",
+      "topic": "data_structures",
+      "description": "Understanding linked-list data structures.",
+      "status": "active"
+    },
+    {
+      "concept_id": "stack",
+      "canonical_name": "stack",
+      "domain": "computer_science",
+      "topic": "data_structures",
+      "description": "Understanding last-in-first-out stack structures.",
+      "status": "active"
+    },
+    {
+      "concept_id": "queue",
+      "canonical_name": "queue",
+      "domain": "computer_science",
+      "topic": "data_structures",
+      "description": "Understanding first-in-first-out queue structures.",
+      "status": "active"
+    },
+    {
+      "concept_id": "tree",
+      "canonical_name": "tree",
+      "domain": "computer_science",
+      "topic": "data_structures",
+      "description": "Understanding hierarchical tree data structures.",
+      "status": "active"
+    },
+    {
+      "concept_id": "database",
+      "canonical_name": "database",
+      "domain": "computer_science",
+      "topic": "data_management",
+      "description": "Understanding structured storage and retrieval of data.",
+      "status": "active"
+    },
+    {
+      "concept_id": "sql_query",
+      "canonical_name": "sql_query",
+      "domain": "computer_science",
+      "topic": "databases",
+      "description": "Writing and understanding SQL queries.",
+      "status": "active"
+    },
+    {
+      "concept_id": "subject_verb_agreement",
+      "canonical_name": "subject_verb_agreement",
+      "domain": "languages",
+      "topic": "english_grammar",
+      "description": "Matching subjects and verbs correctly.",
+      "status": "active"
+    },
+    {
+      "concept_id": "verb_tense",
+      "canonical_name": "verb_tense",
+      "domain": "languages",
+      "topic": "english_grammar",
+      "description": "Using and distinguishing English verb tenses.",
+      "status": "active"
+    },
+    {
+      "concept_id": "modal_verbs",
+      "canonical_name": "modal_verbs",
+      "domain": "languages",
+      "topic": "english_grammar",
+      "description": "Using modal verbs to express ability, possibility, obligation, and related meanings.",
+      "status": "active"
+    },
+    {
+      "concept_id": "passive_voice",
+      "canonical_name": "passive_voice",
+      "domain": "languages",
+      "topic": "english_grammar",
+      "description": "Understanding and forming passive constructions.",
+      "status": "active"
+    },
+    {
+      "concept_id": "conditional_sentence",
+      "canonical_name": "conditional_sentence",
+      "domain": "languages",
+      "topic": "english_grammar",
+      "description": "Understanding and using conditional sentences.",
+      "status": "active"
+    },
+    {
+      "concept_id": "reading_comprehension",
+      "canonical_name": "reading_comprehension",
+      "domain": "languages",
+      "topic": "english_reading",
+      "description": "Extracting and interpreting meaning from written passages.",
+      "status": "active"
+    },
+    {
+      "concept_id": "vocabulary_in_context",
+      "canonical_name": "vocabulary_in_context",
+      "domain": "languages",
+      "topic": "english_vocabulary",
+      "description": "Inferring word meaning from contextual clues.",
+      "status": "active"
+    },
+    {
+      "concept_id": "paragraph_structure",
+      "canonical_name": "paragraph_structure",
+      "domain": "languages",
+      "topic": "writing",
+      "description": "Organizing ideas into coherent paragraphs.",
+      "status": "active"
+    },
+    {
+      "concept_id": "historical_chronology",
+      "canonical_name": "historical_chronology",
+      "domain": "history",
+      "topic": "historical_thinking",
+      "description": "Ordering and relating events in historical time.",
+      "status": "active"
+    },
+    {
+      "concept_id": "cause_and_effect",
+      "canonical_name": "cause_and_effect",
+      "domain": "history",
+      "topic": "historical_thinking",
+      "description": "Analyzing causal relationships among historical events.",
+      "status": "active"
+    },
+    {
+      "concept_id": "historical_evidence",
+      "canonical_name": "historical_evidence",
+      "domain": "history",
+      "topic": "historical_thinking",
+      "description": "Evaluating evidence used to understand historical events.",
+      "status": "active"
+    },
+    {
+      "concept_id": "historical_perspective",
+      "canonical_name": "historical_perspective",
+      "domain": "history",
+      "topic": "historical_thinking",
+      "description": "Interpreting events from different historical perspectives.",
+      "status": "active"
+    },
+    {
+      "concept_id": "map_interpretation",
+      "canonical_name": "map_interpretation",
+      "domain": "geography",
+      "topic": "geographic_skills",
+      "description": "Reading and interpreting maps.",
+      "status": "active"
+    },
+    {
+      "concept_id": "latitude_longitude",
+      "canonical_name": "latitude_longitude",
+      "domain": "geography",
+      "topic": "geographic_skills",
+      "description": "Using latitude and longitude to locate places.",
+      "status": "active"
+    },
+    {
+      "concept_id": "climate_patterns",
+      "canonical_name": "climate_patterns",
+      "domain": "geography",
+      "topic": "physical_geography",
+      "description": "Understanding geographic patterns of climate.",
+      "status": "active"
+    },
+    {
+      "concept_id": "population_distribution",
+      "canonical_name": "population_distribution",
+      "domain": "geography",
+      "topic": "human_geography",
+      "description": "Understanding how populations are distributed geographically.",
+      "status": "active"
+    },
+    {
+      "concept_id": "supply_demand",
+      "canonical_name": "supply_demand",
+      "domain": "economics",
+      "topic": "microeconomics",
+      "description": "Understanding interactions between supply and demand.",
+      "status": "active"
+    },
+    {
+      "concept_id": "opportunity_cost",
+      "canonical_name": "opportunity_cost",
+      "domain": "economics",
+      "topic": "economic_reasoning",
+      "description": "Understanding the value of the next-best alternative forgone.",
+      "status": "active"
+    },
+    {
+      "concept_id": "inflation",
+      "canonical_name": "inflation",
+      "domain": "economics",
+      "topic": "macroeconomics",
+      "description": "Understanding sustained increases in the general price level.",
+      "status": "active"
+    },
+    {
+      "concept_id": "market_equilibrium",
+      "canonical_name": "market_equilibrium",
+      "domain": "economics",
+      "topic": "microeconomics",
+      "description": "Understanding equilibrium between market supply and demand.",
+      "status": "active"
+    }
+  ]
+}

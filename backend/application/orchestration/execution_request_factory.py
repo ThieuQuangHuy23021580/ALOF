@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from backend.domain.student.student import Student
-from backend.schema.chat import ChatRequest
 
 from .execution_request import ExecutionRequest
 

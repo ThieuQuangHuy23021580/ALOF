@@ -170,6 +170,36 @@ class AdaptiveTeachingActionSelector:
         Select an adaptive teaching action from
         the learner diagnosis.
         """
+        # ------------------------------------------------------
+        # Introduce new concepts.
+        # ------------------------------------------------------
+
+        introduce_concepts = [
+            concept_id
+            for concept_id in diagnosis.primary_concepts
+            if (
+                concept_id in diagnosis.concepts
+                and diagnosis.concepts[concept_id].attempts == 0
+                and not diagnosis.concepts[
+                    concept_id
+                ].has_relevant_evidence
+                and not diagnosis.concepts[
+                    concept_id
+                ].has_recent_evidence
+            )
+        ]
+
+        if introduce_concepts:
+            return AdaptiveTeachingAction(
+                action=TeachingActionType.INTRODUCE,
+                strategy=TeachingStrategy.DIRECT_EXPLANATION,
+                difficulty="beginner",
+                reason=(
+                    "The learner has no prior knowledge "
+                    "or historical evidence for the required concept."
+                ),
+            )
+
 
         if not diagnosis.concepts:
             return AdaptiveTeachingAction(

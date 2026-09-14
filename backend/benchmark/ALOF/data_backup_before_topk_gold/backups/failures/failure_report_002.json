@@ -1,0 +1,14 @@
+{
+  "total_cases": 30,
+  "failed_cases": 0,
+  "semantic_pass_cases": 30,
+  "semantic_fail_cases": 0,
+  "failure_counts": {
+    "execution": 0,
+    "memory": 0,
+    "diagnosis": 0,
+    "strategy": 0,
+    "response": 0
+  },
+  "failures": []
+}
