@@ -574,38 +574,56 @@ class ALOFBenchmarkEvaluator:
     # Memory evaluation
     # ==========================================================
 
+    @staticmethod
+    def _expected_memory_fields(
+        expected: dict[str, Any],
+    ) -> tuple[list[str], list[str], str]:
+        """
+        Returns:
+            primary_ids   -> dùng cho pass/fail
+            relevant_ids  -> dùng cho metric phụ
+            gold_source   -> "top_k" | "legacy_relevant"
+        """
+        top_k_ids = [
+            str(v).strip()
+            for v in ALOFBenchmarkEvaluator._as_list(
+                expected.get("top_k_interactions")
+            )
+            if str(v).strip()
+        ]
+        relevant_ids = [
+            str(v).strip()
+            for v in ALOFBenchmarkEvaluator._as_list(
+                expected.get("relevant_interactions")
+            )
+            if str(v).strip()
+        ]
+
+        if top_k_ids:
+            return top_k_ids, relevant_ids, "top_k"
+
+        return relevant_ids, relevant_ids, "legacy_relevant"
+
     def evaluate_memory(
         self,
         expected: dict[str, Any],
         result: dict[str, Any],
     ) -> dict[str, Any]:
-        expected_ids = [
-            str(value).strip()
-            for value in self._as_list(
-                expected.get(
-                    "relevant_interactions",
-                    [],
-                )
-            )
-            if str(value).strip()
-        ]
-
-        actual_ids = self._extract_memory_ids(
-            result,
+        expected_ids, relevant_ids, gold_source = (
+            self._expected_memory_fields(expected)
         )
 
-        expected_set = set(
-            expected_ids,
-        )
+        actual_ids = self._extract_memory_ids(result)
 
-        actual_set = set(
-            actual_ids,
-        )
+        expected_set = set(expected_ids)
+        actual_set = set(actual_ids)
+        relevant_set = set(relevant_ids)
 
         if not expected_set:
             return {
                 "status": "not_applicable",
                 "pass": True,
+                "gold_source": gold_source,
                 "expected": [],
                 "actual": actual_ids,
                 "precision": 1.0,
@@ -614,63 +632,45 @@ class ALOFBenchmarkEvaluator:
                 "matched": [],
                 "missing": [],
                 "extra": actual_ids,
+                "relevant_recall": 1.0,
             }
 
-        matched = sorted(
-            expected_set & actual_set,
-        )
+        matched = sorted(expected_set & actual_set)
+        missing = sorted(expected_set - actual_set)
+        extra = sorted(actual_set - expected_set)
 
-        missing = sorted(
-            expected_set - actual_set,
-        )
-
-        extra = sorted(
-            actual_set - expected_set,
-        )
-
-        precision = (
-            len(matched) / len(actual_set)
-            if actual_set
-            else 0.0
-        )
-
-        recall = (
-            len(matched) / len(expected_set)
-            if expected_set
-            else 0.0
-        )
-
+        precision = len(matched) / len(actual_set) if actual_set else 0.0
+        recall = len(matched) / len(expected_set) if expected_set else 0.0
         f1 = (
-            2 * precision * recall
-            / (precision + recall)
+            2 * precision * recall / (precision + recall)
             if precision + recall > 0
             else 0.0
         )
 
+        relevant_recall = (
+            len(actual_set & relevant_set) / len(relevant_set)
+            if relevant_set
+            else 1.0
+        )
+
+        # Top-K benchmark: exact set match
+        passed = expected_set == actual_set
+
         return {
             "status": "evaluated",
-            "pass": (
-                len(missing) == 0
-            ),
+            "pass": passed,
+            "gold_source": gold_source,
             "expected": expected_ids,
             "actual": actual_ids,
-            "precision": round(
-                precision,
-                4,
-            ),
-            "recall": round(
-                recall,
-                4,
-            ),
-            "f1": round(
-                f1,
-                4,
-            ),
+            "precision": round(precision, 4),
+            "recall": round(recall, 4),
+            "f1": round(f1, 4),
             "matched": matched,
             "missing": missing,
             "extra": extra,
+            "relevant_recall": round(relevant_recall, 4),
         }
-
+    
     # ==========================================================
     # Diagnosis helpers
     # ==========================================================
@@ -1971,7 +1971,7 @@ def main() -> None:
         "--dataset",
         default=(
             "backend/benchmark/ALOF/"
-            "data/long_context/adaptive_learning_vi_longcontext_easy.jsonl"
+            "data/multi_concept/adaptive_learning_vi_multiconcept_hard.jsonl"
         ),
     )
 
@@ -1979,7 +1979,7 @@ def main() -> None:
         "--results",
         default=(
             "backend/benchmark/ALOF/"
-            "results/results_longcontext_easy.jsonl"
+            "results/results_multiconcept_hard.jsonl"
         ),
     )
 
@@ -1987,7 +1987,7 @@ def main() -> None:
         "--report",
         default=(
             "backend/benchmark/ALOF/reports/"
-            "report_longcontext_easy.json"
+            "report_multiconcept_hard.json"
         ),
         help="Path to the generated evaluation report.",
     )
@@ -1996,7 +1996,7 @@ def main() -> None:
         "--failure-report",
         default=(
             "backend/benchmark/ALOF/failure_reports/"
-            "failure_report_longcontext_easy.json"
+            "failure_report_multiconcept_hard.json"
         ),
         help=(
             "Path to the generated failure-only report."

@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     )
 
     groq_api_key: str = Field(
-        validation_alias="GROQ_API_KEY_3"
+        validation_alias="GROQ_API_KEY_2"
     )
 
     model_name: str = Field(

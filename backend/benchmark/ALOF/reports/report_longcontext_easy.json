@@ -2,13 +2,13 @@
   "total_cases": 50,
   "successful_cases": 50,
   "execution_success_rate": 1.0,
-  "semantic_pass_cases": 37,
-  "semantic_pass_rate": 0.74,
+  "semantic_pass_cases": 50,
+  "semantic_pass_rate": 1.0,
   "memory": {
     "evaluated_cases": 50,
-    "pass_cases": 37,
-    "pass_rate": 0.74,
-    "mean_f1": 0.948
+    "pass_cases": 50,
+    "pass_rate": 1.0,
+    "mean_f1": 1.0
   },
   "diagnosis": {
     "evaluated_cases": 50,
@@ -35,6 +35,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc00106",
             "qlc00104",
@@ -60,7 +61,8 @@
             "qlc00107"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -112,13 +114,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc00207",
             "qlc00205",
             "qlc00202",
             "qlc00206",
-            "qlc00204"
+            "qlc00203"
           ],
           "actual": [
             "qlc00207",
@@ -127,21 +130,19 @@
             "qlc00206",
             "qlc00203"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc00202",
+            "qlc00203",
             "qlc00205",
             "qlc00206",
             "qlc00207"
           ],
-          "missing": [
-            "qlc00204"
-          ],
-          "extra": [
-            "qlc00203"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -180,12 +181,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_003",
@@ -194,12 +195,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc00307",
             "qlc00305",
             "qlc00303",
-            "qlc00304",
-            "qlc00306"
+            "qlc00306",
+            "qlc00304"
           ],
           "actual": [
             "qlc00307",
@@ -219,7 +221,8 @@
             "qlc00307"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -272,12 +275,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc00407",
             "qlc00404",
             "qlc00403",
-            "qlc00405",
-            "qlc00406"
+            "qlc00406",
+            "qlc00405"
           ],
           "actual": [
             "qlc00407",
@@ -297,7 +301,8 @@
             "qlc00407"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -349,13 +354,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc00507",
             "qlc00505",
             "qlc00501",
             "qlc00506",
-            "qlc00504"
+            "qlc00503"
           ],
           "actual": [
             "qlc00507",
@@ -364,21 +370,19 @@
             "qlc00506",
             "qlc00503"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc00501",
+            "qlc00503",
             "qlc00505",
             "qlc00506",
             "qlc00507"
           ],
-          "missing": [
-            "qlc00504"
-          ],
-          "extra": [
-            "qlc00503"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -417,12 +421,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_006",
@@ -430,13 +434,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc00606",
             "qlc00604",
             "qlc00601",
             "qlc00607",
-            "qlc00605"
+            "qlc00603"
           ],
           "actual": [
             "qlc00606",
@@ -445,21 +450,19 @@
             "qlc00607",
             "qlc00603"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc00601",
+            "qlc00603",
             "qlc00604",
             "qlc00606",
             "qlc00607"
           ],
-          "missing": [
-            "qlc00605"
-          ],
-          "extra": [
-            "qlc00603"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -498,12 +501,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_007",
@@ -511,13 +514,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc00707",
             "qlc00705",
             "qlc00702",
             "qlc00706",
-            "qlc00704"
+            "qlc00703"
           ],
           "actual": [
             "qlc00707",
@@ -526,21 +530,19 @@
             "qlc00706",
             "qlc00703"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc00702",
+            "qlc00703",
             "qlc00705",
             "qlc00706",
             "qlc00707"
           ],
-          "missing": [
-            "qlc00704"
-          ],
-          "extra": [
-            "qlc00703"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -579,12 +581,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_008",
@@ -593,6 +595,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc00807",
             "qlc00805",
@@ -618,7 +621,8 @@
             "qlc00807"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -671,12 +675,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc00907",
             "qlc00904",
             "qlc00903",
-            "qlc00905",
-            "qlc00906"
+            "qlc00906",
+            "qlc00905"
           ],
           "actual": [
             "qlc00907",
@@ -696,7 +701,8 @@
             "qlc00907"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -748,13 +754,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc01007",
             "qlc01005",
             "qlc01001",
             "qlc01006",
-            "qlc01004"
+            "qlc01003"
           ],
           "actual": [
             "qlc01007",
@@ -763,21 +770,19 @@
             "qlc01006",
             "qlc01003"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc01001",
+            "qlc01003",
             "qlc01005",
             "qlc01006",
             "qlc01007"
           ],
-          "missing": [
-            "qlc01004"
-          ],
-          "extra": [
-            "qlc01003"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -816,12 +821,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_011",
@@ -830,6 +835,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc01106",
             "qlc01104",
@@ -855,7 +861,8 @@
             "qlc01107"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -907,13 +914,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc01207",
             "qlc01205",
             "qlc01202",
-            "qlc01204",
-            "qlc01206"
+            "qlc01206",
+            "qlc01203"
           ],
           "actual": [
             "qlc01207",
@@ -922,21 +930,19 @@
             "qlc01206",
             "qlc01203"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc01202",
+            "qlc01203",
             "qlc01205",
             "qlc01206",
             "qlc01207"
           ],
-          "missing": [
-            "qlc01204"
-          ],
-          "extra": [
-            "qlc01203"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -975,12 +981,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_013",
@@ -989,6 +995,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc01307",
             "qlc01305",
@@ -1014,7 +1021,8 @@
             "qlc01307"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1067,12 +1075,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc01407",
             "qlc01404",
             "qlc01403",
-            "qlc01406",
-            "qlc01405"
+            "qlc01405",
+            "qlc01406"
           ],
           "actual": [
             "qlc01407",
@@ -1092,7 +1101,8 @@
             "qlc01407"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1144,13 +1154,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc01507",
             "qlc01505",
             "qlc01501",
             "qlc01506",
-            "qlc01504"
+            "qlc01503"
           ],
           "actual": [
             "qlc01507",
@@ -1159,21 +1170,19 @@
             "qlc01506",
             "qlc01503"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc01501",
+            "qlc01503",
             "qlc01505",
             "qlc01506",
             "qlc01507"
           ],
-          "missing": [
-            "qlc01504"
-          ],
-          "extra": [
-            "qlc01503"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1212,12 +1221,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_016",
@@ -1226,6 +1235,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc01606",
             "qlc01604",
@@ -1251,7 +1261,8 @@
             "qlc01607"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1304,6 +1315,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc01707",
             "qlc01705",
@@ -1329,7 +1341,8 @@
             "qlc01707"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1382,6 +1395,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc01807",
             "qlc01805",
@@ -1407,7 +1421,8 @@
             "qlc01807"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1460,6 +1475,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc01907",
             "qlc01904",
@@ -1485,7 +1501,8 @@
             "qlc01907"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1538,12 +1555,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc02007",
             "qlc02005",
             "qlc02001",
-            "qlc02006",
-            "qlc02004"
+            "qlc02004",
+            "qlc02006"
           ],
           "actual": [
             "qlc02007",
@@ -1563,7 +1581,8 @@
             "qlc02007"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1615,13 +1634,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc02106",
             "qlc02104",
             "qlc02101",
             "qlc02107",
-            "qlc02103"
+            "qlc02105"
           ],
           "actual": [
             "qlc02106",
@@ -1630,21 +1650,19 @@
             "qlc02107",
             "qlc02105"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc02101",
             "qlc02104",
+            "qlc02105",
             "qlc02106",
             "qlc02107"
           ],
-          "missing": [
-            "qlc02103"
-          ],
-          "extra": [
-            "qlc02105"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1683,12 +1701,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_022",
@@ -1696,13 +1714,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc02207",
             "qlc02205",
             "qlc02202",
             "qlc02206",
-            "qlc02204"
+            "qlc02203"
           ],
           "actual": [
             "qlc02207",
@@ -1711,21 +1730,19 @@
             "qlc02206",
             "qlc02203"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc02202",
+            "qlc02203",
             "qlc02205",
             "qlc02206",
             "qlc02207"
           ],
-          "missing": [
-            "qlc02204"
-          ],
-          "extra": [
-            "qlc02203"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1764,12 +1781,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_023",
@@ -1778,6 +1795,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc02307",
             "qlc02305",
@@ -1803,7 +1821,8 @@
             "qlc02307"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1856,6 +1875,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc02407",
             "qlc02404",
@@ -1881,7 +1901,8 @@
             "qlc02407"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -1934,12 +1955,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc02507",
             "qlc02505",
             "qlc02501",
-            "qlc02506",
-            "qlc02504"
+            "qlc02504",
+            "qlc02506"
           ],
           "actual": [
             "qlc02507",
@@ -1959,7 +1981,8 @@
             "qlc02507"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2012,12 +2035,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc02606",
             "qlc02604",
             "qlc02601",
-            "qlc02605",
-            "qlc02607"
+            "qlc02607",
+            "qlc02605"
           ],
           "actual": [
             "qlc02606",
@@ -2037,7 +2061,8 @@
             "qlc02607"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2090,12 +2115,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc02707",
             "qlc02705",
             "qlc02702",
-            "qlc02704",
-            "qlc02706"
+            "qlc02706",
+            "qlc02704"
           ],
           "actual": [
             "qlc02707",
@@ -2115,7 +2141,8 @@
             "qlc02707"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2168,6 +2195,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc02807",
             "qlc02805",
@@ -2193,7 +2221,8 @@
             "qlc02807"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2246,6 +2275,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc02907",
             "qlc02904",
@@ -2271,7 +2301,8 @@
             "qlc02907"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2323,13 +2354,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc03007",
             "qlc03005",
             "qlc03001",
-            "qlc03006",
-            "qlc03003"
+            "qlc03004",
+            "qlc03006"
           ],
           "actual": [
             "qlc03007",
@@ -2338,21 +2370,19 @@
             "qlc03004",
             "qlc03006"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc03001",
+            "qlc03004",
             "qlc03005",
             "qlc03006",
             "qlc03007"
           ],
-          "missing": [
-            "qlc03003"
-          ],
-          "extra": [
-            "qlc03004"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2391,12 +2421,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_031",
@@ -2405,6 +2435,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc03106",
             "qlc03104",
@@ -2430,7 +2461,8 @@
             "qlc03107"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2483,12 +2515,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc03207",
             "qlc03205",
             "qlc03202",
-            "qlc03206",
-            "qlc03204"
+            "qlc03204",
+            "qlc03206"
           ],
           "actual": [
             "qlc03207",
@@ -2508,7 +2541,8 @@
             "qlc03207"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2561,6 +2595,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc03307",
             "qlc03305",
@@ -2586,7 +2621,8 @@
             "qlc03307"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2639,6 +2675,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc03407",
             "qlc03404",
@@ -2664,7 +2701,8 @@
             "qlc03407"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2717,12 +2755,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc03507",
             "qlc03505",
             "qlc03501",
-            "qlc03506",
-            "qlc03504"
+            "qlc03504",
+            "qlc03506"
           ],
           "actual": [
             "qlc03507",
@@ -2742,7 +2781,8 @@
             "qlc03507"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2795,12 +2835,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc03606",
             "qlc03604",
             "qlc03601",
-            "qlc03607",
-            "qlc03605"
+            "qlc03605",
+            "qlc03607"
           ],
           "actual": [
             "qlc03606",
@@ -2820,7 +2861,8 @@
             "qlc03607"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2873,6 +2915,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc03707",
             "qlc03705",
@@ -2898,7 +2941,8 @@
             "qlc03707"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -2951,12 +2995,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc03807",
             "qlc03805",
             "qlc03803",
-            "qlc03806",
-            "qlc03804"
+            "qlc03804",
+            "qlc03806"
           ],
           "actual": [
             "qlc03807",
@@ -2976,7 +3021,8 @@
             "qlc03807"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3029,6 +3075,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc03907",
             "qlc03904",
@@ -3054,7 +3101,8 @@
             "qlc03907"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3106,13 +3154,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc04007",
             "qlc04005",
             "qlc04001",
-            "qlc04006",
-            "qlc04003"
+            "qlc04004",
+            "qlc04006"
           ],
           "actual": [
             "qlc04007",
@@ -3121,21 +3170,19 @@
             "qlc04004",
             "qlc04006"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc04001",
+            "qlc04004",
             "qlc04005",
             "qlc04006",
             "qlc04007"
           ],
-          "missing": [
-            "qlc04003"
-          ],
-          "extra": [
-            "qlc04004"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3174,12 +3221,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_041",
@@ -3188,12 +3235,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc04106",
             "qlc04104",
             "qlc04101",
-            "qlc04107",
-            "qlc04105"
+            "qlc04105",
+            "qlc04107"
           ],
           "actual": [
             "qlc04106",
@@ -3213,7 +3261,8 @@
             "qlc04107"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3266,6 +3315,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc04207",
             "qlc04205",
@@ -3291,7 +3341,8 @@
             "qlc04207"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3344,12 +3395,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc04307",
             "qlc04305",
             "qlc04303",
-            "qlc04306",
-            "qlc04304"
+            "qlc04304",
+            "qlc04306"
           ],
           "actual": [
             "qlc04307",
@@ -3369,7 +3421,8 @@
             "qlc04307"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3422,12 +3475,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc04407",
             "qlc04404",
             "qlc04403",
-            "qlc04405",
-            "qlc04406"
+            "qlc04406",
+            "qlc04405"
           ],
           "actual": [
             "qlc04407",
@@ -3447,7 +3501,8 @@
             "qlc04407"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3499,13 +3554,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc04507",
             "qlc04505",
             "qlc04501",
             "qlc04506",
-            "qlc04503"
+            "qlc04504"
           ],
           "actual": [
             "qlc04507",
@@ -3514,21 +3570,19 @@
             "qlc04506",
             "qlc04504"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc04501",
+            "qlc04504",
             "qlc04505",
             "qlc04506",
             "qlc04507"
           ],
-          "missing": [
-            "qlc04503"
-          ],
-          "extra": [
-            "qlc04504"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3567,12 +3621,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     },
     {
       "case_id": "adaptive_lc_046",
@@ -3581,12 +3635,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc04606",
             "qlc04604",
             "qlc04601",
-            "qlc04607",
-            "qlc04605"
+            "qlc04605",
+            "qlc04607"
           ],
           "actual": [
             "qlc04606",
@@ -3606,7 +3661,8 @@
             "qlc04607"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3659,6 +3715,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc04707",
             "qlc04705",
@@ -3684,7 +3741,8 @@
             "qlc04707"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3737,12 +3795,13 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc04807",
             "qlc04805",
             "qlc04803",
-            "qlc04806",
-            "qlc04804"
+            "qlc04804",
+            "qlc04806"
           ],
           "actual": [
             "qlc04807",
@@ -3762,7 +3821,8 @@
             "qlc04807"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3815,6 +3875,7 @@
         "memory": {
           "status": "evaluated",
           "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc04907",
             "qlc04904",
@@ -3840,7 +3901,8 @@
             "qlc04907"
           ],
           "missing": [],
-          "extra": []
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3892,13 +3954,14 @@
       "dimensions": {
         "memory": {
           "status": "evaluated",
-          "pass": false,
+          "pass": true,
+          "gold_source": "top_k",
           "expected": [
             "qlc05007",
             "qlc05005",
             "qlc05001",
             "qlc05006",
-            "qlc05004"
+            "qlc05003"
           ],
           "actual": [
             "qlc05007",
@@ -3907,21 +3970,19 @@
             "qlc05006",
             "qlc05003"
           ],
-          "precision": 0.8,
-          "recall": 0.8,
-          "f1": 0.8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
           "matched": [
             "qlc05001",
+            "qlc05003",
             "qlc05005",
             "qlc05006",
             "qlc05007"
           ],
-          "missing": [
-            "qlc05004"
-          ],
-          "extra": [
-            "qlc05003"
-          ]
+          "missing": [],
+          "extra": [],
+          "relevant_recall": 1.0
         },
         "diagnosis": {
           "status": "evaluated",
@@ -3960,12 +4021,12 @@
         }
       },
       "dimension_passes": {
-        "memory": false,
+        "memory": true,
         "diagnosis": true,
         "strategy": true,
         "response": true
       },
-      "semantic_pass": false
+      "semantic_pass": true
     }
   ]
 }
