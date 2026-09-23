@@ -1971,7 +1971,7 @@ def main() -> None:
         "--dataset",
         default=(
             "backend/benchmark/ALOF/"
-            "data/multi_concept/adaptive_learning_vi_multiconcept_hard.jsonl"
+            "data/strategy/adaptive_learning_vi_strategy_hard.jsonl"
         ),
     )
 
@@ -1979,7 +1979,7 @@ def main() -> None:
         "--results",
         default=(
             "backend/benchmark/ALOF/"
-            "results/results_multiconcept_hard.jsonl"
+            "results/results_strategy_hard.jsonl"
         ),
     )
 
@@ -1987,7 +1987,7 @@ def main() -> None:
         "--report",
         default=(
             "backend/benchmark/ALOF/reports/"
-            "report_multiconcept_hard.json"
+            "report_strategy_hard.json"
         ),
         help="Path to the generated evaluation report.",
     )
@@ -1996,7 +1996,7 @@ def main() -> None:
         "--failure-report",
         default=(
             "backend/benchmark/ALOF/failure_reports/"
-            "failure_report_multiconcept_hard.json"
+            "failure_report_strategy_hard.json"
         ),
         help=(
             "Path to the generated failure-only report."

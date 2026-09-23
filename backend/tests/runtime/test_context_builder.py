@@ -255,14 +255,13 @@ def test_context_builder_respects_memory_top_k():
 
     text = _message_text(messages)
 
-    # ContextBuilder currently uses MEMORY_TOP_K = 5.
     selected_ids = [
         f"q-{index}"
         for index in range(10)
         if f"q-{index}" in text
     ]
 
-    assert len(selected_ids) <= 5
+    assert len(selected_ids) <= ContextBuilder.MEMORY_TOP_K
 
 
 def test_context_builder_does_not_expose_gold_fields():
