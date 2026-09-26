@@ -675,7 +675,7 @@ def main() -> None:
         "--dataset",
         default=(
             "backend/benchmark/ALOF/"
-            "data/multi_concept/adaptive_learning_vi_multiconcept_hard.jsonl"
+            "data/backups/test.jsonl"
         ),
         help="Path to the benchmark dataset.",
     )
@@ -684,7 +684,7 @@ def main() -> None:
         "--output",
         default=(
             "backend/benchmark/ALOF/"
-            "results/results_multiconcept_hard.jsonl"
+            "data/backups/test_results.jsonl"
         ),
         help="Path to the JSONL result file.",
     )

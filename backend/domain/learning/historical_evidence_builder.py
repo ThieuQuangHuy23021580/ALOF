@@ -1,9 +1,13 @@
-
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from math import exp
 from typing import Any
 
+from backend.config.adaptive_retrieval import (
+    AdaptiveRetrievalConfig,
+    load_adaptive_retrieval_config,
+)
 from backend.domain.learning.historical_evidence import (
     HistoricalEvidence,
 )
@@ -17,22 +21,29 @@ from backend.domain.learning.learning_state import (
 
 class HistoricalEvidenceBuilder:
     """
-    Build canonical historical evidence for ALOF.
+    Build adaptive historical evidence for ALOF.
 
     Responsibilities
     ----------------
     - Preserve native LearningState interactions.
     - Normalize external history into LearningInteraction.
-    - Keep history_info and related_history semantically separate.
-    - Preserve evidence fields required for downstream retrieval/reasoning.
-    - Keep timestamp/correctness normalization deterministic.
-    - Prevent benchmark Gold annotations from entering ALOF evidence.
+    - Rank evidence using adaptive retrieval signals.
+    - Keep recent, relevant, and related evidence separate.
+    - Preserve deterministic retrieval behavior.
+    - Prevent benchmark Gold annotations from entering evidence.
+
+    Retrieval signals
+    -----------------
+    - concept relevance
+    - error relevance
+    - recency
+    - lexical question relevance
 
     This component does NOT:
     - perform diagnosis;
-    - rank evidence;
     - call an LLM;
-    - access Gold answers.
+    - access Gold answers;
+    - modify LearningState.
     """
 
     _GOLD_FIELDS = {
@@ -42,49 +53,34 @@ class HistoricalEvidenceBuilder:
     }
 
     _METADATA_FIELDS = {
-        # Benchmark / dataset identity
         "_key",
         "record_id",
         "event_id",
-
-        # Original evidence identifiers
         "question_id",
         "questionId",
         "qid",
         "id",
-
-        # Question
         "question",
         "question_text",
         "questionText",
         "content",
         "problem",
-
-        # Student response
         "answer",
         "student_answer",
         "studentAnswer",
         "response",
-
-        # Correctness
         "correct",
         "is_correct",
         "isCorrect",
         "result",
-
-        # Concepts
         "concept_ids",
         "conceptIds",
         "concepts",
-
-        # Time
         "timestamp",
         "created_at",
         "createdAt",
         "time",
         "datetime",
-
-        # Useful benchmark evidence metadata
         "source",
         "evidence_source",
         "history_source",
@@ -95,13 +91,21 @@ class HistoricalEvidenceBuilder:
     def __init__(
         self,
         recent_limit: int = 5,
+        config: AdaptiveRetrievalConfig | None = None,
     ) -> None:
+
         if recent_limit <= 0:
             raise ValueError(
                 "recent_limit must be greater than 0."
             )
 
         self._recent_limit = recent_limit
+
+        self._config = (
+            config
+            if config is not None
+            else load_adaptive_retrieval_config()
+        )
 
     def build(
         self,
@@ -111,20 +115,6 @@ class HistoricalEvidenceBuilder:
         history_info: list[Any] | None = None,
         related_history: list[Any] | None = None,
     ) -> HistoricalEvidence:
-        """
-        Build historical evidence for the current task.
-
-        Evidence sources
-        ----------------
-        1. LearningState.interactions
-        2. External history_info
-        3. External related_history
-
-        External evidence is normalized into the canonical
-        LearningInteraction representation.
-
-        related_history remains separate from relevant_interactions.
-        """
 
         interactions = list(
             learning_state.interactions
@@ -142,7 +132,7 @@ class HistoricalEvidenceBuilder:
         )
 
         # ==================================================
-        # Recent native evidence
+        # Recent evidence
         # ==================================================
 
         recent_interactions = sorted(
@@ -157,37 +147,20 @@ class HistoricalEvidenceBuilder:
 
             for concept_id in interaction.concept_ids:
                 evidence.add_related_concept(
-                    concept_id,
+                    str(concept_id),
                 )
 
         # ==================================================
-        # Relevant native evidence
+        # Normalize external history
         # ==================================================
 
-        if relevant_concepts:
-            for interaction in interactions:
-                interaction_concepts = {
-                    str(value)
-                    for value in interaction.concept_ids
-                }
+        external_history: list[
+            LearningInteraction
+        ] = []
 
-                if relevant_concepts.intersection(
-                    interaction_concepts
-                ):
-                    evidence.add_relevant_interaction(
-                        interaction,
-                    )
-
-                    for concept_id in interaction.concept_ids:
-                        evidence.add_related_concept(
-                            concept_id,
-                        )
-
-        # ==================================================
-        # External relevant history
-        # ==================================================
-
-        external_history_count = 0
+        external_related_history: list[
+            LearningInteraction
+        ] = []
 
         for record in history_info or []:
             interaction = self._to_learning_interaction(
@@ -196,25 +169,10 @@ class HistoricalEvidenceBuilder:
                 source="history_info",
             )
 
-            if interaction is None:
-                continue
-
-            evidence.add_relevant_interaction(
-                interaction,
-            )
-
-            external_history_count += 1
-
-            for concept_id in interaction.concept_ids:
-                evidence.add_related_concept(
-                    concept_id,
+            if interaction is not None:
+                external_history.append(
+                    interaction
                 )
-
-        # ==================================================
-        # External related history
-        # ==================================================
-
-        external_related_history_count = 0
 
         for record in related_history or []:
             interaction = self._to_learning_interaction(
@@ -223,19 +181,103 @@ class HistoricalEvidenceBuilder:
                 source="related_history",
             )
 
-            if interaction is None:
-                continue
+            if interaction is not None:
+                external_related_history.append(
+                    interaction
+                )
 
-            evidence.add_related_interaction(
-                interaction,
+        # ==================================================
+        # Adaptive retrieval
+        # ==================================================
+
+        native_ranked = self._rank_interactions(
+            interactions=interactions,
+            current_question=current_question,
+            relevant_concepts=relevant_concepts,
+        )
+
+        external_ranked = self._rank_interactions(
+            interactions=(
+                external_history
+                + external_related_history
+            ),
+            current_question=current_question,
+            relevant_concepts=relevant_concepts,
+        )
+
+        if self._config.enabled:
+
+            for interaction, score in native_ranked[
+                : self._config.top_k
+            ]:
+
+                if score < self._config.candidate_threshold:
+                    continue
+
+                evidence.add_relevant_interaction(
+                    interaction,
+                )
+
+                for concept_id in interaction.concept_ids:
+                    evidence.add_related_concept(
+                        str(concept_id),
+                    )
+
+            for interaction, score in external_ranked[
+                : self._config.top_k
+            ]:
+
+                if score < self._config.candidate_threshold:
+                    continue
+
+                source = str(
+                    interaction.metadata.get(
+                        "evidence_source",
+                        "history_info",
+                    )
+                )
+
+                if source == "related_history":
+                    evidence.add_related_interaction(
+                        interaction,
+                    )
+                else:
+                    evidence.add_relevant_interaction(
+                        interaction,
+                    )
+
+                for concept_id in interaction.concept_ids:
+                    evidence.add_related_concept(
+                        str(concept_id),
+                    )
+
+        else:
+
+            self._build_legacy_relevant_evidence(
+                evidence=evidence,
+                interactions=interactions,
+                relevant_concepts=relevant_concepts,
             )
 
-            external_related_history_count += 1
-
-            for concept_id in interaction.concept_ids:
-                evidence.add_related_concept(
-                    concept_id,
+            for interaction in external_history:
+                evidence.add_relevant_interaction(
+                    interaction,
                 )
+
+                for concept_id in interaction.concept_ids:
+                    evidence.add_related_concept(
+                        str(concept_id),
+                    )
+
+            for interaction in external_related_history:
+                evidence.add_related_interaction(
+                    interaction,
+                )
+
+                for concept_id in interaction.concept_ids:
+                    evidence.add_related_concept(
+                        str(concept_id),
+                    )
 
         # ==================================================
         # Metadata
@@ -243,12 +285,41 @@ class HistoricalEvidenceBuilder:
 
         evidence.set_metadata(
             "selection_strategy",
-            "recent_and_relevant_with_related_external_history",
+            (
+                "adaptive_hybrid_retrieval"
+                if self._config.enabled
+                else "recent_and_relevant_with_related_external_history"
+            ),
+        )
+
+        evidence.set_metadata(
+            "adaptive_retrieval_enabled",
+            self._config.enabled,
+        )
+
+        evidence.set_metadata(
+            "retrieval_profile",
+            self._config.retrieval_profile,
         )
 
         evidence.set_metadata(
             "recent_limit",
             self._recent_limit,
+        )
+
+        evidence.set_metadata(
+            "top_k",
+            self._config.top_k,
+        )
+
+        evidence.set_metadata(
+            "candidate_limit",
+            self._config.candidate_limit,
+        )
+
+        evidence.set_metadata(
+            "candidate_threshold",
+            self._config.candidate_threshold,
         )
 
         evidence.set_metadata(
@@ -273,23 +344,513 @@ class HistoricalEvidenceBuilder:
 
         evidence.set_metadata(
             "external_history_count",
-            external_history_count,
+            len(external_history),
         )
 
         evidence.set_metadata(
             "external_related_history_count",
-            external_related_history_count,
+            len(external_related_history),
         )
 
         evidence.set_metadata(
             "external_evidence_count",
             (
-                external_history_count
-                + external_related_history_count
+                len(external_history)
+                + len(external_related_history)
             ),
         )
 
+        evidence.set_metadata(
+            "retrieval_candidate_count",
+            len(interactions)
+            + len(external_history)
+            + len(external_related_history),
+        )
+
+        evidence.set_metadata(
+            "retrieval_selected_count",
+            (
+                len(evidence.relevant_interactions)
+                + len(evidence.related_interactions)
+            ),
+        )
+
+        evidence.set_metadata(
+            "retrieval_weights",
+            dict(
+                self._normalized_weights()
+            ),
+        )
+
+        if self._config.trace_enabled:
+            evidence.set_metadata(
+                "retrieval_trace",
+                self._build_trace(
+                    native_ranked=native_ranked,
+                    external_ranked=external_ranked,
+                    current_question=current_question,
+                    relevant_concepts=relevant_concepts,
+                ),
+            )
+
         return evidence
+
+    # ======================================================
+    # Legacy retrieval
+    # ======================================================
+
+    def _build_legacy_relevant_evidence(
+        self,
+        evidence: HistoricalEvidence,
+        interactions: list[LearningInteraction],
+        relevant_concepts: set[str],
+    ) -> None:
+
+        if not relevant_concepts:
+            return
+
+        for interaction in interactions:
+
+            interaction_concepts = {
+                str(value)
+                for value in interaction.concept_ids
+            }
+
+            if relevant_concepts.intersection(
+                interaction_concepts
+            ):
+                evidence.add_relevant_interaction(
+                    interaction,
+                )
+
+                for concept_id in interaction.concept_ids:
+                    evidence.add_related_concept(
+                        str(concept_id),
+                    )
+
+    # ======================================================
+    # Adaptive ranking
+    # ======================================================
+
+    def _rank_interactions(
+        self,
+        interactions: list[LearningInteraction],
+        current_question: str,
+        relevant_concepts: set[str],
+    ) -> list[
+        tuple[LearningInteraction, float]
+    ]:
+
+        if not interactions:
+            return []
+
+        unique: dict[str, LearningInteraction] = {}
+
+        for interaction in interactions:
+            unique.setdefault(
+                interaction.id,
+                interaction,
+            )
+
+        candidates = list(
+            unique.values()
+        )
+
+        candidates.sort(
+            key=lambda interaction: (
+                interaction.timestamp,
+            ),
+            reverse=True,
+        )
+
+        candidates = candidates[
+            : self._config.candidate_limit
+        ]
+
+        latest_timestamp = max(
+            (
+                interaction.timestamp
+                for interaction in candidates
+            ),
+            default=datetime.fromtimestamp(
+                0,
+                tz=UTC,
+            ),
+        )
+
+        weights = self._normalized_weights()
+
+        scored: list[
+            tuple[LearningInteraction, float]
+        ] = []
+
+        for interaction in candidates:
+
+            concept_score = (
+                self._concept_relevance(
+                    interaction=interaction,
+                    relevant_concepts=relevant_concepts,
+                )
+            )
+
+            error_score = (
+                self._error_relevance(
+                    interaction=interaction,
+                )
+            )
+
+            recency_score = (
+                self._recency_score(
+                    timestamp=interaction.timestamp,
+                    latest_timestamp=latest_timestamp,
+                )
+            )
+
+            semantic_score = (
+                self._semantic_relevance(
+                    current_question=current_question,
+                    historical_question=interaction.question,
+                )
+            )
+
+            score = (
+                weights["concept"]
+                * concept_score
+                + weights["error"]
+                * error_score
+                + weights["recency"]
+                * recency_score
+                + weights["semantic"]
+                * semantic_score
+            )
+
+            scored.append(
+                (
+                    interaction,
+                    score,
+                )
+            )
+
+        scored.sort(
+            key=lambda item: (
+                item[1],
+                item[0].timestamp,
+            ),
+            reverse=True,
+        )
+
+        return scored
+
+    def _normalized_weights(
+        self,
+    ) -> dict[str, float]:
+
+        weights = {
+            "concept": float(
+                self._config.retrieval_weights.get(
+                    "concept",
+                    0.0,
+                )
+            ),
+            "error": float(
+                self._config.retrieval_weights.get(
+                    "error",
+                    0.0,
+                )
+            ),
+            "recency": float(
+                self._config.retrieval_weights.get(
+                    "recency",
+                    0.0,
+                )
+            ),
+            "semantic": float(
+                self._config.retrieval_weights.get(
+                    "semantic",
+                    0.0,
+                )
+            ),
+        }
+
+        total = sum(
+            weights.values()
+        )
+
+        if total <= 0.0:
+            return {
+                "concept": 0.0,
+                "error": 0.0,
+                "recency": 1.0,
+                "semantic": 0.0,
+            }
+
+        return {
+            key: value / total
+            for key, value in weights.items()
+        }
+
+    # ======================================================
+    # Retrieval signals
+    # ======================================================
+
+    @staticmethod
+    def _concept_relevance(
+        interaction: LearningInteraction,
+        relevant_concepts: set[str],
+    ) -> float:
+
+        if not relevant_concepts:
+            return 0.0
+
+        interaction_concepts = {
+            str(value)
+            for value in interaction.concept_ids
+        }
+
+        if not interaction_concepts:
+            return 0.0
+
+        overlap = (
+            relevant_concepts
+            .intersection(
+                interaction_concepts
+            )
+        )
+
+        if not overlap:
+            return 0.0
+
+        return min(
+            1.0,
+            len(overlap)
+            / len(relevant_concepts),
+        )
+
+    @staticmethod
+    def _error_relevance(
+        interaction: LearningInteraction,
+    ) -> float:
+
+        if interaction.correct is False:
+            return 1.0
+
+        if interaction.correct is True:
+            return 0.0
+
+        return 0.5
+
+    def _recency_score(
+        self,
+        timestamp: datetime,
+        latest_timestamp: datetime,
+    ) -> float:
+
+        if timestamp >= latest_timestamp:
+            return 1.0
+
+        age_seconds = (
+            latest_timestamp
+            - timestamp
+        ).total_seconds()
+
+        if age_seconds <= 0.0:
+            return 1.0
+
+        units = (
+            age_seconds
+            / self._config.recency_unit_seconds
+        )
+
+        return exp(
+            -self._config.recency_decay
+            * units
+        )
+
+    @staticmethod
+    def _semantic_relevance(
+        current_question: str,
+        historical_question: str,
+    ) -> float:
+
+        current_tokens = (
+            HistoricalEvidenceBuilder._tokenize(
+                current_question,
+            )
+        )
+
+        historical_tokens = (
+            HistoricalEvidenceBuilder._tokenize(
+                historical_question,
+            )
+        )
+
+        if (
+            not current_tokens
+            or not historical_tokens
+        ):
+            return 0.0
+
+        intersection = (
+            current_tokens
+            .intersection(
+                historical_tokens
+            )
+        )
+
+        union = (
+            current_tokens
+            .union(
+                historical_tokens
+            )
+        )
+
+        if not union:
+            return 0.0
+
+        return (
+            len(intersection)
+            / len(union)
+        )
+
+    @staticmethod
+    def _tokenize(
+        text: str,
+    ) -> set[str]:
+
+        if not text:
+            return set()
+
+        normalized = (
+            text.lower()
+            .replace("?", " ")
+            .replace(",", " ")
+            .replace(".", " ")
+            .replace(":", " ")
+            .replace(";", " ")
+            .replace("(", " ")
+            .replace(")", " ")
+            .replace("[", " ")
+            .replace("]", " ")
+            .replace("{", " ")
+            .replace("}", " ")
+        )
+
+        return {
+            token
+            for token in normalized.split()
+            if len(token) > 1
+        }
+
+    # ======================================================
+    # Retrieval trace
+    # ======================================================
+
+    def _build_trace(
+        self,
+        native_ranked: list[
+            tuple[LearningInteraction, float]
+        ],
+        external_ranked: list[
+            tuple[LearningInteraction, float]
+        ],
+        current_question: str,
+        relevant_concepts: set[str],
+    ) -> list[dict[str, Any]]:
+
+        weights = self._normalized_weights()
+
+        trace: list[dict[str, Any]] = []
+
+        latest_candidates = (
+            native_ranked
+            + external_ranked
+        )
+
+        latest_timestamp = max(
+            (
+                interaction.timestamp
+                for interaction, _ in latest_candidates
+            ),
+            default=datetime.fromtimestamp(
+                0,
+                tz=UTC,
+            ),
+        )
+
+        seen: set[str] = set()
+
+        for interaction, score in (
+            latest_candidates
+        ):
+
+            if interaction.id in seen:
+                continue
+
+            seen.add(
+                interaction.id
+            )
+
+            concept_score = (
+                self._concept_relevance(
+                    interaction,
+                    relevant_concepts,
+                )
+            )
+
+            error_score = (
+                self._error_relevance(
+                    interaction,
+                )
+            )
+
+            recency_score = (
+                self._recency_score(
+                    interaction.timestamp,
+                    latest_timestamp,
+                )
+            )
+
+            semantic_score = (
+                self._semantic_relevance(
+                    current_question,
+                    interaction.question,
+                )
+            )
+
+            trace.append(
+                {
+                    "interaction_id": interaction.id,
+                    "question_id": interaction.question_id,
+                    "score": score,
+                    "concept_score": concept_score,
+                    "error_score": error_score,
+                    "recency_score": recency_score,
+                    "semantic_score": semantic_score,
+                    "weighted_concept": (
+                        weights["concept"]
+                        * concept_score
+                    ),
+                    "weighted_error": (
+                        weights["error"]
+                        * error_score
+                    ),
+                    "weighted_recency": (
+                        weights["recency"]
+                        * recency_score
+                    ),
+                    "weighted_semantic": (
+                        weights["semantic"]
+                        * semantic_score
+                    ),
+                }
+            )
+
+        trace.sort(
+            key=lambda item: item["score"],
+            reverse=True,
+        )
+
+        return trace
 
     # ======================================================
     # External history normalization
@@ -301,14 +862,10 @@ class HistoricalEvidenceBuilder:
         learner_id: str,
         source: str,
     ) -> LearningInteraction | None:
-        """
-        Normalize one external record.
 
-        Only evidence-bearing fields are preserved.
-        Gold annotations are explicitly excluded.
-        """
-
-        data = self._normalize_record(record)
+        data = self._normalize_record(
+            record,
+        )
 
         if not data:
             return None
@@ -375,8 +932,6 @@ class HistoricalEvidenceBuilder:
             source=source,
         )
 
-        # A record without any meaningful evidence should
-        # not become a useless interaction.
         if (
             question_id is None
             and question is None
@@ -421,16 +976,11 @@ class HistoricalEvidenceBuilder:
         data: dict[str, Any],
         source: str,
     ) -> dict[str, Any]:
-        """
-        Preserve only known evidence metadata.
-
-        This intentionally uses a whitelist rather than
-        copying the complete benchmark record.
-        """
 
         metadata: dict[str, Any] = {}
 
         for key in cls._METADATA_FIELDS:
+
             if key not in data:
                 continue
 
@@ -454,32 +1004,51 @@ class HistoricalEvidenceBuilder:
     def _normalize_record(
         record: Any,
     ) -> dict[str, Any]:
+
         if record is None:
             return {}
 
-        if isinstance(record, dict):
+        if isinstance(
+            record,
+            dict,
+        ):
             return dict(record)
 
-        if isinstance(record, str):
+        if isinstance(
+            record,
+            str,
+        ):
             return {
                 "question": record,
             }
 
-        if hasattr(record, "model_dump"):
+        if hasattr(
+            record,
+            "model_dump",
+        ):
             try:
                 value = record.model_dump()
 
-                if isinstance(value, dict):
+                if isinstance(
+                    value,
+                    dict,
+                ):
                     return value
 
             except Exception:
                 pass
 
-        if hasattr(record, "__dict__"):
+        if hasattr(
+            record,
+            "__dict__",
+        ):
             try:
                 value = vars(record)
 
-                if isinstance(value, dict):
+                if isinstance(
+                    value,
+                    dict,
+                ):
                     return dict(value)
 
             except Exception:
@@ -492,7 +1061,9 @@ class HistoricalEvidenceBuilder:
         data: dict[str, Any],
         *keys: str,
     ) -> Any:
+
         for key in keys:
+
             if (
                 key in data
                 and data[key] is not None
@@ -505,24 +1076,33 @@ class HistoricalEvidenceBuilder:
     def _normalize_concept_ids(
         value: Any,
     ) -> list[str]:
+
         if value is None:
             return []
 
-        if isinstance(value, str):
+        if isinstance(
+            value,
+            str,
+        ):
             return [
                 item.strip()
                 for item in value.split(",")
                 if item.strip()
             ]
 
-        if isinstance(value, (list, tuple, set)):
+        if isinstance(
+            value,
+            (list, tuple, set),
+        ):
             return [
                 str(item)
                 for item in value
                 if item is not None
             ]
 
-        return [str(value)]
+        return [
+            str(value)
+        ]
 
     # ======================================================
     # Timestamp
@@ -532,28 +1112,32 @@ class HistoricalEvidenceBuilder:
     def _parse_timestamp(
         value: Any,
     ) -> datetime:
-        """
-        Normalize timestamps to timezone-aware UTC.
 
-        Missing/invalid timestamps use the Unix epoch rather
-        than datetime.now(), so historical ordering remains
-        deterministic.
-        """
+        if isinstance(
+            value,
+            datetime,
+        ):
 
-        if isinstance(value, datetime):
             if value.tzinfo is None:
                 return value.replace(
                     tzinfo=UTC,
                 )
 
-            return value.astimezone(UTC)
+            return value.astimezone(
+                UTC,
+            )
 
-        if isinstance(value, (int, float)):
+        if isinstance(
+            value,
+            (int, float),
+        ):
+
             try:
                 return datetime.fromtimestamp(
                     value,
                     tz=UTC,
                 )
+
             except (
                 OverflowError,
                 OSError,
@@ -561,10 +1145,15 @@ class HistoricalEvidenceBuilder:
             ):
                 pass
 
-        if isinstance(value, str):
+        if isinstance(
+            value,
+            str,
+        ):
+
             normalized = value.strip()
 
             if normalized:
+
                 try:
                     parsed = datetime.fromisoformat(
                         normalized.replace(
@@ -578,7 +1167,9 @@ class HistoricalEvidenceBuilder:
                             tzinfo=UTC,
                         )
 
-                    return parsed.astimezone(UTC)
+                    return parsed.astimezone(
+                        UTC,
+                    )
 
                 except ValueError:
                     pass
@@ -596,16 +1187,27 @@ class HistoricalEvidenceBuilder:
     def _normalize_correctness(
         value: Any,
     ) -> bool | None:
+
         if value is None:
             return None
 
-        if isinstance(value, bool):
+        if isinstance(
+            value,
+            bool,
+        ):
             return value
 
-        if isinstance(value, (int, float)):
+        if isinstance(
+            value,
+            (int, float),
+        ):
             return bool(value)
 
-        if isinstance(value, str):
+        if isinstance(
+            value,
+            str,
+        ):
+
             normalized = value.strip().lower()
 
             if normalized in {
@@ -632,4 +1234,3 @@ class HistoricalEvidenceBuilder:
                 return False
 
         return None
-

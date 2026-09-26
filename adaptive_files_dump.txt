@@ -1,0 +1,4485 @@
+
+====================================================================================================
+FILE: backend\domain\learning\adaptive_teaching_action.py
+====================================================================================================
+from __future__ import annotations
+
+from enum import StrEnum
+
+from pydantic import BaseModel, Field
+
+from backend.domain.learning.knowledge_diagnosis import (
+    KnowledgeDiagnosis,
+)
+from backend.domain.learning.knowledge_diagnosis import (
+    ConceptDiagnosis,
+)
+
+
+class TeachingActionType(StrEnum):
+    """
+    Represents the adaptive teaching action selected
+    for the current learner state.
+    """
+
+    INTRODUCE = "introduce"
+
+    EXPLAIN = "explain"
+
+    SCAFFOLD = "scaffold"
+
+    PRACTICE = "practice"
+
+    REVIEW = "review"
+
+    CHALLENGE = "challenge"
+
+
+class TeachingStrategy(StrEnum):
+    """
+    Represents the teaching strategy selected for
+    the current adaptive action.
+    """
+
+    DIRECT_EXPLANATION = "direct_explanation"
+
+    GUIDED_EXPLANATION = "guided_explanation"
+
+    STEP_BY_STEP = "step_by_step"
+
+    TARGETED_PRACTICE = "targeted_practice"
+
+    SPACED_REVIEW = "spaced_review"
+
+    DEEPENING = "deepening"
+
+
+class AdaptiveTeachingAction(BaseModel):
+    """
+    Represents the adaptive teaching decision for
+    the current tutoring task.
+
+    This is a domain-level decision.
+
+    It does not execute teaching and does not call
+    an LLM.
+    """
+
+    action: TeachingActionType
+
+    strategy: TeachingStrategy
+
+    difficulty: str = "medium"
+
+    focus_concepts: list[str] = Field(
+        default_factory=list,
+    )
+
+    reason: str = ""
+
+    metadata: dict[str, object] = Field(
+        default_factory=dict,
+    )
+
+    @property
+    def has_focus(self) -> bool:
+        return bool(
+            self.focus_concepts
+        )
+
+    def add_focus_concept(
+        self,
+        concept_id: str,
+    ) -> None:
+
+        if concept_id not in self.focus_concepts:
+            self.focus_concepts.append(
+                concept_id,
+            )
+
+    def set_metadata(
+        self,
+        key: str,
+        value: object,
+    ) -> None:
+
+        self.metadata[key] = value
+
+    def get_metadata(
+        self,
+        key: str,
+        default: object = None,
+    ) -> object:
+
+        return self.metadata.get(
+            key,
+            default,
+        )
+
+
+class AdaptiveTeachingActionSelector:
+    """
+    Deterministically selects an adaptive teaching action
+    from KnowledgeDiagnosis.
+
+    Responsibilities
+    ----------------
+    - Identify the learner's current instructional need.
+    - Select an appropriate teaching action.
+    - Select an appropriate teaching strategy.
+    - Select an appropriate difficulty.
+    - Select concepts requiring attention.
+    - Never modify LearningState.
+    - Never call an LLM.
+    """
+
+    def __init__(
+        self,
+        weak_mastery_threshold: float = 0.4,
+        strong_mastery_threshold: float = 0.7,
+    ) -> None:
+
+        if not 0.0 <= weak_mastery_threshold <= 1.0:
+            raise ValueError(
+                "weak_mastery_threshold must be between 0 and 1."
+            )
+
+        if not 0.0 <= strong_mastery_threshold <= 1.0:
+            raise ValueError(
+                "strong_mastery_threshold must be between 0 and 1."
+            )
+
+        if (
+            weak_mastery_threshold
+            >= strong_mastery_threshold
+        ):
+            raise ValueError(
+                "weak_mastery_threshold must be lower "
+                "than strong_mastery_threshold."
+            )
+
+        self._weak_mastery_threshold = (
+            weak_mastery_threshold
+        )
+
+        self._strong_mastery_threshold = (
+            strong_mastery_threshold
+        )
+
+    def select(
+        self,
+        diagnosis: KnowledgeDiagnosis,
+    ) -> AdaptiveTeachingAction:
+        """
+        Select an adaptive teaching action from
+        the learner diagnosis.
+        """
+        # ------------------------------------------------------
+        # Introduce new concepts.
+        # ------------------------------------------------------
+
+        introduce_concepts = [
+            concept_id
+            for concept_id in diagnosis.primary_concepts
+            if (
+                concept_id in diagnosis.concepts
+                and diagnosis.concepts[concept_id].attempts == 0
+                and not diagnosis.concepts[
+                    concept_id
+                ].has_relevant_evidence
+                and not diagnosis.concepts[
+                    concept_id
+                ].has_recent_evidence
+            )
+        ]
+
+        if introduce_concepts:
+            return AdaptiveTeachingAction(
+                action=TeachingActionType.INTRODUCE,
+                strategy=TeachingStrategy.DIRECT_EXPLANATION,
+                difficulty="beginner",
+                reason=(
+                    "The learner has no prior knowledge "
+                    "or historical evidence for the required concept."
+                ),
+            )
+
+
+        if not diagnosis.concepts:
+            return AdaptiveTeachingAction(
+                action=TeachingActionType.INTRODUCE,
+                strategy=TeachingStrategy.DIRECT_EXPLANATION,
+                difficulty="beginner",
+                reason=(
+                    "No diagnosed knowledge state is available "
+                    "for the current task."
+                ),
+            )
+
+        # ------------------------------------------------------
+        # Transfer deficit has highest priority.
+        # ------------------------------------------------------
+
+        if diagnosis.transfer_deficit_concepts:
+
+            action = AdaptiveTeachingAction(
+                action=TeachingActionType.SCAFFOLD,
+                strategy=TeachingStrategy.STEP_BY_STEP,
+                difficulty="medium",
+                reason=(
+                    "The learner has difficulty applying "
+                    "related knowledge to the current task."
+                ),
+            )
+
+            for concept_id in (
+                diagnosis.transfer_deficit_concepts
+            ):
+                action.add_focus_concept(
+                    concept_id,
+                )
+
+            action.set_metadata(
+                "decision_signal",
+                "transfer_deficit",
+            )
+
+            return action
+
+        # ------------------------------------------------------
+        # Weak concepts require guided teaching.
+        # ------------------------------------------------------
+
+        if diagnosis.weak_concepts:
+
+            action = AdaptiveTeachingAction(
+                action=TeachingActionType.EXPLAIN,
+                strategy=TeachingStrategy.GUIDED_EXPLANATION,
+                difficulty="beginner",
+                reason=(
+                    "The learner has insufficient mastery "
+                    "of one or more required concepts."
+                ),
+            )
+
+            for concept_id in (
+                diagnosis.weak_concepts
+            ):
+                action.add_focus_concept(
+                    concept_id,
+                )
+
+            action.set_metadata(
+                "decision_signal",
+                "weak_knowledge",
+            )
+
+            return action
+
+        # ------------------------------------------------------
+        # Strong knowledge can be challenged.
+        # ------------------------------------------------------
+
+        strong_concepts = [
+            concept_id
+            for concept_id, concept in (
+                diagnosis.concepts.items()
+            )
+            if (
+                concept.mastery
+                >= self._strong_mastery_threshold
+            )
+        ]
+
+        if strong_concepts:
+
+            action = AdaptiveTeachingAction(
+                action=TeachingActionType.CHALLENGE,
+                strategy=TeachingStrategy.DEEPENING,
+                difficulty="advanced",
+                reason=(
+                    "The learner demonstrates strong mastery "
+                    "of the relevant concepts."
+                ),
+            )
+
+            for concept_id in strong_concepts:
+                action.add_focus_concept(
+                    concept_id,
+                )
+
+            action.set_metadata(
+                "decision_signal",
+                "strong_mastery",
+            )
+
+            return action
+
+        # ------------------------------------------------------
+        # Existing but incomplete knowledge.
+        # ------------------------------------------------------
+
+        intermediate_concepts = [
+            concept_id
+            for concept_id, concept in (
+                diagnosis.concepts.items()
+            )
+            if (
+                self._weak_mastery_threshold
+                <= concept.mastery
+                < self._strong_mastery_threshold
+            )
+        ]
+
+        if intermediate_concepts:
+
+            action = AdaptiveTeachingAction(
+                action=TeachingActionType.PRACTICE,
+                strategy=TeachingStrategy.TARGETED_PRACTICE,
+                difficulty="medium",
+                reason=(
+                    "The learner has partial mastery and "
+                    "should consolidate the knowledge through practice."
+                ),
+            )
+
+            for concept_id in intermediate_concepts:
+                action.add_focus_concept(
+                    concept_id,
+                )
+
+            action.set_metadata(
+                "decision_signal",
+                "partial_mastery",
+            )
+
+            return action
+
+        # ------------------------------------------------------
+        # Fallback.
+        # ------------------------------------------------------
+
+        return AdaptiveTeachingAction(
+            action=TeachingActionType.REVIEW,
+            strategy=TeachingStrategy.SPACED_REVIEW,
+            difficulty="medium",
+            reason=(
+                "Review the relevant knowledge before "
+                "continuing with the current task."
+            ),
+        )
+
+====================================================================================================
+FILE: backend\domain\learning\historical_evidence.py
+====================================================================================================
+from __future__ import annotations
+
+from datetime import UTC, datetime
+
+from pydantic import BaseModel, Field
+
+from backend.domain.learning.learning_interaction import (
+    LearningInteraction,
+)
+
+
+class HistoricalEvidence(BaseModel):
+    """
+    Represents historical learning evidence selected
+    for the current tutoring task.
+
+    HistoricalEvidence is an intermediate representation
+    between raw learner interactions and knowledge
+    state diagnosis.
+
+    It preserves the semantic distinction between:
+
+    - relevant interactions;
+    - recent interactions;
+    - related-concept interactions.
+
+    It does not perform diagnosis itself.
+    """
+
+    learner_id: str
+
+    current_question: str = ""
+
+    relevant_interactions: list[LearningInteraction] = Field(
+        default_factory=list,
+    )
+
+    recent_interactions: list[LearningInteraction] = Field(
+        default_factory=list,
+    )
+
+    related_interactions: list[LearningInteraction] = Field(
+        default_factory=list,
+    )
+
+    related_concept_ids: list[str] = Field(
+        default_factory=list,
+    )
+
+    metadata: dict[str, object] = Field(
+        default_factory=dict,
+    )
+
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(
+            UTC,
+        ),
+    )
+
+    # ======================================================
+    # Interaction management
+    # ======================================================
+
+    def add_relevant_interaction(
+        self,
+        interaction: LearningInteraction,
+    ) -> None:
+        """
+        Add an interaction as directly relevant
+        historical evidence.
+        """
+
+        self.relevant_interactions.append(
+            interaction,
+        )
+
+    def add_recent_interaction(
+        self,
+        interaction: LearningInteraction,
+    ) -> None:
+        """
+        Add an interaction to recent-history evidence.
+        """
+
+        self.recent_interactions.append(
+            interaction,
+        )
+
+    def add_related_interaction(
+        self,
+        interaction: LearningInteraction,
+    ) -> None:
+        """
+        Add an interaction as related-concept evidence.
+
+        Related evidence is intentionally kept separate
+        from directly relevant evidence so downstream
+        selectors can preserve source semantics.
+        """
+
+        self.related_interactions.append(
+            interaction,
+        )
+
+    # ======================================================
+    # Concept management
+    # ======================================================
+
+    def add_related_concept(
+        self,
+        concept_id: str,
+    ) -> None:
+        """
+        Register a concept related to the current task.
+        """
+
+        if concept_id not in self.related_concept_ids:
+            self.related_concept_ids.append(
+                concept_id,
+            )
+
+    # ======================================================
+    # Metadata
+    # ======================================================
+
+    def set_metadata(
+        self,
+        key: str,
+        value: object,
+    ) -> None:
+        """
+        Store evidence metadata.
+        """
+
+        self.metadata[key] = value
+
+    def get_metadata(
+        self,
+        key: str,
+        default: object = None,
+    ) -> object:
+        """
+        Retrieve evidence metadata.
+        """
+
+        return self.metadata.get(
+            key,
+            default,
+        )
+
+    # ======================================================
+    # Inspection
+    # ======================================================
+
+    @property
+    def interaction_count(self) -> int:
+        """
+        Return the total number of selected historical
+        interactions across all evidence categories.
+        """
+
+        return (
+            len(self.relevant_interactions)
+            + len(self.recent_interactions)
+            + len(self.related_interactions)
+        )
+
+    @property
+    def has_evidence(self) -> bool:
+        """
+        Return whether historical evidence is available.
+        """
+
+        return self.interaction_count > 0
+
+====================================================================================================
+FILE: backend\domain\learning\historical_evidence_builder.py
+====================================================================================================
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+from typing import Any
+
+from backend.domain.learning.historical_evidence import (
+    HistoricalEvidence,
+)
+from backend.domain.learning.learning_interaction import (
+    LearningInteraction,
+)
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
+
+
+class HistoricalEvidenceBuilder:
+    """
+    Build canonical historical evidence for ALOF.
+
+    Responsibilities
+    ----------------
+    - Preserve native LearningState interactions.
+    - Normalize external history into LearningInteraction.
+    - Keep history_info and related_history semantically separate.
+    - Preserve evidence fields required for downstream retrieval/reasoning.
+    - Keep timestamp/correctness normalization deterministic.
+    - Prevent benchmark Gold annotations from entering ALOF evidence.
+
+    This component does NOT:
+    - perform diagnosis;
+    - rank evidence;
+    - call an LLM;
+    - access Gold answers.
+    """
+
+    _GOLD_FIELDS = {
+        "gold_memory_queries",
+        "gold_answer",
+        "gold_answers",
+    }
+
+    _METADATA_FIELDS = {
+        # Benchmark / dataset identity
+        "_key",
+        "record_id",
+        "event_id",
+
+        # Original evidence identifiers
+        "question_id",
+        "questionId",
+        "qid",
+        "id",
+
+        # Question
+        "question",
+        "question_text",
+        "questionText",
+        "content",
+        "problem",
+
+        # Student response
+        "answer",
+        "student_answer",
+        "studentAnswer",
+        "response",
+
+        # Correctness
+        "correct",
+        "is_correct",
+        "isCorrect",
+        "result",
+
+        # Concepts
+        "concept_ids",
+        "conceptIds",
+        "concepts",
+
+        # Time
+        "timestamp",
+        "created_at",
+        "createdAt",
+        "time",
+        "datetime",
+
+        # Useful benchmark evidence metadata
+        "source",
+        "evidence_source",
+        "history_source",
+        "related",
+        "related_history",
+    }
+
+    def __init__(
+        self,
+        recent_limit: int = 5,
+    ) -> None:
+        if recent_limit <= 0:
+            raise ValueError(
+                "recent_limit must be greater than 0."
+            )
+
+        self._recent_limit = recent_limit
+
+    def build(
+        self,
+        learning_state: LearningState,
+        current_question: str = "",
+        related_concept_ids: list[str] | None = None,
+        history_info: list[Any] | None = None,
+        related_history: list[Any] | None = None,
+    ) -> HistoricalEvidence:
+        """
+        Build historical evidence for the current task.
+
+        Evidence sources
+        ----------------
+        1. LearningState.interactions
+        2. External history_info
+        3. External related_history
+
+        External evidence is normalized into the canonical
+        LearningInteraction representation.
+
+        related_history remains separate from relevant_interactions.
+        """
+
+        interactions = list(
+            learning_state.interactions
+        )
+
+        relevant_concepts = {
+            str(value)
+            for value in (related_concept_ids or [])
+            if value is not None
+        }
+
+        evidence = HistoricalEvidence(
+            learner_id=learning_state.learner_id,
+            current_question=current_question,
+        )
+
+        # ==================================================
+        # Recent native evidence
+        # ==================================================
+
+        recent_interactions = sorted(
+            interactions,
+            key=lambda interaction: interaction.timestamp,
+        )[-self._recent_limit:]
+
+        for interaction in recent_interactions:
+            evidence.add_recent_interaction(
+                interaction,
+            )
+
+            for concept_id in interaction.concept_ids:
+                evidence.add_related_concept(
+                    concept_id,
+                )
+
+        # ==================================================
+        # Relevant native evidence
+        # ==================================================
+
+        if relevant_concepts:
+            for interaction in interactions:
+                interaction_concepts = {
+                    str(value)
+                    for value in interaction.concept_ids
+                }
+
+                if relevant_concepts.intersection(
+                    interaction_concepts
+                ):
+                    evidence.add_relevant_interaction(
+                        interaction,
+                    )
+
+                    for concept_id in interaction.concept_ids:
+                        evidence.add_related_concept(
+                            concept_id,
+                        )
+
+        # ==================================================
+        # External relevant history
+        # ==================================================
+
+        external_history_count = 0
+
+        for record in history_info or []:
+            interaction = self._to_learning_interaction(
+                record=record,
+                learner_id=learning_state.learner_id,
+                source="history_info",
+            )
+
+            if interaction is None:
+                continue
+
+            evidence.add_relevant_interaction(
+                interaction,
+            )
+
+            external_history_count += 1
+
+            for concept_id in interaction.concept_ids:
+                evidence.add_related_concept(
+                    concept_id,
+                )
+
+        # ==================================================
+        # External related history
+        # ==================================================
+
+        external_related_history_count = 0
+
+        for record in related_history or []:
+            interaction = self._to_learning_interaction(
+                record=record,
+                learner_id=learning_state.learner_id,
+                source="related_history",
+            )
+
+            if interaction is None:
+                continue
+
+            evidence.add_related_interaction(
+                interaction,
+            )
+
+            external_related_history_count += 1
+
+            for concept_id in interaction.concept_ids:
+                evidence.add_related_concept(
+                    concept_id,
+                )
+
+        # ==================================================
+        # Metadata
+        # ==================================================
+
+        evidence.set_metadata(
+            "selection_strategy",
+            "recent_and_relevant_with_related_external_history",
+        )
+
+        evidence.set_metadata(
+            "recent_limit",
+            self._recent_limit,
+        )
+
+        evidence.set_metadata(
+            "source_interaction_count",
+            len(interactions),
+        )
+
+        evidence.set_metadata(
+            "recent_interaction_count",
+            len(evidence.recent_interactions),
+        )
+
+        evidence.set_metadata(
+            "relevant_interaction_count",
+            len(evidence.relevant_interactions),
+        )
+
+        evidence.set_metadata(
+            "related_interaction_count",
+            len(evidence.related_interactions),
+        )
+
+        evidence.set_metadata(
+            "external_history_count",
+            external_history_count,
+        )
+
+        evidence.set_metadata(
+            "external_related_history_count",
+            external_related_history_count,
+        )
+
+        evidence.set_metadata(
+            "external_evidence_count",
+            (
+                external_history_count
+                + external_related_history_count
+            ),
+        )
+
+        return evidence
+
+    # ======================================================
+    # External history normalization
+    # ======================================================
+
+    def _to_learning_interaction(
+        self,
+        record: Any,
+        learner_id: str,
+        source: str,
+    ) -> LearningInteraction | None:
+        """
+        Normalize one external record.
+
+        Only evidence-bearing fields are preserved.
+        Gold annotations are explicitly excluded.
+        """
+
+        data = self._normalize_record(record)
+
+        if not data:
+            return None
+
+        question_id = self._first_value(
+            data,
+            "question_id",
+            "questionId",
+            "qid",
+            "id",
+        )
+
+        question = self._first_value(
+            data,
+            "question",
+            "question_text",
+            "questionText",
+            "content",
+            "problem",
+        )
+
+        answer = self._first_value(
+            data,
+            "answer",
+            "student_answer",
+            "studentAnswer",
+            "response",
+        )
+
+        correct = self._first_value(
+            data,
+            "correct",
+            "is_correct",
+            "isCorrect",
+            "result",
+        )
+
+        concept_ids = self._first_value(
+            data,
+            "concept_ids",
+            "conceptIds",
+            "concepts",
+        )
+
+        timestamp = self._parse_timestamp(
+            self._first_value(
+                data,
+                "timestamp",
+                "created_at",
+                "createdAt",
+                "time",
+                "datetime",
+            )
+        )
+
+        normalized_concept_ids = (
+            self._normalize_concept_ids(
+                concept_ids,
+            )
+        )
+
+        metadata = self._build_metadata(
+            data=data,
+            source=source,
+        )
+
+        # A record without any meaningful evidence should
+        # not become a useless interaction.
+        if (
+            question_id is None
+            and question is None
+            and answer is None
+            and correct is None
+            and not normalized_concept_ids
+        ):
+            return None
+
+        return LearningInteraction(
+            learner_id=learner_id,
+            question_id=(
+                str(question_id)
+                if question_id is not None
+                else None
+            ),
+            question=(
+                str(question)
+                if question is not None
+                else ""
+            ),
+            answer=(
+                str(answer)
+                if answer is not None
+                else ""
+            ),
+            correct=self._normalize_correctness(
+                correct,
+            ),
+            concept_ids=normalized_concept_ids,
+            timestamp=timestamp,
+            metadata=metadata,
+        )
+
+    # ======================================================
+    # Metadata
+    # ======================================================
+
+    @classmethod
+    def _build_metadata(
+        cls,
+        data: dict[str, Any],
+        source: str,
+    ) -> dict[str, Any]:
+        """
+        Preserve only known evidence metadata.
+
+        This intentionally uses a whitelist rather than
+        copying the complete benchmark record.
+        """
+
+        metadata: dict[str, Any] = {}
+
+        for key in cls._METADATA_FIELDS:
+            if key not in data:
+                continue
+
+            if key in cls._GOLD_FIELDS:
+                continue
+
+            value = data[key]
+
+            if value is not None:
+                metadata[key] = value
+
+        metadata["evidence_source"] = source
+
+        return metadata
+
+    # ======================================================
+    # Record normalization
+    # ======================================================
+
+    @staticmethod
+    def _normalize_record(
+        record: Any,
+    ) -> dict[str, Any]:
+        if record is None:
+            return {}
+
+        if isinstance(record, dict):
+            return dict(record)
+
+        if isinstance(record, str):
+            return {
+                "question": record,
+            }
+
+        if hasattr(record, "model_dump"):
+            try:
+                value = record.model_dump()
+
+                if isinstance(value, dict):
+                    return value
+
+            except Exception:
+                pass
+
+        if hasattr(record, "__dict__"):
+            try:
+                value = vars(record)
+
+                if isinstance(value, dict):
+                    return dict(value)
+
+            except Exception:
+                pass
+
+        return {}
+
+    @staticmethod
+    def _first_value(
+        data: dict[str, Any],
+        *keys: str,
+    ) -> Any:
+        for key in keys:
+            if (
+                key in data
+                and data[key] is not None
+            ):
+                return data[key]
+
+        return None
+
+    @staticmethod
+    def _normalize_concept_ids(
+        value: Any,
+    ) -> list[str]:
+        if value is None:
+            return []
+
+        if isinstance(value, str):
+            return [
+                item.strip()
+                for item in value.split(",")
+                if item.strip()
+            ]
+
+        if isinstance(value, (list, tuple, set)):
+            return [
+                str(item)
+                for item in value
+                if item is not None
+            ]
+
+        return [str(value)]
+
+    # ======================================================
+    # Timestamp
+    # ======================================================
+
+    @staticmethod
+    def _parse_timestamp(
+        value: Any,
+    ) -> datetime:
+        """
+        Normalize timestamps to timezone-aware UTC.
+
+        Missing/invalid timestamps use the Unix epoch rather
+        than datetime.now(), so historical ordering remains
+        deterministic.
+        """
+
+        if isinstance(value, datetime):
+            if value.tzinfo is None:
+                return value.replace(
+                    tzinfo=UTC,
+                )
+
+            return value.astimezone(UTC)
+
+        if isinstance(value, (int, float)):
+            try:
+                return datetime.fromtimestamp(
+                    value,
+                    tz=UTC,
+                )
+            except (
+                OverflowError,
+                OSError,
+                ValueError,
+            ):
+                pass
+
+        if isinstance(value, str):
+            normalized = value.strip()
+
+            if normalized:
+                try:
+                    parsed = datetime.fromisoformat(
+                        normalized.replace(
+                            "Z",
+                            "+00:00",
+                        )
+                    )
+
+                    if parsed.tzinfo is None:
+                        parsed = parsed.replace(
+                            tzinfo=UTC,
+                        )
+
+                    return parsed.astimezone(UTC)
+
+                except ValueError:
+                    pass
+
+        return datetime.fromtimestamp(
+            0,
+            tz=UTC,
+        )
+
+    # ======================================================
+    # Correctness
+    # ======================================================
+
+    @staticmethod
+    def _normalize_correctness(
+        value: Any,
+    ) -> bool | None:
+        if value is None:
+            return None
+
+        if isinstance(value, bool):
+            return value
+
+        if isinstance(value, (int, float)):
+            return bool(value)
+
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+
+            if normalized in {
+                "true",
+                "correct",
+                "right",
+                "1",
+                "yes",
+                "success",
+                "accepted",
+            }:
+                return True
+
+            if normalized in {
+                "false",
+                "incorrect",
+                "wrong",
+                "0",
+                "no",
+                "fail",
+                "failed",
+                "rejected",
+            }:
+                return False
+
+        return None
+
+
+
+====================================================================================================
+FILE: backend\domain\learning\knowledge_diagnosis.py
+====================================================================================================
+from __future__ import annotations
+
+from pydantic import BaseModel, Field
+
+from backend.domain.knowledge.knowledge_level import (
+    KnowledgeLevel,
+)
+from backend.domain.learning.historical_evidence import (
+    HistoricalEvidence,
+)
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
+
+
+class ConceptDiagnosis(BaseModel):
+    """
+    Diagnosis of one learner knowledge concept.
+
+    This is a domain-level diagnostic result.
+    It does not call an LLM and does not modify
+    the learner state.
+    """
+
+    concept_id: str
+
+    mastery: float = 0.0
+
+    level: KnowledgeLevel = KnowledgeLevel.BEGINNER
+
+    attempts: int = 0
+
+    correct_attempts: int = 0
+
+    accuracy: float = 0.0
+
+    error_rate: float = 0.0
+
+    evidence_count: int = 0
+
+    has_recent_evidence: bool = False
+
+    has_relevant_evidence: bool = False
+
+    weakness_signal: bool = False
+
+    transfer_deficit_signal: bool = False
+
+
+class KnowledgeDiagnosis(BaseModel):
+    """
+    Represents the diagnosed learner knowledge state
+    for the current tutoring task.
+
+    KnowledgeDiagnosis is produced from historical evidence
+    and the current learner state.
+
+    It does not modify LearningState.
+    """
+
+    learner_id: str
+
+    current_question: str = ""
+
+    concepts: dict[str, ConceptDiagnosis] = Field(
+        default_factory=dict,
+    )
+
+    primary_concepts: list[str] = Field(
+        default_factory=list,
+    )
+
+    weak_concepts: list[str] = Field(
+        default_factory=list,
+    )
+
+    transfer_deficit_concepts: list[str] = Field(
+        default_factory=list,
+    )
+
+    metadata: dict[str, object] = Field(
+        default_factory=dict,
+    )
+
+    # ======================================================
+    # Concept management
+    # ======================================================
+
+    def add_concept(
+        self,
+        diagnosis: ConceptDiagnosis,
+    ) -> None:
+        self.concepts[
+            diagnosis.concept_id
+        ] = diagnosis
+
+    def get_concept(
+        self,
+        concept_id: str,
+    ) -> ConceptDiagnosis | None:
+
+        return self.concepts.get(
+            concept_id,
+        )
+
+    # ======================================================
+    # Inspection
+    # ======================================================
+
+    @property
+    def concept_count(self) -> int:
+        return len(self.concepts)
+
+    @property
+    def has_weakness(self) -> bool:
+        return bool(
+            self.weak_concepts
+        )
+
+    @property
+    def has_transfer_deficit(self) -> bool:
+        return bool(
+            self.transfer_deficit_concepts
+        )
+
+
+class KnowledgeStateDiagnoser:
+    """
+    Deterministic knowledge-state diagnoser.
+
+    Responsibilities
+    ----------------
+    - Inspect learner knowledge states.
+    - Inspect historical evidence.
+    - Calculate diagnostic signals.
+    - Detect weak concepts.
+    - Detect possible transfer deficits.
+    - Never modify LearningState.
+    - Never call an LLM.
+
+    This is the domain diagnosis layer for the
+    LongTutor knowledge-state diagnosis stage.
+    """
+
+    def __init__(
+        self,
+        weakness_threshold: float = 0.5,
+        transfer_accuracy_threshold: float = 0.5,
+    ) -> None:
+
+        if not 0.0 <= weakness_threshold <= 1.0:
+            raise ValueError(
+                "weakness_threshold must be between 0 and 1."
+            )
+
+        if not 0.0 <= transfer_accuracy_threshold <= 1.0:
+            raise ValueError(
+                "transfer_accuracy_threshold must be between 0 and 1."
+            )
+
+        self._weakness_threshold = (
+            weakness_threshold
+        )
+
+        self._transfer_accuracy_threshold = (
+            transfer_accuracy_threshold
+        )
+
+    def diagnose(
+        self,
+        learning_state: LearningState,
+        evidence: HistoricalEvidence,
+        primary_concept_ids: list[str] | None = None,
+    ) -> KnowledgeDiagnosis:
+        """
+        Diagnose the learner's current knowledge state.
+
+        The diagnosis is derived from the learner state
+        and selected historical evidence.
+        """
+
+        diagnosis = KnowledgeDiagnosis(
+            learner_id=learning_state.learner_id,
+            current_question=evidence.current_question,
+        )
+
+        primary_concepts = set(
+            primary_concept_ids or []
+        )
+
+        evidence_concepts = set(
+            evidence.related_concept_ids
+        )
+
+        concept_ids = (
+            set(learning_state.knowledge.keys())
+            | primary_concepts
+            | evidence_concepts
+        )
+
+        for concept_id in sorted(
+            concept_ids
+        ):
+
+            state = learning_state.get_knowledge_state(
+                concept_id,
+            )
+
+            relevant_interactions = [
+                interaction
+                for interaction
+                in evidence.relevant_interactions
+                if concept_id
+                in interaction.concept_ids
+            ]
+
+            recent_interactions = [
+                interaction
+                for interaction
+                in evidence.recent_interactions
+                if concept_id
+                in interaction.concept_ids
+            ]
+
+            evidence_interactions = self._unique_interactions(
+                relevant_interactions
+                + recent_interactions
+            )
+
+            attempts = state.attempts
+
+            correct_attempts = (
+                state.correct_attempts
+            )
+
+            accuracy = (
+                state.recent_accuracy
+                if attempts > 0
+                else 0.0
+            )
+
+            error_rate = state.error_rate
+
+            evidence_count = len(
+                evidence_interactions
+            )
+
+            has_recent_evidence = bool(
+                recent_interactions
+            )
+
+            has_relevant_evidence = bool(
+                relevant_interactions
+            )
+
+            weakness_signal = (
+                state.mastery
+                < self._weakness_threshold
+                or (
+                    attempts > 0
+                    and accuracy
+                    < self._weakness_threshold
+                )
+            )
+
+            transfer_deficit_signal = (
+                has_relevant_evidence
+                and has_recent_evidence
+                and accuracy
+                < self._transfer_accuracy_threshold
+            )
+
+            concept_diagnosis = ConceptDiagnosis(
+                concept_id=concept_id,
+                mastery=state.mastery,
+                level=state.level,
+                attempts=attempts,
+                correct_attempts=correct_attempts,
+                accuracy=accuracy,
+                error_rate=error_rate,
+                evidence_count=evidence_count,
+                has_recent_evidence=(
+                    has_recent_evidence
+                ),
+                has_relevant_evidence=(
+                    has_relevant_evidence
+                ),
+                weakness_signal=(
+                    weakness_signal
+                ),
+                transfer_deficit_signal=(
+                    transfer_deficit_signal
+                ),
+            )
+
+            diagnosis.add_concept(
+                concept_diagnosis,
+            )
+
+            if concept_id in primary_concepts:
+                diagnosis.primary_concepts.append(
+                    concept_id
+                )
+
+            if weakness_signal:
+                diagnosis.weak_concepts.append(
+                    concept_id
+                )
+
+            if transfer_deficit_signal:
+                diagnosis.transfer_deficit_concepts.append(
+                    concept_id
+                )
+
+        diagnosis.metadata.update(
+            {
+                "concept_count": (
+                    diagnosis.concept_count
+                ),
+                "weak_concept_count": len(
+                    diagnosis.weak_concepts
+                ),
+                "transfer_deficit_count": len(
+                    diagnosis.transfer_deficit_concepts
+                ),
+                "weakness_threshold": (
+                    self._weakness_threshold
+                ),
+                "transfer_accuracy_threshold": (
+                    self._transfer_accuracy_threshold
+                ),
+            }
+        )
+
+        return diagnosis
+
+    @staticmethod
+    def _unique_interactions(
+        interactions: list,
+    ) -> list:
+
+        result = []
+        seen: set[str] = set()
+
+        for interaction in interactions:
+
+            if interaction.id in seen:
+                continue
+
+            seen.add(
+                interaction.id
+            )
+
+            result.append(
+                interaction
+            )
+
+        return result
+
+====================================================================================================
+FILE: backend\domain\learning\learning_interaction.py
+====================================================================================================
+from __future__ import annotations
+
+from datetime import UTC, datetime
+from uuid import uuid4
+
+from pydantic import BaseModel, Field
+
+
+class LearningInteraction(BaseModel):
+    """
+    Represents one observable learning interaction.
+
+    An interaction is evidence used to update the
+    learner model.
+    """
+
+    id: str = Field(
+        default_factory=lambda: str(uuid4()),
+    )
+
+    learner_id: str
+
+    question_id: str | None = None
+
+    question: str = ""
+
+    answer: str = ""
+
+    correct: bool | None = None
+
+    concept_ids: list[str] = Field(
+        default_factory=list,
+    )
+
+    timestamp: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+    )
+
+    metadata: dict[str, object] = Field(
+        default_factory=dict,
+    )
+
+====================================================================================================
+FILE: backend\domain\learning\learning_state.py
+====================================================================================================
+from __future__ import annotations
+
+from typing import Any
+
+from pydantic import BaseModel, Field, model_validator
+
+from backend.domain.knowledge.knowledge_state import (
+    KnowledgeState,
+)
+from backend.domain.learning.learning_interaction import (
+    LearningInteraction,
+)
+
+
+class LearningState(BaseModel):
+    """
+    Represents the learner's current adaptive learning state.
+
+    LearningState contains the learner model used by
+    routing, planning, execution and adaptation.
+    """
+
+    learner_id: str
+
+    knowledge: dict[str, KnowledgeState] = Field(
+        default_factory=dict,
+    )
+
+    interactions: list[LearningInteraction] = Field(
+        default_factory=list,
+    )
+
+    progress: dict[str, float] = Field(
+        default_factory=dict,
+    )
+
+    metadata: dict[str, object] = Field(
+        default_factory=dict,
+    )
+
+    # ======================================================
+    # Backward compatibility
+    # ======================================================
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_legacy_knowledge(
+        cls,
+        data: Any,
+    ) -> Any:
+        """
+        Normalize the old current_knowledge format
+        into the new knowledge structure.
+        """
+
+        if not isinstance(data, dict):
+            return data
+
+        data = dict(data)
+
+        legacy_knowledge = data.pop(
+            "current_knowledge",
+            None,
+        )
+
+        if legacy_knowledge is None:
+            return data
+
+        knowledge = dict(
+            data.get(
+                "knowledge",
+                {},
+            )
+        )
+
+        for concept_id, value in legacy_knowledge.items():
+
+            if isinstance(
+                value,
+                KnowledgeState,
+            ):
+                knowledge[concept_id] = value
+                continue
+
+            state = KnowledgeState(
+                concept_id=concept_id,
+            )
+
+            if isinstance(
+                value,
+                str,
+            ):
+                level_map = {
+                    "unknown": 0.0,
+                    "basic": 0.2,
+                    "beginner": 0.2,
+                    "intermediate": 0.5,
+                    "understood": 0.8,
+                    "advanced": 0.75,
+                    "mastered": 0.95,
+                }
+
+                normalized = value.lower()
+
+                if normalized in level_map:
+                    state.update_mastery(
+                        level_map[normalized],
+                    )
+
+                else:
+                    # Free-form legacy knowledge such as
+                    # "basic syntax" should be preserved.
+                    state.metadata[
+                        "legacy_label"
+                    ] = value
+
+            else:
+                state.metadata[
+                    "value"
+                ] = value
+
+            knowledge[concept_id] = state
+
+        data["knowledge"] = knowledge
+
+        return data
+
+    # ======================================================
+    # Backward-compatible Knowledge API
+    # ======================================================
+
+    @property
+    def current_knowledge(
+        self,
+    ) -> dict[str, str]:
+        """
+        Backward-compatible view of knowledge.
+
+        New code should use `knowledge`.
+        """
+
+        return {
+            concept_id: self._knowledge_label(
+                state,
+            )
+            for concept_id, state
+            in self.knowledge.items()
+        }
+
+    @staticmethod
+    def _knowledge_label(
+        state: KnowledgeState,
+    ) -> str:
+        """
+        Convert KnowledgeState into the legacy
+        current_knowledge representation.
+
+        The legacy API preserves the original labels
+        such as:
+            basic
+            intermediate
+            understood
+            advanced
+            mastered
+
+        New code should use KnowledgeState.level directly.
+        """
+
+        legacy_label = state.metadata.get(
+            "legacy_label",
+        )
+
+        if legacy_label is not None:
+            return str(
+                legacy_label,
+            )
+
+        if state.mastery == 0.2:
+            return "basic"
+
+        if state.mastery == 0.5:
+            return "intermediate"
+
+        if state.mastery == 0.8:
+            return "understood"
+
+        if state.mastery == 0.75:
+            return "advanced"
+
+        if state.mastery == 0.95:
+            return "mastered"
+
+        return state.level.value
+
+    def update_knowledge(
+        self,
+        topic: str,
+        knowledge: object,
+    ) -> None:
+        """
+        Backward-compatible knowledge update API.
+
+        New code should prefer update_mastery() or
+        get_knowledge_state().
+        """
+
+        state = self.get_knowledge_state(
+            topic,
+        )
+
+        if isinstance(
+            knowledge,
+            KnowledgeState,
+        ):
+            self.knowledge[topic] = knowledge
+            return
+
+        if isinstance(
+            knowledge,
+            str,
+        ):
+            level_map = {
+                "unknown": 0.0,
+                "basic": 0.2,
+                "beginner": 0.2,
+                "intermediate": 0.5,
+                "understood": 0.8,
+                "advanced": 0.75,
+                "mastered": 0.95,
+            }
+
+            normalized = knowledge.lower()
+
+            if normalized in level_map:
+
+                state.update_mastery(
+                    level_map[normalized],
+                )
+
+                # Remove any previous free-form label.
+                state.metadata.pop(
+                    "legacy_label",
+                    None,
+                )
+
+            else:
+                # Preserve free-form knowledge descriptions.
+                state.metadata[
+                    "legacy_label"
+                ] = knowledge
+
+            return
+
+        state.metadata[
+            "value"
+        ] = knowledge
+
+    def get_knowledge(
+        self,
+        topic: str,
+        default: object = None,
+    ) -> object:
+        """
+        Return backward-compatible knowledge value.
+        """
+
+        if topic not in self.knowledge:
+            return default
+
+        return self._knowledge_label(
+            self.knowledge[topic],
+        )
+
+    # ======================================================
+    # Knowledge State
+    # ======================================================
+
+    def get_knowledge_state(
+        self,
+        concept_id: str,
+    ) -> KnowledgeState:
+        """
+        Return the KnowledgeState for a concept.
+
+        Creates a default state when the concept does
+        not yet exist.
+        """
+
+        if concept_id not in self.knowledge:
+
+            self.knowledge[concept_id] = (
+                KnowledgeState(
+                    concept_id=concept_id,
+                )
+            )
+
+        return self.knowledge[concept_id]
+
+    def update_mastery(
+        self,
+        concept_id: str,
+        mastery: float,
+    ) -> None:
+        """
+        Update mastery for a knowledge concept.
+        """
+
+        state = self.get_knowledge_state(
+            concept_id,
+        )
+
+        state.update_mastery(
+            mastery,
+        )
+
+    # ======================================================
+    # Interaction
+    # ======================================================
+
+    def add_interaction(
+        self,
+        interaction: LearningInteraction,
+    ) -> None:
+        """
+        Add one learner interaction and update
+        affected knowledge states.
+        """
+
+        self.interactions.append(
+            interaction,
+        )
+
+        if interaction.correct is None:
+            return
+
+        for concept_id in interaction.concept_ids:
+
+            state = self.get_knowledge_state(
+                concept_id,
+            )
+
+            state.record_attempt(
+                interaction.correct,
+            )
+
+    # ======================================================
+    # Progress
+    # ======================================================
+
+    def update_progress(
+        self,
+        topic: str,
+        value: float,
+    ) -> None:
+        """
+        Update learning progress for a topic.
+        """
+
+        self.progress[topic] = value
+
+    def get_progress(
+        self,
+        topic: str,
+        default: float | None = None,
+    ) -> float | None:
+        """
+        Get progress for a topic.
+        """
+
+        return self.progress.get(
+            topic,
+            default,
+        )
+
+    # ======================================================
+    # Metadata
+    # ======================================================
+
+    def set_metadata(
+        self,
+        key: str,
+        value: object,
+    ) -> None:
+        """
+        Set learner metadata.
+        """
+
+        self.metadata[key] = value
+
+    def get_metadata(
+        self,
+        key: str,
+        default: object = None,
+    ) -> object:
+        """
+        Get learner metadata.
+        """
+
+        return self.metadata.get(
+            key,
+            default,
+        )
+
+====================================================================================================
+FILE: backend\domain\learning\memory_repository.py
+====================================================================================================
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+
+from backend.domain.learning.learning_interaction import (
+    LearningInteraction,
+)
+
+
+class MemoryRepository(ABC):
+    """
+    Learner-scoped historical interaction retrieval.
+
+    Ranking stays in the application layer.
+    """
+
+    @abstractmethod
+    def get_recent_interactions(
+        self,
+        learner_id: str,
+        limit: int,
+    ) -> list[LearningInteraction]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_interactions_by_concepts(
+        self,
+        learner_id: str,
+        concept_ids: list[str],
+        limit: int,
+    ) -> list[LearningInteraction]:
+        raise NotImplementedError
+
+
+====================================================================================================
+FILE: backend\domain\knowledge\concept.py
+====================================================================================================
+from __future__ import annotations
+
+from pydantic import BaseModel, Field
+
+
+class Concept(BaseModel):
+    """
+    Canonical knowledge concept identity.
+
+    The concept registry is the source of truth for
+    concept_id values. Downstream services must not
+    invent new canonical IDs.
+    """
+
+    concept_id: str
+    name: str
+    description: str = ""
+    domain: str = ""
+    parent_concept_id: str | None = None
+    difficulty: str | None = None
+    status: str = "active"
+    aliases: list[str] = Field(default_factory=list)
+    metadata: dict[str, object] = Field(default_factory=dict)
+
+
+====================================================================================================
+FILE: backend\domain\knowledge\concept_repository.py
+====================================================================================================
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+
+from backend.domain.knowledge.concept import Concept
+
+
+class ConceptRepository(ABC):
+    """Canonical concept registry contract."""
+
+    @abstractmethod
+    def get(self, concept_id: str) -> Concept | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def list(self, domain: str | None = None) -> list[Concept]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def find_by_name(self, name: str) -> Concept | None:
+        raise NotImplementedError
+
+
+====================================================================================================
+FILE: backend\domain\knowledge\knowledge_level.py
+====================================================================================================
+from __future__ import annotations
+
+from enum import StrEnum
+
+
+class KnowledgeLevel(StrEnum):
+    """
+    Represents learner mastery over a knowledge node.
+    """
+
+    BEGINNER = "beginner"
+
+    INTERMEDIATE = "intermediate"
+
+    ADVANCED = "advanced"
+
+
+
+====================================================================================================
+FILE: backend\domain\knowledge\knowledge_node.py
+====================================================================================================
+from __future__ import annotations
+from uuid import uuid4
+
+from pydantic import BaseModel, Field
+
+from backend.domain.knowledge.knowledge_level import (
+    KnowledgeLevel,
+)
+
+
+class KnowledgeNode(BaseModel):
+    """
+    Represents a single knowledge unit.
+
+    A KnowledgeNode is the smallest learning object
+    that can be planned, taught and assessed.
+    """
+
+    id: str = Field(
+          default_factory=lambda: str(uuid4()),
+        )
+
+    title: str
+
+    description: str = ""
+
+    level: KnowledgeLevel = KnowledgeLevel.BEGINNER
+
+    prerequisites: list[str] = Field(
+        default_factory=list,
+    )
+
+    tags: list[str] = Field(
+        default_factory=list,
+    )
+
+    def add_prerequisite(
+        self,
+        node_id: str,
+    ) -> None:
+
+        if node_id not in self.prerequisites:
+            self.prerequisites.append(
+                node_id,
+            )
+
+    def add_tag(
+        self,
+        tag: str,
+    ) -> None:
+
+        if tag not in self.tags:
+            self.tags.append(
+                tag,
+            )
+
+====================================================================================================
+FILE: backend\domain\knowledge\knowledge_state.py
+====================================================================================================
+from __future__ import annotations
+
+from datetime import UTC, datetime
+
+from pydantic import BaseModel, Field
+
+from backend.domain.knowledge.knowledge_level import (
+    KnowledgeLevel,
+)
+
+
+class KnowledgeState(BaseModel):
+    """
+    Represents the learner's current state for a
+    specific knowledge concept.
+
+    This is learner-specific state and must not be
+    confused with KnowledgeNode, which belongs to
+    the domain knowledge model.
+    """
+
+    concept_id: str
+
+    mastery: float = 0.0
+
+    level: KnowledgeLevel = KnowledgeLevel.BEGINNER
+
+    attempts: int = 0
+
+    correct_attempts: int = 0
+
+    error_rate: float = 0.0
+
+    recent_accuracy: float = 0.0
+
+    last_interaction_at: datetime | None = None
+
+    metadata: dict[str, object] = Field(
+        default_factory=dict,
+    )
+
+    def record_attempt(
+        self,
+        correct: bool,
+    ) -> None:
+        self.attempts += 1
+
+        if correct:
+            self.correct_attempts += 1
+
+        self.error_rate = (
+            1.0
+            - (
+                self.correct_attempts
+                / self.attempts
+            )
+        )
+
+        self.recent_accuracy = (
+            self.correct_attempts
+            / self.attempts
+        )
+
+        # Keep mastery synchronized with the current
+        # observed learning performance.
+        self.mastery = self.recent_accuracy
+        self.level = self._infer_level()
+
+        self.last_interaction_at = datetime.now(UTC)
+    def update_mastery(
+        self,
+        value: float,
+    ) -> None:
+        """
+        Update estimated mastery.
+
+        Mastery is normalized to [0, 1].
+        """
+
+        self.mastery = max(
+            0.0,
+            min(1.0, value),
+        )
+
+        self.level = self._infer_level()
+
+    def _infer_level(
+        self,
+    ) -> KnowledgeLevel:
+        """
+        Infer knowledge level from mastery.
+
+        Level is derived from mastery and does not
+        require previous learner interactions.
+
+        This is important because an initial learner
+        state may already contain an estimated mastery
+        value before any interaction is recorded.
+        """
+
+        if self.mastery < 0.4:
+            return KnowledgeLevel.BEGINNER
+
+        if self.mastery < 0.7:
+            return KnowledgeLevel.INTERMEDIATE
+
+        return KnowledgeLevel.ADVANCED
+
+====================================================================================================
+FILE: backend\domain\knowledge\repository.py
+====================================================================================================
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+
+from backend.domain.knowledge.knowledge_node import (
+    KnowledgeNode,
+)
+
+
+class KnowledgeRepository(ABC):
+    """
+    Domain repository for KnowledgeNode Aggregate.
+
+    Infrastructure implementations (SQLite, PostgreSQL,
+    MongoDB, Neo4j, etc.) must implement this contract.
+    """
+
+    @abstractmethod
+    def add(
+        self,
+        knowledge: KnowledgeNode,
+    ) -> None:
+        """
+        Persist a new knowledge node.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get(
+        self,
+        knowledge_id: str,
+    ) -> KnowledgeNode | None:
+        """
+        Retrieve a knowledge node by id.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def list(
+        self,
+    ) -> list[KnowledgeNode]:
+        """
+        Retrieve all knowledge nodes.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def remove(
+        self,
+        knowledge_id: str,
+    ) -> None:
+        """
+        Remove a knowledge node.
+        """
+        raise NotImplementedError
+
+====================================================================================================
+FILE: backend\application\services\adaptive_diagnosis_factory.py
+====================================================================================================
+
+
+====================================================================================================
+FILE: backend\application\services\adaptive_diagnosis_service.py
+====================================================================================================
+
+
+====================================================================================================
+FILE: backend\application\services\adaptive_models.py
+====================================================================================================
+
+
+====================================================================================================
+FILE: backend\application\services\adaptive_retrieval_service.py
+====================================================================================================
+
+
+====================================================================================================
+FILE: backend\application\services\diagnosis_engine.py
+====================================================================================================
+
+
+====================================================================================================
+FILE: backend\application\services\evidence_aggregator.py
+====================================================================================================
+
+
+====================================================================================================
+FILE: backend\application\services\learning_service.py
+====================================================================================================
+from __future__ import annotations
+
+from backend.application.orchestration.execution_request import (
+    ExecutionRequest,
+)
+from backend.application.orchestration.learning_orchestrator import (
+    LearningOrchestrator,
+)
+from backend.application.runtime.runtime_result import (
+    RuntimeResult,
+)
+
+
+class LearningService:
+    """
+    Application service for executing a learner request.
+
+    LearningService is the entry point for the application
+    layer.
+
+    Responsibilities
+    ----------------
+    - Receive an ExecutionRequest.
+    - Delegate execution to LearningOrchestrator.
+    - Return the final RuntimeResult.
+
+    It does not perform:
+    - intent recognition
+    - component selection
+    - planning
+    - workflow construction
+    - runtime execution
+    """
+
+    def __init__(
+        self,
+        orchestrator: LearningOrchestrator,
+    ) -> None:
+
+        self._orchestrator = orchestrator
+
+    def execute(
+        self,
+        request: ExecutionRequest,
+    ) -> RuntimeResult:
+
+        return self._orchestrator.execute(
+            request,
+        )
+
+====================================================================================================
+FILE: backend\application\services\llm_call_metrics.py
+====================================================================================================
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class LLMCallMetrics:
+    """
+    Metrics collected for one LLM call.
+    """
+
+    stage: str | None
+
+    component: str | None
+
+    duration: float
+
+    input_tokens: int
+
+    output_tokens: int
+
+    total_tokens: int
+
+====================================================================================================
+FILE: backend\application\services\llm_service.py
+====================================================================================================
+from __future__ import annotations
+
+import time
+
+from backend.application.services.llm_call_metrics import (
+    LLMCallMetrics,
+)
+from backend.infrastructure.providers import (
+    LLMProvider,
+    ProviderFactory,
+)
+
+
+class LLMService:
+    """
+    Application service for LLM access.
+
+    Responsibilities:
+    - provide a single application-level interface for LLM calls;
+    - count LLM calls;
+    - collect per-call metrics;
+    - collect token usage;
+    - aggregate usage metrics;
+    - track execution stage;
+    - manage the active provider.
+    """
+
+    def __init__(
+        self,
+        provider: LLMProvider | None = None,
+    ) -> None:
+
+        self._provider = (
+            provider
+            if provider is not None
+            else ProviderFactory.create()
+        )
+
+        self._call_count = 0
+
+        self._call_metrics: list[
+            LLMCallMetrics
+        ] = []
+
+    # ======================================================
+    # Provider
+    # ======================================================
+
+    @property
+    def provider(
+        self,
+    ) -> LLMProvider:
+
+        return self._provider
+
+    # ======================================================
+    # LLM generation
+    # ======================================================
+
+    def generate(
+        self,
+        messages: list[dict[str, str]],
+        *,
+        stage: str | None = None,
+        component: str | None = None,
+    ) -> str:
+
+        self._call_count += 1
+
+        started_at = time.perf_counter()
+
+        try:
+
+            response = self._provider.generate(
+                messages,
+            )
+
+        except Exception:
+
+            duration = (
+                time.perf_counter()
+                - started_at
+            )
+
+            self._call_metrics.append(
+                LLMCallMetrics(
+                    stage=stage,
+                    component=component,
+                    duration=duration,
+                    input_tokens=0,
+                    output_tokens=0,
+                    total_tokens=0,
+                )
+            )
+
+            raise
+
+        duration = (
+            time.perf_counter()
+            - started_at
+        )
+
+        input_tokens = (
+            self._provider.last_input_tokens
+        )
+
+        output_tokens = (
+            self._provider.last_output_tokens
+        )
+
+        total_tokens = (
+            self._provider.last_total_tokens
+        )
+
+        self._call_metrics.append(
+            LLMCallMetrics(
+                stage=stage,
+                component=component,
+                duration=duration,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                total_tokens=total_tokens,
+            )
+        )
+
+        return response
+
+    # ======================================================
+    # Call metrics
+    # ======================================================
+
+    @property
+    def call_count(
+        self,
+    ) -> int:
+
+        return self._call_count
+
+    def reset_call_count(
+        self,
+    ) -> None:
+
+        self._call_count = 0
+        self._call_metrics.clear()
+
+    @property
+    def call_metrics(
+        self,
+    ) -> list[LLMCallMetrics]:
+
+        return list(
+            self._call_metrics,
+        )
+
+    # ======================================================
+    # Aggregated metrics
+    # ======================================================
+
+    @property
+    def total_input_tokens(
+        self,
+    ) -> int:
+
+        return sum(
+            metric.input_tokens
+            for metric in self._call_metrics
+        )
+
+    @property
+    def total_output_tokens(
+        self,
+    ) -> int:
+
+        return sum(
+            metric.output_tokens
+            for metric in self._call_metrics
+        )
+
+    @property
+    def total_tokens(
+        self,
+    ) -> int:
+
+        return sum(
+            metric.total_tokens
+            for metric in self._call_metrics
+        )
+
+    @property
+    def total_duration(
+        self,
+    ) -> float:
+
+        return sum(
+            metric.duration
+            for metric in self._call_metrics
+        )
+
+    def metrics_by_stage(
+        self,
+        stage: str,
+    ) -> list[LLMCallMetrics]:
+
+        return [
+            metric
+            for metric in self._call_metrics
+            if metric.stage == stage
+        ]
+
+    def input_tokens_by_stage(
+        self,
+        stage: str,
+    ) -> int:
+
+        return sum(
+            metric.input_tokens
+            for metric in self.metrics_by_stage(
+                stage,
+            )
+        )
+
+    def output_tokens_by_stage(
+        self,
+        stage: str,
+    ) -> int:
+
+        return sum(
+            metric.output_tokens
+            for metric in self.metrics_by_stage(
+                stage,
+            )
+        )
+
+    def total_tokens_by_stage(
+        self,
+        stage: str,
+    ) -> int:
+
+        return sum(
+            metric.total_tokens
+            for metric in self.metrics_by_stage(
+                stage,
+            )
+        )
+
+    def duration_by_stage(
+        self,
+        stage: str,
+    ) -> float:
+
+        return sum(
+            metric.duration
+            for metric in self.metrics_by_stage(
+                stage,
+            )
+        )
+
+    def set_provider(
+        self,
+        provider: LLMProvider,
+    ) -> None:
+
+        self._provider = provider
+
+    def metrics_by_component(
+        self,
+        component: str,
+    ) -> list[LLMCallMetrics]:
+
+        return [
+            metric
+            for metric in self._call_metrics
+            if metric.component == component
+        ]
+
+    def duration_by_component(
+        self,
+        component: str,
+    ) -> float:
+
+        return sum(
+            metric.duration
+            for metric in self.metrics_by_component(
+                component,
+            )
+        )
+
+    def input_tokens_by_component(
+        self,
+        component: str,
+    ) -> int:
+
+        return sum(
+            metric.input_tokens
+            for metric in self.metrics_by_component(
+                component,
+            )
+        )
+
+    def output_tokens_by_component(
+        self,
+        component: str,
+    ) -> int:
+
+        return sum(
+            metric.output_tokens
+            for metric in self.metrics_by_component(
+                component,
+            )
+        )
+
+    def total_tokens_by_component(
+        self,
+        component: str,
+    ) -> int:
+
+        return sum(
+            metric.total_tokens
+            for metric in self.metrics_by_component(
+                component,
+            )
+        )
+
+====================================================================================================
+FILE: backend\application\services\memory_query_service.py
+====================================================================================================
+
+from __future__ import annotations
+
+from typing import Any, Literal
+
+from backend.application.runtime.evidence_selector import (
+    EvidenceSelector,
+)
+from backend.domain.learning.historical_evidence_builder import (
+    HistoricalEvidenceBuilder,
+)
+from backend.domain.learning.learning_state import LearningState
+
+
+MemoryRetrievalMode = Literal[
+    "context",
+    "all",
+]
+
+
+class MemoryQueryService:
+    """
+    Retrieves historical evidence for memory queries.
+
+    Retrieval modes
+    ---------------
+    context:
+        Deterministic Top-K retrieval for contextual memory.
+
+    all:
+        Returns the complete canonical historical evidence set.
+        This mode is required for aggregation/filtering questions
+        such as count, date-based filtering, or exact-record lookup.
+
+    This service:
+    - receives QUERY ONLY;
+    - never reads Gold answers;
+    - never generates answers;
+    - never performs benchmark-specific answer matching.
+    """
+
+    TOP_K = 5
+    MAX_TOKENS = 1200
+
+    def __init__(
+        self,
+        evidence_builder: HistoricalEvidenceBuilder | None = None,
+    ) -> None:
+        self._evidence_builder = (
+            evidence_builder
+            if evidence_builder is not None
+            else HistoricalEvidenceBuilder()
+        )
+
+    def retrieve(
+        self,
+        learning_state: LearningState,
+        query: str,
+        history_info: list[Any] | None = None,
+        related_history: list[Any] | None = None,
+        mode: MemoryRetrievalMode = "context",
+    ) -> dict[str, Any]:
+        """
+        Retrieve historical evidence for one memory query.
+
+        Parameters
+        ----------
+        learning_state:
+            Current learner state.
+
+        query:
+            Memory query only.
+
+        history_info:
+            Historical interaction records.
+
+        related_history:
+            Related historical interaction records.
+
+        mode:
+            - "context": deterministic Top-K selection.
+            - "all": return all canonical evidence.
+        """
+
+        query = str(query or "").strip()
+
+        if mode not in {"context", "all"}:
+            raise ValueError(
+                f"Unsupported memory retrieval mode: {mode!r}"
+            )
+
+        if not query:
+            return {
+                "query": "",
+                "mode": mode,
+                "history": [],
+                "related_history": [],
+                "stats": {},
+            }
+
+        evidence = self._evidence_builder.build(
+            learning_state=learning_state,
+            current_question=query,
+            related_concept_ids=[],
+            history_info=history_info or [],
+            related_history=related_history or [],
+        )
+
+        if mode == "all":
+            return self._retrieve_all(
+                query=query,
+                evidence=evidence,
+            )
+
+        return self._retrieve_context(
+            query=query,
+            evidence=evidence,
+        )
+
+    @staticmethod
+    def infer_mode(
+        query: str,
+    ) -> MemoryRetrievalMode:
+        """
+        Infer the minimum retrieval scope required by a
+        memory query.
+
+        This does not answer the query.
+
+        Queries involving counting, totals, or aggregation
+        require the complete evidence set.
+        """
+
+        query = str(query or "").strip().lower()
+
+        aggregation_markers = (
+            # Chinese
+            "多少",
+            "几道",
+            "几题",
+            "共",
+            "一共",
+            "总数",
+            "统计",
+            "多少道",
+            "多少题",
+            "有几",
+            "答对了几",
+            "完成了多少",
+            "尝试了多少",
+
+            # English
+            "how many",
+            "number of",
+            "total",
+            "count",
+            "how much",
+        )
+
+        if any(
+            marker in query
+            for marker in aggregation_markers
+        ):
+            return "all"
+
+        return "context"
+
+    def _retrieve_context(
+        self,
+        query: str,
+        evidence: Any,
+    ) -> dict[str, Any]:
+        """
+        Retrieve a bounded contextual memory set.
+        """
+
+        selection = EvidenceSelector.select(
+            current_question=query,
+            current_concept_ids=[],
+            interactions=(
+                list(evidence.relevant_interactions)
+                + list(evidence.recent_interactions)
+            ),
+            related_history=list(
+                evidence.related_interactions
+            ),
+            top_k=self.TOP_K,
+            max_tokens=self.MAX_TOKENS,
+        )
+
+        stats = dict(
+            selection.get(
+                "stats",
+                {},
+            )
+        )
+
+        stats["retrieval_mode"] = "context"
+
+        return {
+            "query": query,
+            "mode": "context",
+            "history": self._serialize_interactions(
+                selection["history"]
+            ),
+            "related_history": self._serialize_interactions(
+                selection["related_history"]
+            ),
+            "stats": self._json_safe(stats),
+        }
+
+    @staticmethod
+    def _retrieve_all(
+        query: str,
+        evidence: Any,
+    ) -> dict[str, Any]:
+        """
+        Return the complete canonical evidence set.
+
+        No Top-K truncation is applied because aggregation,
+        filtering, and exact historical lookup may require
+        records outside the contextual Top-K window.
+        """
+
+        history = (
+            list(evidence.relevant_interactions)
+            + list(evidence.recent_interactions)
+        )
+
+        related_history = list(
+            evidence.related_interactions
+        )
+
+        stats = {
+            "retrieval_mode": "all",
+            "history_candidates": len(history),
+            "related_history_candidates": len(
+                related_history
+            ),
+            "selected_count": (
+                len(history)
+                + len(related_history)
+            ),
+        }
+
+        return {
+            "query": query,
+            "mode": "all",
+            "history": MemoryQueryService._serialize_interactions(
+                history
+            ),
+            "related_history": MemoryQueryService._serialize_interactions(
+                related_history
+            ),
+            "stats": MemoryQueryService._json_safe(
+                stats
+            ),
+        }
+
+    @staticmethod
+    def _json_safe(
+        value: Any,
+    ) -> Any:
+        """
+        Convert arbitrary nested values into JSON-safe values.
+
+        Handles:
+        - Pydantic models;
+        - datetime/date-like objects;
+        - dictionaries;
+        - lists/tuples;
+        - nested combinations of the above.
+        """
+
+        if hasattr(
+            value,
+            "model_dump",
+        ):
+            return MemoryQueryService._json_safe(
+                value.model_dump()
+            )
+
+        if isinstance(
+            value,
+            dict,
+        ):
+            return {
+                str(key): MemoryQueryService._json_safe(
+                    item
+                )
+                for key, item in value.items()
+            }
+
+        if isinstance(
+            value,
+            (list, tuple),
+        ):
+            return [
+                MemoryQueryService._json_safe(
+                    item
+                )
+                for item in value
+            ]
+
+        if hasattr(
+            value,
+            "isoformat",
+        ):
+            return value.isoformat()
+
+        return value
+
+    @staticmethod
+    def _serialize_interactions(
+        items: list[Any],
+    ) -> list[dict[str, Any]]:
+        """
+        Convert canonical LearningInteraction objects
+        into JSON-safe dictionaries.
+        """
+
+        result: list[dict[str, Any]] = []
+
+        for item in items:
+            serialized = MemoryQueryService._json_safe(
+                item
+            )
+
+            if isinstance(
+                serialized,
+                dict,
+            ):
+                result.append(
+                    serialized
+                )
+
+        return result
+
+
+
+====================================================================================================
+FILE: backend\application\services\quiz_specification.py
+====================================================================================================
+
+
+====================================================================================================
+FILE: backend\application\services\session_service.py
+====================================================================================================
+from datetime import UTC, datetime
+
+from sqlalchemy.orm import Session
+
+from backend.db.models.learning import LearningSession
+from backend.db.repositories.session_repository import SessionRepository
+
+
+class SessionService:
+
+    def __init__(self, db: Session):
+        self.repository = SessionRepository(db)
+
+    def create(
+        self,
+        user_id: str,
+        title: str,
+        goal_id: str | None = None,
+    ) -> LearningSession:
+
+        now = datetime.now(UTC).isoformat()
+
+        session = LearningSession(
+            user_id=user_id,
+            goal_id=goal_id,
+            title=title,
+            summary=None,
+            created_at=now,
+            updated_at=now,
+        )
+
+        return self.repository.create(session)
+
+    def get(
+        self,
+        session_id: str,
+    ) -> LearningSession | None:
+
+        return self.repository.get(session_id)
+
+    def list_user_sessions(
+        self,
+        user_id: str,
+    ) -> list[LearningSession]:
+
+        return self.repository.list_by_user(user_id)
+
+    def rename(
+        self,
+        session_id: str,
+        title: str,
+    ) -> LearningSession | None:
+
+        session = self.repository.get(session_id)
+
+        if session is None:
+            return None
+
+        session.title = title
+        session.updated_at = datetime.now(UTC).isoformat()
+
+        return self.repository.update(session)
+
+    def update_summary(
+        self,
+        session_id: str,
+        summary: str,
+    ) -> LearningSession | None:
+
+        session = self.repository.get(session_id)
+
+        if session is None:
+            return None
+
+        session.summary = summary
+        session.updated_at = datetime.now(UTC).isoformat()
+
+        return self.repository.update(session)
+
+    def delete(
+        self,
+        session_id: str,
+    ) -> bool:
+
+        session = self.repository.get(session_id)
+
+        if session is None:
+            return False
+
+        self.repository.delete(session)
+
+        return True
+
+====================================================================================================
+FILE: backend\application\services\user_service.py
+====================================================================================================
+from datetime import UTC, datetime
+
+from sqlalchemy.orm import Session
+
+from backend.db.models.user import User
+from backend.db.repositories.user_repository import UserRepository
+
+
+class UserService:
+
+    def __init__(self, db: Session):
+        self.users = UserRepository(db)
+
+    def get_user(
+        self,
+        user_id: str,
+    ) -> User | None:
+
+        return self.users.get(user_id)
+
+    def get_user_by_email(
+        self,
+        email: str,
+    ) -> User | None:
+
+        return self.users.get_by_email(email)
+
+    def create_user(
+        self,
+        email: str,
+        password_hash: str,
+        display_name: str,
+    ) -> User:
+
+        if self.users.get_by_email(email) is not None:
+            raise ValueError("Email already exists.")
+
+        user = User(
+            email=email,
+            password_hash=password_hash,
+            display_name=display_name,
+            role="student",
+            created_at=datetime.now(UTC).isoformat(),
+        )
+
+        return self.users.create(user)
+
+    def update_display_name(
+        self,
+        user_id: str,
+        display_name: str,
+    ) -> User:
+
+        user = self.users.get(user_id)
+
+        if user is None:
+            raise ValueError("User not found.")
+
+        user.display_name = display_name
+        user.updated_at = datetime.now(UTC).isoformat()
+
+        return self.users.update(user)
+
+    def delete_user(
+        self,
+        user_id: str,
+    ) -> None:
+
+        user = self.users.get(user_id)
+
+        if user is None:
+            raise ValueError("User not found.")
+
+        self.users.delete(user)
+
+====================================================================================================
+FILE: backend\application\services\__init__.py
+====================================================================================================
+# from .learning_service import LearningService
+# from .llm_service import LLMService
+
+# __all__ = [
+#     "LearningService",
+#     "LLMService",
+# ]
+
+====================================================================================================
+FILE: backend\application\orchestration\adaptive_learning_pipeline.py
+====================================================================================================
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from backend.domain.learning.adaptive_teaching_action import (
+    AdaptiveTeachingAction,
+    AdaptiveTeachingActionSelector,
+)
+from backend.domain.learning.historical_evidence import (
+    HistoricalEvidence,
+)
+from backend.domain.learning.historical_evidence_builder import (
+    HistoricalEvidenceBuilder,
+)
+from backend.domain.learning.knowledge_diagnosis import (
+    KnowledgeDiagnosis,
+    KnowledgeStateDiagnoser,
+)
+from backend.domain.learning.learning_state import (
+    LearningState,
+)
+from backend.application.orchestration.adaptive_learning_result import (
+    AdaptiveLearningResult,
+)
+
+class AdaptiveLearningPipeline:
+    """
+    Application-level coordinator for adaptive learning.
+
+    Responsibilities
+    ----------------
+    - Build historical evidence from LearningState.
+    - Diagnose the learner's knowledge state.
+    - Select an adaptive teaching action.
+    - Keep the three stages explicitly separated.
+    - Never execute teaching.
+    - Never modify LearningState directly.
+    - Never call an LLM.
+
+    The resulting AdaptiveLearningResult can then be
+    consumed by the planner and runtime.
+    """
+
+    def __init__(
+        self,
+        evidence_builder: HistoricalEvidenceBuilder | None = None,
+        diagnoser: KnowledgeStateDiagnoser | None = None,
+        action_selector: AdaptiveTeachingActionSelector | None = None,
+    ) -> None:
+
+        self._evidence_builder = (
+            evidence_builder
+            if evidence_builder is not None
+            else HistoricalEvidenceBuilder()
+        )
+
+        self._diagnoser = (
+            diagnoser
+            if diagnoser is not None
+            else KnowledgeStateDiagnoser()
+        )
+
+        self._action_selector = (
+            action_selector
+            if action_selector is not None
+            else AdaptiveTeachingActionSelector()
+        )
+
+    def run(
+        self,
+        learning_state: LearningState,
+        current_question: str = "",
+        related_concept_ids: list[str] | None = None,
+        primary_concept_ids: list[str] | None = None,
+    ) -> AdaptiveLearningResult:
+        """
+        Execute the complete adaptive learning pipeline.
+
+        Parameters
+        ----------
+        learning_state:
+            Current learner model.
+
+        current_question:
+            Question currently being solved or taught.
+
+        related_concept_ids:
+            Concepts identified as related to the current task.
+            These are passed to historical evidence acquisition.
+
+        primary_concept_ids:
+            Concepts that are primary targets of the current task.
+            These are passed to knowledge diagnosis.
+
+        Returns
+        -------
+        AdaptiveLearningResult
+            Contains evidence, diagnosis and teaching action.
+        """
+
+        # ======================================================
+        # 1. HISTORICAL EVIDENCE
+        # ======================================================
+
+        evidence = self._evidence_builder.build(
+            learning_state=learning_state,
+            current_question=current_question,
+            related_concept_ids=related_concept_ids,
+        )
+
+        # ======================================================
+        # 2. KNOWLEDGE DIAGNOSIS
+        # ======================================================
+
+        diagnosis = self._diagnoser.diagnose(
+            learning_state=learning_state,
+            evidence=evidence,
+            primary_concept_ids=primary_concept_ids,
+        )
+
+        # ======================================================
+        # 3. ADAPTIVE TEACHING ACTION
+        # ======================================================
+
+        teaching_action = self._action_selector.select(
+            diagnosis,
+        )
+
+        # ======================================================
+        # RESULT
+        # ======================================================
+
+        return AdaptiveLearningResult(
+            evidence=evidence,
+            diagnosis=diagnosis,
+            teaching_action=teaching_action,
+        )
+
+====================================================================================================
+FILE: backend\application\orchestration\adaptive_learning_result.py
+====================================================================================================
+from __future__ import annotations
+
+from pydantic import BaseModel
+
+from backend.domain.learning.adaptive_teaching_action import (
+    AdaptiveTeachingAction,
+)
+from backend.domain.learning.historical_evidence import (
+    HistoricalEvidence,
+)
+from backend.domain.learning.knowledge_diagnosis import (
+    KnowledgeDiagnosis,
+)
+
+
+class AdaptiveLearningResult(BaseModel):
+    """
+    Complete adaptive-learning result for one
+    tutoring execution.
+
+    Contains the three stages required by the
+    adaptive learning pipeline:
+
+        HistoricalEvidence
+            ↓
+        KnowledgeDiagnosis
+            ↓
+        AdaptiveTeachingAction
+    """
+
+    evidence: HistoricalEvidence
+
+    diagnosis: KnowledgeDiagnosis
+
+    teaching_action: AdaptiveTeachingAction
+
+====================================================================================================
+FILE: backend\application\orchestration\execution_request.py
+====================================================================================================
+from __future__ import annotations
+
+from typing import Any
+
+from pydantic import BaseModel, Field
+
+from backend.domain.learning.learning_state import LearningState
+from backend.domain.student.student import Student
+
+
+class ExecutionRequest(BaseModel):
+    """
+    Input request for the application orchestration layer.
+    """
+
+    student: Student
+
+    message: str
+
+    learning_state: LearningState = Field(
+        default_factory=lambda: LearningState(
+            learner_id="default",
+        ),
+    )
+
+    metadata: dict[str, Any] = Field(
+        default_factory=dict,
+    )
+
+    def set_metadata(
+        self,
+        key: str,
+        value: Any,
+    ) -> None:
+
+        self.metadata[key] = value
+
+    def get_metadata(
+        self,
+        key: str,
+        default: Any = None,
+    ) -> Any:
+
+        return self.metadata.get(
+            key,
+            default,
+        )
+
+====================================================================================================
+FILE: backend\application\orchestration\execution_request_factory.py
+====================================================================================================
+from __future__ import annotations
+
+from backend.domain.student.student import Student
+
+from .execution_request import ExecutionRequest
+
+
+class ExecutionRequestFactory:
+    """
+    Creates an application-level ExecutionRequest
+    from an API-level ChatRequest.
+    """
+
+    @staticmethod
+    def create(
+        request: ChatRequest,
+        student: Student,
+    ) -> ExecutionRequest:
+
+        return ExecutionRequest(
+            student=student,
+            message=request.content,
+            metadata={
+                "session_id": request.session_id,
+                "user_id": request.user_id,
+                "mode": request.mode.value,
+                "agent": request.agent,
+            },
+        )
+
+====================================================================================================
+FILE: backend\application\orchestration\learning_orchestrator.py
+====================================================================================================
+
+from __future__ import annotations
+
+from backend.application.orchestration.adaptive_learning_pipeline import (
+    AdaptiveLearningPipeline,
+)
+from backend.application.orchestration.adaptive_learning_result import (
+    AdaptiveLearningResult,
+)
+from backend.application.orchestration.execution_request import (
+    ExecutionRequest,
+)
+from backend.application.planning.planner import Planner
+from backend.application.planning.planning_request import (
+    PlanningRequest,
+)
+from backend.application.planning.workflow_builder import (
+    WorkflowBuilder,
+)
+from backend.application.routing.router import Router
+from backend.application.runtime.runtime import Runtime
+from backend.application.runtime.runtime_context import (
+    RuntimeContext,
+)
+from backend.application.runtime.runtime_result import (
+    RuntimeResult,
+)
+from backend.application.services.memory_query_service import (
+    MemoryQueryService,
+)
+
+
+class LearningOrchestrator:
+    """
+    Application-level coordinator.
+
+    Coordinates the complete learning execution pipeline:
+
+        ExecutionRequest
+            ↓
+        Routing
+            ↓
+        Adaptive Learning
+            ↓
+        Planning
+            ↓
+        Workflow Building
+            ↓
+        Runtime Context
+            ↓
+        Runtime Execution
+            ↓
+        RuntimeResult
+    """
+
+    def __init__(
+        self,
+        router: Router,
+        planner: Planner,
+        workflow_builder: WorkflowBuilder,
+        runtime: Runtime,
+        adaptive_learning_pipeline: AdaptiveLearningPipeline | None = None,
+        memory_query_service: MemoryQueryService | None = None,
+    ) -> None:
+
+        self._router = router
+        self._planner = planner
+        self._workflow_builder = workflow_builder
+        self._runtime = runtime
+
+        self._adaptive_learning_pipeline = (
+            adaptive_learning_pipeline
+            if adaptive_learning_pipeline is not None
+            else AdaptiveLearningPipeline()
+        )
+
+        self._memory_query_service = (
+            memory_query_service
+            if memory_query_service is not None
+            else MemoryQueryService()
+        )
+
+    @staticmethod
+    def _json_safe(
+        value: object,
+    ) -> object:
+        """
+        Convert nested runtime metadata into JSON-safe values.
+
+        Handles:
+        - Pydantic models;
+        - datetime/date-like objects;
+        - dictionaries;
+        - lists/tuples;
+        - nested combinations of the above.
+        """
+
+        if hasattr(
+            value,
+            "model_dump",
+        ):
+            return LearningOrchestrator._json_safe(
+                value.model_dump()
+            )
+
+        if isinstance(
+            value,
+            dict,
+        ):
+            return {
+                str(key): LearningOrchestrator._json_safe(
+                    item
+                )
+                for key, item in value.items()
+            }
+
+        if isinstance(
+            value,
+            (list, tuple),
+        ):
+            return [
+                LearningOrchestrator._json_safe(
+                    item
+                )
+                for item in value
+            ]
+
+        if hasattr(
+            value,
+            "isoformat",
+        ):
+            return value.isoformat()
+
+        return value
+
+    def execute(
+        self,
+        request: ExecutionRequest,
+    ) -> RuntimeResult:
+
+        # ==================================================
+        # 1. ROUTING
+        # ==================================================
+
+        routing_result = self._router.route(
+            request.student,
+            request.message,
+        )
+
+        # ==================================================
+        # 2. CURRENT QUESTION / CONCEPTS
+        # ==================================================
+
+        current_question = request.metadata.get(
+            "current_question",
+            request.message,
+        )
+
+        current_concept_ids = request.metadata.get(
+            "current_concept_ids",
+            [],
+        )
+
+        # Defensive normalization.
+        if not isinstance(
+            current_concept_ids,
+            list,
+        ):
+            current_concept_ids = []
+
+        # ==================================================
+        # 3. ADAPTIVE LEARNING
+        # ==================================================
+
+        adaptive_learning: AdaptiveLearningResult = (
+            self._adaptive_learning_pipeline.run(
+                learning_state=request.learning_state,
+                current_question=current_question,
+                related_concept_ids=current_concept_ids,
+                primary_concept_ids=current_concept_ids,
+            )
+        )
+
+        # ==================================================
+        # 4. PLANNING
+        # ==================================================
+
+        planning_request = PlanningRequest(
+            student=request.student,
+            message=request.message,
+            routing=routing_result,
+            learning_state=request.learning_state,
+            adaptive_learning=adaptive_learning,
+        )
+
+        plan = self._planner.plan(
+            planning_request,
+        )
+
+        # ==================================================
+        # 5. WORKFLOW BUILDING
+        # ==================================================
+
+        workflow = self._workflow_builder.build(
+            plan,
+        )
+
+        # ==================================================
+        # 6. RUNTIME CONTEXT
+        # ==================================================
+
+        context = RuntimeContext(
+            workflow=workflow,
+            learning_state=request.learning_state,
+            adaptive_learning=adaptive_learning,
+        )
+
+        context.set_metadata(
+            "student_id",
+            request.student.id,
+        )
+
+        context.set_metadata(
+            "message",
+            request.message,
+        )
+
+        context.set_metadata(
+            "current_question",
+            current_question,
+        )
+
+        context.set_metadata(
+            "current_concept_ids",
+            current_concept_ids,
+        )
+
+        context.set_metadata(
+            "routing",
+            routing_result.model_dump(),
+        )
+
+        context.set_metadata(
+            "historical_evidence",
+            self._json_safe(
+                adaptive_learning.evidence,
+            ),
+        )
+
+        context.set_metadata(
+            "knowledge_diagnosis",
+            self._json_safe(
+                adaptive_learning.diagnosis,
+            ),
+        )
+
+        context.set_metadata(
+            "adaptive_teaching_action",
+            self._json_safe(
+                adaptive_learning.teaching_action,
+            ),
+        )
+
+        context.set_metadata(
+            "adaptive_learning",
+            self._json_safe(
+                adaptive_learning,
+            ),
+        )
+
+        # ==================================================
+        # 6.1 HISTORICAL EVIDENCE 
+        # ==================================================
+        #
+        # Preserve externally supplied historical evidence
+        # inside the in-memory RuntimeContext.
+        #
+        # No repository.
+        # No database.
+        # No Gold answers.
+        #
+        # The Runtime/ContextBuilder will consume this metadata
+        # through the canonical EvidenceSelector.
+        # ==================================================
+
+        request_metadata = request.metadata or {}
+
+        for key in (
+            "history_info",
+            "history",
+            "related_history",
+            "longtutor_features",
+        ):
+            value = request_metadata.get(key)
+
+            if value is not None:
+                context.set_metadata(
+                    key,
+                    value,
+                )
+
+        # ==================================================
+        # 6.2 MEMORY RETRIEVAL
+        # ==================================================
+        #
+        # Each memory query is retrieved independently.
+        #
+        # The retrieval mode is intentionally separated from
+        # answer generation:
+        #
+        #   context -> bounded Top-K evidence
+        #   all     -> complete canonical evidence
+        #
+        # No Gold answer is ever passed to MemoryQueryService.
+        # ==================================================
+
+        memory_queries = request_metadata.get(
+            "gold_memory_queries",
+            [],
+        )
+
+        if not isinstance(
+            memory_queries,
+            list,
+        ):
+            memory_queries = []
+
+        memory_retrieval = []
+
+        for item in memory_queries:
+
+            if isinstance(
+                item,
+                dict,
+            ):
+                query = item.get(
+                    "query",
+                    item.get(
+                        "question",
+                        "",
+                    ),
+                )
+
+            elif isinstance(
+                item,
+                str,
+            ):
+                query = item
+
+            else:
+                query = ""
+
+            query = str(
+                query
+                if query is not None
+                else "",
+            ).strip()
+
+            if not query:
+                continue
+
+            retrieval_mode = (
+                self._memory_query_service.infer_mode(
+                    query,
+                )
+            )
+
+            retrieval = (
+                self._memory_query_service.retrieve(
+                    learning_state=request.learning_state,
+                    query=query,
+                    history_info=context.get_metadata(
+                        "history_info",
+                        [],
+                    ),
+                    related_history=context.get_metadata(
+                        "related_history",
+                        [],
+                    ),
+                    mode=retrieval_mode,
+                )
+            )
+
+            memory_retrieval.append(
+                {
+                    "query": query,
+                    "mode": retrieval["mode"],
+                    "evidence": retrieval["history"],
+                    "related_evidence": retrieval[
+                        "related_history"
+                    ],
+                    "stats": retrieval["stats"],
+                }
+            )
+
+        # ==================================================
+        # IMPORTANT:
+        # Serialize memory retrieval at the application
+        # boundary before it enters RuntimeContext.
+        #
+        # This prevents LearningInteraction / datetime /
+        # nested Pydantic objects from reaching Runner JSON
+        # serialization.
+        # ==================================================
+
+        context.set_metadata(
+            "memory_retrieval",
+            self._json_safe(
+                memory_retrieval,
+            ),
+        )
+
+        # ==================================================
+        # 7. DEBUG
+        # ==================================================
+
+        print(
+            "ROUTING:",
+            routing_result.model_dump(),
+        )
+
+        print(
+            "CURRENT QUESTION:",
+            current_question,
+        )
+
+        print(
+            "CURRENT CONCEPTS:",
+            current_concept_ids,
+        )
+
+        print(
+            "ADAPTIVE LEARNING:",
+            adaptive_learning.model_dump(),
+        )
+
+        print(
+            "PLAN:",
+            plan.model_dump(),
+        )
+
+        print(
+            "WORKFLOW NODES:",
+            [
+                {
+                    "id": node.id,
+                    "component": node.component_id,
+                    "objective": node.objective,
+                    "action": node.action,
+                    "strategy": node.strategy,
+                    "difficulty": node.difficulty,
+                    "focus_concepts": node.focus_concepts,
+                }
+                for node in workflow.nodes
+            ],
+        )
+
+        # ==================================================
+        # 7.1 DEBUG RUNTIME EVIDENCE
+        # ==================================================
+
+        history_info = context.get_metadata(
+            "history_info",
+            [],
+        )
+
+        history = context.get_metadata(
+            "history",
+            [],
+        )
+
+        related_history = context.get_metadata(
+            "related_history",
+            [],
+        )
+
+        longtutor_features = context.get_metadata(
+            "longtutor_features",
+            {},
+        )
+
+        print(
+            "RUNTIME HISTORY INFO:",
+            len(history_info)
+            if isinstance(
+                history_info,
+                list,
+            )
+            else 0,
+        )
+
+        print(
+            "RUNTIME HISTORY:",
+            len(history)
+            if isinstance(
+                history,
+                list,
+            )
+            else 0,
+        )
+
+        print(
+            "RUNTIME RELATED HISTORY:",
+            len(related_history)
+            if isinstance(
+                related_history,
+                list,
+            )
+            else 0,
+        )
+
+        print(
+            "RUNTIME LONGTUTOR FEATURES:",
+            bool(longtutor_features),
+        )
+
+        # ==================================================
+        # 8. RUNTIME EXECUTION
+        # ==================================================
+
+        return self._runtime.run(
+            context,
+        )
+
+
+
+====================================================================================================
+FILE: backend\application\orchestration\orchestrator_factory.py
+====================================================================================================
+from __future__ import annotations
+
+from backend.application.orchestration.learning_orchestrator import (
+    LearningOrchestrator,
+)
+from backend.application.planning.sequential_planner import (
+    SequentialPlanner,
+)
+from backend.application.planning.sequential_workflow_builder import (
+    SequentialWorkflowBuilder,
+)
+from backend.application.routing.llm_router import (
+    LLMRouter,
+)
+from backend.application.runtime.sequential_runtime import (
+    SequentialRuntime,
+)
+from backend.application.services.llm_service import (
+    LLMService,
+)
+from backend.core.component_bootstrap import register_components
+from backend.infrastructure.providers.groq_provider import (
+    GroqProvider,
+)
+
+
+def create_learning_orchestrator() -> LearningOrchestrator:
+    register_components()
+
+    provider = GroqProvider()
+
+    llm_service = LLMService(
+        provider=provider,
+    )
+
+    router = LLMRouter()
+
+    planner = SequentialPlanner()
+
+    workflow_builder = SequentialWorkflowBuilder()
+
+    runtime = SequentialRuntime(
+        dependencies={
+            "llm": llm_service,
+        },
+    )
+
+    return LearningOrchestrator(
+        router=router,
+        planner=planner,
+        workflow_builder=workflow_builder,
+        runtime=runtime,
+    )
+
+====================================================================================================
+FILE: backend\application\orchestration\__init__.py
+====================================================================================================
+
+
+====================================================================================================
+FILE: backend\config\adaptive_retrieval.py
+====================================================================================================
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass, field, replace
+
+
+RETRIEVAL_WEIGHT_PRESETS: dict[str, dict[str, float]] = {
+    # A: recent-K baseline (recency only)
+    "A": {
+        "concept": 0.0,
+        "error": 0.0,
+        "recency": 1.0,
+        "semantic": 0.0,
+    },
+    # B: concept relevance
+    "B": {
+        "concept": 1.0,
+        "error": 0.0,
+        "recency": 0.0,
+        "semantic": 0.0,
+    },
+    # C: concept + error
+    "C": {
+        "concept": 0.62,
+        "error": 0.38,
+        "recency": 0.0,
+        "semantic": 0.0,
+    },
+    # D: concept + error + recency
+    "D": {
+        "concept": 0.47,
+        "error": 0.29,
+        "recency": 0.24,
+        "semantic": 0.0,
+    },
+    # E: full hybrid (default enhanced formula)
+    "E": {
+        "concept": 0.40,
+        "error": 0.25,
+        "recency": 0.20,
+        "semantic": 0.15,
+    },
+}
+
+
+DEFAULT_RETRIEVAL_WEIGHTS: dict[str, float] = dict(
+    RETRIEVAL_WEIGHT_PRESETS["E"]
+)
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _env_float(name: str, default: float) -> float:
+    raw = os.environ.get(name)
+    if raw is None or not raw.strip():
+        return default
+    return float(raw)
+
+
+def _env_int(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None or not raw.strip():
+        return default
+    return int(raw)
+
+
+def _env_str(name: str, default: str) -> str:
+    raw = os.environ.get(name)
+    if raw is None or not raw.strip():
+        return default
+    return raw.strip()
+
+
+@dataclass(frozen=True)
+class AdaptiveRetrievalConfig:
+    """
+    Configuration for concept-aware hybrid retrieval.
+
+    Numeric thresholds and weights live here so algorithm
+    code does not hard-code experiment knobs.
+    """
+
+    enabled: bool = False
+    trace_enabled: bool = False
+
+    top_k: int = 5
+    candidate_limit: int = 50
+
+    recency_decay: float = 0.1
+    recency_unit_seconds: float = 86400.0
+
+    accept_threshold: float = 0.75
+    candidate_threshold: float = 0.50
+
+    confidence_k: float = 5.0
+
+    weakness_threshold: float = 0.5
+    beginner_mastery_threshold: float = 0.4
+    advanced_mastery_threshold: float = 0.7
+
+    retrieval_profile: str = "E"
+    retrieval_weights: dict[str, float] = field(
+        default_factory=lambda: dict(DEFAULT_RETRIEVAL_WEIGHTS)
+    )
+
+    allow_llm_concept_fallback: bool = False
+    allow_new_concepts: bool = False
+
+    def with_updates(self, **changes: object) -> AdaptiveRetrievalConfig:
+        return replace(self, **changes)
+
+
+def _weights_from_env(profile: str) -> dict[str, float]:
+    preset = RETRIEVAL_WEIGHT_PRESETS.get(
+        profile.upper(),
+        DEFAULT_RETRIEVAL_WEIGHTS,
+    )
+    weights = dict(preset)
+    weights["concept"] = _env_float(
+        "RETRIEVAL_WEIGHT_CONCEPT",
+        weights["concept"],
+    )
+    weights["error"] = _env_float(
+        "RETRIEVAL_WEIGHT_ERROR",
+        weights["error"],
+    )
+    weights["recency"] = _env_float(
+        "RETRIEVAL_WEIGHT_RECENCY",
+        weights["recency"],
+    )
+    weights["semantic"] = _env_float(
+        "RETRIEVAL_WEIGHT_SEMANTIC",
+        weights["semantic"],
+    )
+    return weights
+
+
+def load_adaptive_retrieval_config() -> AdaptiveRetrievalConfig:
+    profile = _env_str("RETRIEVAL_PROFILE", "E")
+    return AdaptiveRetrievalConfig(
+        enabled=_env_bool("ADAPTIVE_RETRIEVAL_ENABLED", False),
+        trace_enabled=_env_bool(
+            "ADAPTIVE_RETRIEVAL_TRACE_ENABLED",
+            False,
+        ),
+        top_k=_env_int("ADAPTIVE_RETRIEVAL_TOP_K", 5),
+        candidate_limit=_env_int(
+            "ADAPTIVE_RETRIEVAL_CANDIDATE_LIMIT",
+            50,
+        ),
+        recency_decay=_env_float("RECENCY_DECAY", 0.1),
+        recency_unit_seconds=_env_float(
+            "RECENCY_UNIT_SECONDS",
+            86400.0,
+        ),
+        accept_threshold=_env_float(
+            "CONCEPT_ACCEPT_THRESHOLD",
+            0.75,
+        ),
+        candidate_threshold=_env_float(
+            "CONCEPT_CANDIDATE_THRESHOLD",
+            0.50,
+        ),
+        confidence_k=_env_float(
+            "DIAGNOSIS_CONFIDENCE_K",
+            5.0,
+        ),
+        retrieval_profile=profile,
+        retrieval_weights=_weights_from_env(profile),
+        allow_llm_concept_fallback=_env_bool(
+            "CONCEPT_LLM_FALLBACK_ENABLED",
+            False,
+        ),
+        allow_new_concepts=_env_bool(
+            "CONCEPT_ALLOW_CREATE",
+            False,
+        ),
+    )
+
+
+====================================================================================================
+FILE: backend\config\ai_settings.py
+====================================================================================================
+from functools import lru_cache
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
+
+    groq_api_key: str = Field(
+        validation_alias="GROQ_API_KEY_2"
+    )
+
+    model_name: str = Field(
+        default="openai/gpt-oss-20b",
+        validation_alias="MODEL_NAME"
+    )
+
+    temperature: float = Field(
+        default=0.3,
+        validation_alias="TEMPERATURE"
+    )
+
+    max_output_tokens: int = Field(
+        default=2048,
+        validation_alias="MAX_OUTPUT_TOKENS"
+    )
+
+    history_limit: int = Field(
+        default=6,
+        validation_alias="HISTORY_LIMIT"
+    )
+
+
+@lru_cache
+def get_settings():
+    return Settings()
+
+
+settings = get_settings()
+
+====================================================================================================
+FILE: backend\config\app_settings.py
+====================================================================================================
+from functools import lru_cache
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    app_name: str = Field(
+        default="Adaptive Learning Multi-Agent API",
+        validation_alias="APP_NAME",
+    )
+
+    app_version: str = Field(
+        default="1.0.0",
+        validation_alias="APP_VERSION",
+    )
+
+    debug: bool = Field(
+        default=True,
+        validation_alias="DEBUG",
+    )
+
+    host: str = Field(
+        default="127.0.0.1",
+        validation_alias="HOST",
+    )
+
+    port: int = Field(
+        default=8000,
+        validation_alias="PORT",
+    )
+
+    database_url: str = Field(
+        validation_alias="DATABASE_URL",
+    )
+
+    allowed_origins: str = Field(
+        default="*",
+        validation_alias="ALLOWED_ORIGINS",
+    )
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
+
+
+settings: Settings = get_settings()
+
+====================================================================================================
+FILE: backend\config\logger.py
+====================================================================================================
+import logging
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+)
+
+logger = logging.getLogger("backend")
+
+====================================================================================================
+FILE: backend\config\__init__.py
+====================================================================================================
+from ..config.ai_settings import settings
+
+__all__ = [
+    "ai_settings",
+    "app_settings",
+    "logger",
+]
