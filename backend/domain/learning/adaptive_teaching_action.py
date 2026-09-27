@@ -7,46 +7,23 @@ from pydantic import BaseModel, Field
 from backend.domain.learning.knowledge_diagnosis import (
     KnowledgeDiagnosis,
 )
-from backend.domain.learning.knowledge_diagnosis import (
-    ConceptDiagnosis,
-)
 
 
 class TeachingActionType(StrEnum):
-    """
-    Represents the adaptive teaching action selected
-    for the current learner state.
-    """
-
     INTRODUCE = "introduce"
-
     EXPLAIN = "explain"
-
     SCAFFOLD = "scaffold"
-
     PRACTICE = "practice"
-
     REVIEW = "review"
-
     CHALLENGE = "challenge"
 
 
 class TeachingStrategy(StrEnum):
-    """
-    Represents the teaching strategy selected for
-    the current adaptive action.
-    """
-
     DIRECT_EXPLANATION = "direct_explanation"
-
     GUIDED_EXPLANATION = "guided_explanation"
-
     STEP_BY_STEP = "step_by_step"
-
     TARGETED_PRACTICE = "targeted_practice"
-
     SPACED_REVIEW = "spaced_review"
-
     DEEPENING = "deepening"
 
 
@@ -79,9 +56,7 @@ class AdaptiveTeachingAction(BaseModel):
 
     @property
     def has_focus(self) -> bool:
-        return bool(
-            self.focus_concepts
-        )
+        return bool(self.focus_concepts)
 
     def add_focus_concept(
         self,
@@ -125,6 +100,7 @@ class AdaptiveTeachingActionSelector:
     - Select an appropriate teaching strategy.
     - Select an appropriate difficulty.
     - Select concepts requiring attention.
+    - Use adaptive quiz target ranking when available.
     - Never modify LearningState.
     - Never call an LLM.
     """
@@ -166,13 +142,10 @@ class AdaptiveTeachingActionSelector:
         self,
         diagnosis: KnowledgeDiagnosis,
     ) -> AdaptiveTeachingAction:
-        """
-        Select an adaptive teaching action from
-        the learner diagnosis.
-        """
-        # ------------------------------------------------------
-        # Introduce new concepts.
-        # ------------------------------------------------------
+
+        adaptive_targets = self._get_adaptive_targets(
+            diagnosis,
+        )
 
         introduce_concepts = [
             concept_id
@@ -190,18 +163,25 @@ class AdaptiveTeachingActionSelector:
         ]
 
         if introduce_concepts:
+
+            focus_concepts = self._prioritize_concepts(
+                introduce_concepts,
+                adaptive_targets,
+            )
+
             return AdaptiveTeachingAction(
                 action=TeachingActionType.INTRODUCE,
                 strategy=TeachingStrategy.DIRECT_EXPLANATION,
                 difficulty="beginner",
+                focus_concepts=focus_concepts,
                 reason=(
                     "The learner has no prior knowledge "
                     "or historical evidence for the required concept."
                 ),
             )
 
-
         if not diagnosis.concepts:
+
             return AdaptiveTeachingAction(
                 action=TeachingActionType.INTRODUCE,
                 strategy=TeachingStrategy.DIRECT_EXPLANATION,
@@ -212,69 +192,65 @@ class AdaptiveTeachingActionSelector:
                 ),
             )
 
-        # ------------------------------------------------------
-        # Transfer deficit has highest priority.
-        # ------------------------------------------------------
-
         if diagnosis.transfer_deficit_concepts:
+
+            focus_concepts = self._prioritize_concepts(
+                diagnosis.transfer_deficit_concepts,
+                adaptive_targets,
+            )
 
             action = AdaptiveTeachingAction(
                 action=TeachingActionType.SCAFFOLD,
                 strategy=TeachingStrategy.STEP_BY_STEP,
                 difficulty="medium",
+                focus_concepts=focus_concepts,
                 reason=(
                     "The learner has difficulty applying "
                     "related knowledge to the current task."
                 ),
             )
 
-            for concept_id in (
-                diagnosis.transfer_deficit_concepts
-            ):
-                action.add_focus_concept(
-                    concept_id,
-                )
-
             action.set_metadata(
                 "decision_signal",
                 "transfer_deficit",
             )
 
+            self._attach_target_metadata(
+                action,
+                adaptive_targets,
+            )
+
             return action
 
-        # ------------------------------------------------------
-        # Weak concepts require guided teaching.
-        # ------------------------------------------------------
-
         if diagnosis.weak_concepts:
+
+            focus_concepts = self._prioritize_concepts(
+                diagnosis.weak_concepts,
+                adaptive_targets,
+            )
 
             action = AdaptiveTeachingAction(
                 action=TeachingActionType.EXPLAIN,
                 strategy=TeachingStrategy.GUIDED_EXPLANATION,
                 difficulty="beginner",
+                focus_concepts=focus_concepts,
                 reason=(
                     "The learner has insufficient mastery "
                     "of one or more required concepts."
                 ),
             )
 
-            for concept_id in (
-                diagnosis.weak_concepts
-            ):
-                action.add_focus_concept(
-                    concept_id,
-                )
-
             action.set_metadata(
                 "decision_signal",
                 "weak_knowledge",
             )
 
-            return action
+            self._attach_target_metadata(
+                action,
+                adaptive_targets,
+            )
 
-        # ------------------------------------------------------
-        # Strong knowledge can be challenged.
-        # ------------------------------------------------------
+            return action
 
         strong_concepts = [
             concept_id
@@ -289,31 +265,33 @@ class AdaptiveTeachingActionSelector:
 
         if strong_concepts:
 
+            focus_concepts = self._prioritize_concepts(
+                strong_concepts,
+                adaptive_targets,
+            )
+
             action = AdaptiveTeachingAction(
                 action=TeachingActionType.CHALLENGE,
                 strategy=TeachingStrategy.DEEPENING,
                 difficulty="advanced",
+                focus_concepts=focus_concepts,
                 reason=(
                     "The learner demonstrates strong mastery "
                     "of the relevant concepts."
                 ),
             )
 
-            for concept_id in strong_concepts:
-                action.add_focus_concept(
-                    concept_id,
-                )
-
             action.set_metadata(
                 "decision_signal",
                 "strong_mastery",
             )
 
-            return action
+            self._attach_target_metadata(
+                action,
+                adaptive_targets,
+            )
 
-        # ------------------------------------------------------
-        # Existing but incomplete knowledge.
-        # ------------------------------------------------------
+            return action
 
         intermediate_concepts = [
             concept_id
@@ -329,31 +307,33 @@ class AdaptiveTeachingActionSelector:
 
         if intermediate_concepts:
 
+            focus_concepts = self._prioritize_concepts(
+                intermediate_concepts,
+                adaptive_targets,
+            )
+
             action = AdaptiveTeachingAction(
                 action=TeachingActionType.PRACTICE,
                 strategy=TeachingStrategy.TARGETED_PRACTICE,
                 difficulty="medium",
+                focus_concepts=focus_concepts,
                 reason=(
                     "The learner has partial mastery and "
                     "should consolidate the knowledge through practice."
                 ),
             )
 
-            for concept_id in intermediate_concepts:
-                action.add_focus_concept(
-                    concept_id,
-                )
-
             action.set_metadata(
                 "decision_signal",
                 "partial_mastery",
             )
 
-            return action
+            self._attach_target_metadata(
+                action,
+                adaptive_targets,
+            )
 
-        # ------------------------------------------------------
-        # Fallback.
-        # ------------------------------------------------------
+            return action
 
         return AdaptiveTeachingAction(
             action=TeachingActionType.REVIEW,
@@ -364,3 +344,144 @@ class AdaptiveTeachingActionSelector:
                 "continuing with the current task."
             ),
         )
+
+    @staticmethod
+    def _get_adaptive_targets(
+        diagnosis: KnowledgeDiagnosis,
+    ) -> list[tuple[str, float]]:
+
+        metadata = diagnosis.metadata
+
+        if not isinstance(
+            metadata,
+            dict,
+        ):
+            return []
+
+        raw_targets = metadata.get(
+            "adaptive_quiz_targets",
+            [],
+        )
+
+        if not isinstance(
+            raw_targets,
+            list,
+        ):
+            return []
+
+        targets: list[tuple[str, float]] = []
+
+        for item in raw_targets:
+
+            if not isinstance(
+                item,
+                dict,
+            ):
+                continue
+
+            concept_id = item.get(
+                "concept_id",
+            )
+
+            score = item.get(
+                "score",
+            )
+
+            if not isinstance(
+                concept_id,
+                str,
+            ):
+                continue
+
+            if not isinstance(
+                score,
+                (int, float),
+            ):
+                continue
+
+            targets.append(
+                (
+                    concept_id,
+                    float(score),
+                ),
+            )
+
+        targets.sort(
+            key=lambda item: item[1],
+            reverse=True,
+        )
+
+        return targets
+
+    @staticmethod
+    def _prioritize_concepts(
+        concept_ids: list[str],
+        adaptive_targets: list[tuple[str, float]],
+    ) -> list[str]:
+
+        unique_concepts = list(
+            dict.fromkeys(
+                concept_ids,
+            )
+        )
+
+        if not adaptive_targets:
+            return unique_concepts
+
+        target_rank = {
+            concept_id: index
+            for index, (
+                concept_id,
+                _,
+            ) in enumerate(
+                adaptive_targets,
+            )
+        }
+
+        return sorted(
+            unique_concepts,
+            key=lambda concept_id: (
+                target_rank.get(
+                    concept_id,
+                    len(target_rank),
+                ),
+                concept_id,
+            ),
+        )
+
+    @staticmethod
+    def _attach_target_metadata(
+        action: AdaptiveTeachingAction,
+        adaptive_targets: list[tuple[str, float]],
+    ) -> None:
+
+        if not adaptive_targets:
+            return
+
+        action.set_metadata(
+            "adaptive_quiz_targets",
+            [
+                {
+                    "concept_id": concept_id,
+                    "score": score,
+                }
+                for concept_id, score
+                in adaptive_targets
+            ],
+        )
+
+        selected_target = next(
+            (
+                concept_id
+                for concept_id, _
+                in adaptive_targets
+                if concept_id in action.focus_concepts
+            ),
+            None,
+        )
+
+        if selected_target is not None:
+            action.set_metadata(
+                "selected_quiz_target",
+                selected_target,
+            )
