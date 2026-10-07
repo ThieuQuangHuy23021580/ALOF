@@ -1,0 +1,81 @@
+{
+  "gold": "concept-overlap relevant set (independent of ranking)",
+  "max_tokens": 1200,
+  "default_k": 5,
+  "note": "The candidate pool is capped at 50 records and the token budget at 1200, so selected size saturates below K for large K.",
+  "total_cases": 400,
+  "rows": [
+    {
+      "k": 1,
+      "mean_selected_size": 1,
+      "oracle_ceiling_F1": 0.4485,
+      "share_cases_token_blocked": 0.0,
+      "P": 0.995,
+      "R": 0.3061,
+      "F1": 0.4435,
+      "nDCG": 0.995,
+      "exact": 0.045,
+      "gap_to_ceiling_F1": 0.005
+    },
+    {
+      "k": 3,
+      "mean_selected_size": 3,
+      "oracle_ceiling_F1": 0.7954,
+      "share_cases_token_blocked": 0.0,
+      "P": 0.9167,
+      "R": 0.7558,
+      "F1": 0.7904,
+      "nDCG": 0.995,
+      "exact": 0.22,
+      "gap_to_ceiling_F1": 0.005
+    },
+    {
+      "k": 5,
+      "mean_selected_size": 4.98,
+      "oracle_ceiling_F1": 0.8189,
+      "share_cases_token_blocked": 0.0,
+      "P": 0.765,
+      "R": 0.9576,
+      "F1": 0.8161,
+      "nDCG": 0.995,
+      "exact": 0.3175,
+      "gap_to_ceiling_F1": 0.0028
+    },
+    {
+      "k": 8,
+      "mean_selected_size": 6.0225,
+      "oracle_ceiling_F1": 0.6519,
+      "share_cases_token_blocked": 0.0,
+      "P": 0.6926,
+      "R": 0.995,
+      "F1": 0.7792,
+      "nDCG": 0.995,
+      "exact": 0.4225,
+      "gap_to_ceiling_F1": -0.1273
+    },
+    {
+      "k": 10,
+      "mean_selected_size": 6.06,
+      "oracle_ceiling_F1": 0.5618,
+      "share_cases_token_blocked": 0.0,
+      "P": 0.6905,
+      "R": 0.995,
+      "F1": 0.7773,
+      "nDCG": 0.995,
+      "exact": 0.4225,
+      "gap_to_ceiling_F1": -0.2155
+    },
+    {
+      "k": 12,
+      "mean_selected_size": 6.06,
+      "oracle_ceiling_F1": 0.4939,
+      "share_cases_token_blocked": 0.0,
+      "P": 0.6905,
+      "R": 0.995,
+      "F1": 0.7773,
+      "nDCG": 0.995,
+      "exact": 0.4225,
+      "gap_to_ceiling_F1": -0.2834
+    }
+  ]
+}

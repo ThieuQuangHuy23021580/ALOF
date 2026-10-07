@@ -1,7 +1,7 @@
-from ..config.ai_settings import settings
+from backend.config.ai_settings import Settings, get_settings, settings
 
 __all__ = [
-    "ai_settings",
-    "app_settings",
-    "logger",
+    "Settings",
+    "get_settings",
+    "settings",
 ]

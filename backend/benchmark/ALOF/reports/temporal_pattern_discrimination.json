@@ -1,0 +1,231 @@
+{
+  "stimulus": "Synthetic correctness sequences, one interaction per day, matched on length and inspected for temporal shape.",
+  "detector_config": {
+    "recency_decay": 0.1,
+    "recency_unit_seconds": 86400.0,
+    "minimum_observations": 3,
+    "persistence_threshold": 0.6,
+    "recovery_threshold": 0.55,
+    "instability_threshold": 0.65,
+    "confidence_k": 5.0
+  },
+  "families": [
+    {
+      "family": "persistent",
+      "sequence": "CCCWWWW",
+      "correctness_ratio": 0.4286,
+      "intended_label": "persistent",
+      "predicted_label": "unstable",
+      "correct": false,
+      "persistence": 0.609,
+      "recovery": 0.0,
+      "instability": 0.7296,
+      "instability_reachable_max": 0.9591,
+      "instability_threshold": 0.65,
+      "instability_threshold_reachable": true,
+      "alternation_rate": 0.1667,
+      "recent_error_pressure": 0.6549,
+      "retention_risk": 0.8296,
+      "next_error_risk": 0.8,
+      "half_life_days": 0.6923,
+      "confidence": 0.5833,
+      "observation_count": 7,
+      "rationale": "tỷ lệ đúng 3/7, nhưng ba lỗi liên tiếp ở cuối chuỗi"
+    },
+    {
+      "family": "recovering",
+      "sequence": "WWWCCCC",
+      "correctness_ratio": 0.5714,
+      "intended_label": "recovering",
+      "predicted_label": "unstable",
+      "correct": false,
+      "persistence": 0.391,
+      "recovery": 0.5667,
+      "instability": 0.7296,
+      "instability_reachable_max": 0.9591,
+      "instability_threshold": 0.65,
+      "instability_threshold_reachable": true,
+      "alternation_rate": 0.1667,
+      "recent_error_pressure": 0.3451,
+      "retention_risk": 0.0,
+      "next_error_risk": 0.2,
+      "half_life_days": 0.9293,
+      "confidence": 0.5833,
+      "observation_count": 7,
+      "rationale": "tỷ lệ đúng 4/7, ba lỗi liên tiếp ở đầu chuỗi"
+    },
+    {
+      "family": "unstable",
+      "sequence": "CWCWCWC",
+      "correctness_ratio": 0.5714,
+      "intended_label": "unstable",
+      "predicted_label": "recovering",
+      "correct": false,
+      "persistence": 0.2702,
+      "recovery": 0.7667,
+      "instability": 0.5,
+      "instability_reachable_max": 0.9591,
+      "instability_threshold": 0.65,
+      "instability_threshold_reachable": true,
+      "alternation_rate": 1.0,
+      "recent_error_pressure": 0.4257,
+      "retention_risk": 0.0,
+      "next_error_risk": 0.8,
+      "half_life_days": 2.1094,
+      "confidence": 0.5833,
+      "observation_count": 7,
+      "rationale": "tỷ lệ đúng 4/7, đúng sai xen kẽ, bốn sự kiện chuyển cân bằng"
+    },
+    {
+      "family": "stable",
+      "sequence": "CCCCCCC",
+      "correctness_ratio": 1.0,
+      "intended_label": "stable",
+      "predicted_label": "stable",
+      "correct": true,
+      "persistence": 0.0,
+      "recovery": 0.0,
+      "instability": 0.0,
+      "instability_reachable_max": 0.9591,
+      "instability_threshold": 0.65,
+      "instability_threshold_reachable": true,
+      "alternation_rate": 0.0,
+      "recent_error_pressure": 0.0,
+      "retention_risk": 0.0,
+      "next_error_risk": 0.125,
+      "half_life_days": 1.1336,
+      "confidence": 0.5833,
+      "observation_count": 7,
+      "rationale": "tỷ lệ đúng 7/7, không có lỗi nào"
+    }
+  ],
+  "recovery_rate_per_family": {
+    "persistent": 0.0,
+    "recovering": 0.0,
+    "unstable": 0.0,
+    "stable": 1.0
+  },
+  "overall_accuracy": 0.25,
+  "discrimination_margins": {
+    "recovering_vs_unstable": 0.1208,
+    "recovering_vs_unstable__note": "cùng 4/7 đúng, khác hình dạng chuỗi"
+  },
+  "instability_threshold_reachability": {
+    "note": "Normalised transition entropy over four transition types cannot exceed 1.0 unless the sequence length is a multiple of 4, and is bounded below 1.0 for every finite length. This table reports, for each observation count, the largest instability value physically attainable, so it can be compared with the fixed 0.65 classification threshold.",
+    "by_observation_count": {
+      "n_obs=3": {
+        "max_instability": 0.5,
+        "reachable": false
+      },
+      "n_obs=4": {
+        "max_instability": 0.7925,
+        "reachable": true
+      },
+      "n_obs=5": {
+        "max_instability": 1.0,
+        "reachable": true
+      },
+      "n_obs=6": {
+        "max_instability": 0.961,
+        "reachable": true
+      },
+      "n_obs=7": {
+        "max_instability": 0.9591,
+        "reachable": true
+      },
+      "n_obs=8": {
+        "max_instability": 0.9751,
+        "reachable": true
+      },
+      "n_obs=9": {
+        "max_instability": 1.0,
+        "reachable": true
+      },
+      "n_obs=10": {
+        "max_instability": 0.9875,
+        "reachable": true
+      },
+      "n_obs=11": {
+        "max_instability": 0.9855,
+        "reachable": true
+      },
+      "n_obs=12": {
+        "max_instability": 0.9904,
+        "reachable": true
+      },
+      "n_obs=13": {
+        "max_instability": 1.0,
+        "reachable": true
+      },
+      "n_obs=14": {
+        "max_instability": 0.9939,
+        "reachable": true
+      },
+      "n_obs=15": {
+        "max_instability": 0.9926,
+        "reachable": true
+      },
+      "n_obs=16": {
+        "max_instability": 0.9949,
+        "reachable": true
+      },
+      "n_obs=17": {
+        "max_instability": 1.0,
+        "reachable": true
+      },
+      "n_obs=18": {
+        "max_instability": 0.9964,
+        "reachable": true
+      },
+      "n_obs=19": {
+        "max_instability": 0.9955,
+        "reachable": true
+      },
+      "n_obs=20": {
+        "max_instability": 0.9969,
+        "reachable": true
+      },
+      "n_obs=21": {
+        "max_instability": 1.0,
+        "reachable": true
+      },
+      "n_obs=22": {
+        "max_instability": 0.9976,
+        "reachable": true
+      },
+      "n_obs=23": {
+        "max_instability": 0.997,
+        "reachable": true
+      },
+      "n_obs=24": {
+        "max_instability": 0.9979,
+        "reachable": true
+      },
+      "n_obs=25": {
+        "max_instability": 1.0,
+        "reachable": true
+      }
+    },
+    "smallest_n_reaching_0.65": 4
+  },
+  "benchmark_distribution": {
+    "n_concept_observations": 1432,
+    "label_counts": {
+      "stable": 1337,
+      "recovering": 35,
+      "unstable": 20,
+      "persistent": 40
+    },
+    "label_share": {
+      "stable": 0.9337,
+      "recovering": 0.0244,
+      "unstable": 0.014,
+      "persistent": 0.0279
+    },
+    "mean_persistence": 0.2077,
+    "mean_recovery": 0.0328,
+    "mean_instability": 0.0292,
+    "mean_confidence": 0.2421,
+    "mean_observations": 1.7437
+  }
+}

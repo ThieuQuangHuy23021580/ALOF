@@ -1,0 +1,2672 @@
+{
+  "total_cases": 50,
+  "failed_cases": 50,
+  "semantic_pass_cases": 0,
+  "semantic_fail_cases": 50,
+  "failure_counts": {
+    "execution": 0,
+    "memory": 50,
+    "diagnosis": 0,
+    "strategy": 7,
+    "response": 0
+  },
+  "failures": [
+    {
+      "case_id": "adaptive_st_051",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst051f",
+            "qst051h",
+            "qst051d",
+            "qst051a",
+            "qst051b",
+            "qst051e",
+            "qst051g"
+          ],
+          "actual": [
+            "qst051a",
+            "qst051f",
+            "qst051d",
+            "qst051h",
+            "qst051e"
+          ],
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "matched": [
+            "qst051a",
+            "qst051d",
+            "qst051e",
+            "qst051f",
+            "qst051h"
+          ],
+          "missing": [
+            "qst051b",
+            "qst051g"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_052",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst052h",
+            "qst052f",
+            "qst052b",
+            "qst052d",
+            "qst052a",
+            "qst052e",
+            "qst052g"
+          ],
+          "actual": [
+            "qst052b",
+            "qst052d",
+            "qst052f",
+            "qst052h",
+            "qst052e"
+          ],
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "matched": [
+            "qst052b",
+            "qst052d",
+            "qst052e",
+            "qst052f",
+            "qst052h"
+          ],
+          "missing": [
+            "qst052a",
+            "qst052g"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_053",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst053h",
+            "qst053f",
+            "qst053d",
+            "qst053b",
+            "qst053a",
+            "qst053g",
+            "qst053e"
+          ],
+          "actual": [
+            "qst053d",
+            "qst053f",
+            "qst053h",
+            "qst053g",
+            "qst053e"
+          ],
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "matched": [
+            "qst053d",
+            "qst053e",
+            "qst053f",
+            "qst053g",
+            "qst053h"
+          ],
+          "missing": [
+            "qst053a",
+            "qst053b"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_054",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst054h",
+            "qst054f",
+            "qst054d",
+            "qst054b",
+            "qst054a",
+            "qst054g",
+            "qst054e"
+          ],
+          "actual": [
+            "qst054b",
+            "qst054a",
+            "qst054d",
+            "qst054f",
+            "qst054h"
+          ],
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "matched": [
+            "qst054a",
+            "qst054b",
+            "qst054d",
+            "qst054f",
+            "qst054h"
+          ],
+          "missing": [
+            "qst054e",
+            "qst054g"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_055",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst055h",
+            "qst055f",
+            "qst055d",
+            "qst055a",
+            "qst055b",
+            "qst055g",
+            "qst055e"
+          ],
+          "actual": [
+            "qst055d",
+            "qst055f",
+            "qst055h",
+            "qst055g",
+            "qst055e"
+          ],
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "matched": [
+            "qst055d",
+            "qst055e",
+            "qst055f",
+            "qst055g",
+            "qst055h"
+          ],
+          "missing": [
+            "qst055a",
+            "qst055b"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_056",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst056h",
+            "qst056f",
+            "qst056d",
+            "qst056a",
+            "qst056b",
+            "qst056g",
+            "qst056e"
+          ],
+          "actual": [
+            "qst056d",
+            "qst056f",
+            "qst056h",
+            "qst056a",
+            "qst056b"
+          ],
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "matched": [
+            "qst056a",
+            "qst056b",
+            "qst056d",
+            "qst056f",
+            "qst056h"
+          ],
+          "missing": [
+            "qst056e",
+            "qst056g"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_057",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst057h",
+            "qst057f",
+            "qst057a",
+            "qst057d",
+            "qst057b",
+            "qst057g",
+            "qst057e"
+          ],
+          "actual": [
+            "qst057a",
+            "qst057b",
+            "qst057f",
+            "qst057d",
+            "qst057h"
+          ],
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "matched": [
+            "qst057a",
+            "qst057b",
+            "qst057d",
+            "qst057f",
+            "qst057h"
+          ],
+          "missing": [
+            "qst057e",
+            "qst057g"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_058",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst058h",
+            "qst058f",
+            "qst058d",
+            "qst058b",
+            "qst058a",
+            "qst058g",
+            "qst058e"
+          ],
+          "actual": [
+            "qst058d",
+            "qst058f",
+            "qst058h",
+            "qst058g",
+            "qst058e"
+          ],
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "matched": [
+            "qst058d",
+            "qst058e",
+            "qst058f",
+            "qst058g",
+            "qst058h"
+          ],
+          "missing": [
+            "qst058a",
+            "qst058b"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_059",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst059h",
+            "qst059f",
+            "qst059d",
+            "qst059a",
+            "qst059b",
+            "qst059g",
+            "qst059e"
+          ],
+          "actual": [
+            "qst059a",
+            "qst059d",
+            "qst059b",
+            "qst059f",
+            "qst059h"
+          ],
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "matched": [
+            "qst059a",
+            "qst059b",
+            "qst059d",
+            "qst059f",
+            "qst059h"
+          ],
+          "missing": [
+            "qst059e",
+            "qst059g"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_060",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst060h",
+            "qst060f",
+            "qst060d",
+            "qst060a",
+            "qst060b",
+            "qst060g",
+            "qst060e"
+          ],
+          "actual": [
+            "qst060d",
+            "qst060f",
+            "qst060h",
+            "qst060g",
+            "qst060e"
+          ],
+          "precision": 1.0,
+          "recall": 0.7143,
+          "f1": 0.8333,
+          "matched": [
+            "qst060d",
+            "qst060e",
+            "qst060f",
+            "qst060g",
+            "qst060h"
+          ],
+          "missing": [
+            "qst060a",
+            "qst060b"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_061",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst061d",
+            "qst061c",
+            "qst061b",
+            "qst061a",
+            "qst061g",
+            "qst061i",
+            "qst061h",
+            "qst061f",
+            "qst061e"
+          ],
+          "actual": [
+            "qst061b",
+            "qst061c",
+            "qst061d",
+            "qst061g",
+            "qst061i"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst061b",
+            "qst061c",
+            "qst061d",
+            "qst061g",
+            "qst061i"
+          ],
+          "missing": [
+            "qst061a",
+            "qst061e",
+            "qst061f",
+            "qst061h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_062",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst062a",
+            "qst062d",
+            "qst062c",
+            "qst062b",
+            "qst062h",
+            "qst062i",
+            "qst062e",
+            "qst062f",
+            "qst062g"
+          ],
+          "actual": [
+            "qst062a",
+            "qst062b",
+            "qst062c",
+            "qst062d",
+            "qst062h"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst062a",
+            "qst062b",
+            "qst062c",
+            "qst062d",
+            "qst062h"
+          ],
+          "missing": [
+            "qst062e",
+            "qst062f",
+            "qst062g",
+            "qst062i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_063",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst063d",
+            "qst063a",
+            "qst063c",
+            "qst063b",
+            "qst063f",
+            "qst063i",
+            "qst063h",
+            "qst063e",
+            "qst063g"
+          ],
+          "actual": [
+            "qst063b",
+            "qst063c",
+            "qst063d",
+            "qst063f",
+            "qst063i"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst063b",
+            "qst063c",
+            "qst063d",
+            "qst063f",
+            "qst063i"
+          ],
+          "missing": [
+            "qst063a",
+            "qst063e",
+            "qst063g",
+            "qst063h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_064",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst064d",
+            "qst064c",
+            "qst064b",
+            "qst064a",
+            "qst064g",
+            "qst064i",
+            "qst064e",
+            "qst064h",
+            "qst064f"
+          ],
+          "actual": [
+            "qst064b",
+            "qst064c",
+            "qst064d",
+            "qst064g",
+            "qst064i"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst064b",
+            "qst064c",
+            "qst064d",
+            "qst064g",
+            "qst064i"
+          ],
+          "missing": [
+            "qst064a",
+            "qst064e",
+            "qst064f",
+            "qst064h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_065",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst065c",
+            "qst065d",
+            "qst065b",
+            "qst065a",
+            "qst065i",
+            "qst065f",
+            "qst065g",
+            "qst065h",
+            "qst065e"
+          ],
+          "actual": [
+            "qst065c",
+            "qst065b",
+            "qst065d",
+            "qst065i",
+            "qst065f"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst065b",
+            "qst065c",
+            "qst065d",
+            "qst065f",
+            "qst065i"
+          ],
+          "missing": [
+            "qst065a",
+            "qst065e",
+            "qst065g",
+            "qst065h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_066",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst066d",
+            "qst066c",
+            "qst066b",
+            "qst066a",
+            "qst066h",
+            "qst066e",
+            "qst066g",
+            "qst066i",
+            "qst066f"
+          ],
+          "actual": [
+            "qst066b",
+            "qst066c",
+            "qst066d",
+            "qst066a",
+            "qst066h"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst066a",
+            "qst066b",
+            "qst066c",
+            "qst066d",
+            "qst066h"
+          ],
+          "missing": [
+            "qst066e",
+            "qst066f",
+            "qst066g",
+            "qst066i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_067",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst067d",
+            "qst067c",
+            "qst067a",
+            "qst067b",
+            "qst067i",
+            "qst067e",
+            "qst067g",
+            "qst067f",
+            "qst067h"
+          ],
+          "actual": [
+            "qst067a",
+            "qst067b",
+            "qst067d",
+            "qst067c",
+            "qst067i"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst067a",
+            "qst067b",
+            "qst067c",
+            "qst067d",
+            "qst067i"
+          ],
+          "missing": [
+            "qst067e",
+            "qst067f",
+            "qst067g",
+            "qst067h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_068",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst068d",
+            "qst068a",
+            "qst068c",
+            "qst068b",
+            "qst068h",
+            "qst068i",
+            "qst068g",
+            "qst068e",
+            "qst068f"
+          ],
+          "actual": [
+            "qst068a",
+            "qst068b",
+            "qst068d",
+            "qst068c",
+            "qst068h"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst068a",
+            "qst068b",
+            "qst068c",
+            "qst068d",
+            "qst068h"
+          ],
+          "missing": [
+            "qst068e",
+            "qst068f",
+            "qst068g",
+            "qst068i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_069",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst069a",
+            "qst069d",
+            "qst069c",
+            "qst069b",
+            "qst069h",
+            "qst069g",
+            "qst069e",
+            "qst069i",
+            "qst069f"
+          ],
+          "actual": [
+            "qst069a",
+            "qst069b",
+            "qst069c",
+            "qst069d",
+            "qst069h"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst069a",
+            "qst069b",
+            "qst069c",
+            "qst069d",
+            "qst069h"
+          ],
+          "missing": [
+            "qst069e",
+            "qst069f",
+            "qst069g",
+            "qst069i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_070",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst070d",
+            "qst070c",
+            "qst070b",
+            "qst070a",
+            "qst070i",
+            "qst070h",
+            "qst070e",
+            "qst070f",
+            "qst070g"
+          ],
+          "actual": [
+            "qst070b",
+            "qst070a",
+            "qst070c",
+            "qst070d",
+            "qst070i"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst070a",
+            "qst070b",
+            "qst070c",
+            "qst070d",
+            "qst070i"
+          ],
+          "missing": [
+            "qst070e",
+            "qst070f",
+            "qst070g",
+            "qst070h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_071",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst071b",
+            "qst071d",
+            "qst071c",
+            "qst071a",
+            "qst071i",
+            "qst071f",
+            "qst071e",
+            "qst071h",
+            "qst071g"
+          ],
+          "actual": [
+            "qst071b",
+            "qst071c",
+            "qst071d",
+            "qst071i",
+            "qst071f"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst071b",
+            "qst071c",
+            "qst071d",
+            "qst071f",
+            "qst071i"
+          ],
+          "missing": [
+            "qst071a",
+            "qst071e",
+            "qst071g",
+            "qst071h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_072",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst072d",
+            "qst072c",
+            "qst072b",
+            "qst072a",
+            "qst072i",
+            "qst072h",
+            "qst072e",
+            "qst072g",
+            "qst072f"
+          ],
+          "actual": [
+            "qst072b",
+            "qst072c",
+            "qst072d",
+            "qst072a",
+            "qst072i"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst072a",
+            "qst072b",
+            "qst072c",
+            "qst072d",
+            "qst072i"
+          ],
+          "missing": [
+            "qst072e",
+            "qst072f",
+            "qst072g",
+            "qst072h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_073",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst073e",
+            "qst073f",
+            "qst073c",
+            "qst073d",
+            "qst073a",
+            "qst073b",
+            "qst073i",
+            "qst073h",
+            "qst073g"
+          ],
+          "actual": [
+            "qst073c",
+            "qst073b",
+            "qst073e",
+            "qst073d",
+            "qst073f"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst073b",
+            "qst073c",
+            "qst073d",
+            "qst073e",
+            "qst073f"
+          ],
+          "missing": [
+            "qst073a",
+            "qst073g",
+            "qst073h",
+            "qst073i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_074",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst074f",
+            "qst074d",
+            "qst074b",
+            "qst074e",
+            "qst074c",
+            "qst074a",
+            "qst074g",
+            "qst074i",
+            "qst074h"
+          ],
+          "actual": [
+            "qst074b",
+            "qst074d",
+            "qst074a",
+            "qst074f",
+            "qst074c"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst074a",
+            "qst074b",
+            "qst074c",
+            "qst074d",
+            "qst074f"
+          ],
+          "missing": [
+            "qst074e",
+            "qst074g",
+            "qst074h",
+            "qst074i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_075",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst075e",
+            "qst075c",
+            "qst075f",
+            "qst075a",
+            "qst075d",
+            "qst075b",
+            "qst075i",
+            "qst075h",
+            "qst075g"
+          ],
+          "actual": [
+            "qst075a",
+            "qst075c",
+            "qst075d",
+            "qst075e",
+            "qst075f"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst075a",
+            "qst075c",
+            "qst075d",
+            "qst075e",
+            "qst075f"
+          ],
+          "missing": [
+            "qst075b",
+            "qst075g",
+            "qst075h",
+            "qst075i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_076",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst076f",
+            "qst076d",
+            "qst076b",
+            "qst076e",
+            "qst076c",
+            "qst076a",
+            "qst076i",
+            "qst076h",
+            "qst076g"
+          ],
+          "actual": [
+            "qst076f",
+            "qst076b",
+            "qst076d",
+            "qst076e",
+            "qst076i"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst076b",
+            "qst076d",
+            "qst076e",
+            "qst076f",
+            "qst076i"
+          ],
+          "missing": [
+            "qst076a",
+            "qst076c",
+            "qst076g",
+            "qst076h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_077",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst077e",
+            "qst077c",
+            "qst077a",
+            "qst077f",
+            "qst077d",
+            "qst077b",
+            "qst077h",
+            "qst077i",
+            "qst077g"
+          ],
+          "actual": [
+            "qst077a",
+            "qst077c",
+            "qst077e",
+            "qst077f",
+            "qst077h"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst077a",
+            "qst077c",
+            "qst077e",
+            "qst077f",
+            "qst077h"
+          ],
+          "missing": [
+            "qst077b",
+            "qst077d",
+            "qst077g",
+            "qst077i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_078",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst078f",
+            "qst078e",
+            "qst078d",
+            "qst078c",
+            "qst078a",
+            "qst078b",
+            "qst078i",
+            "qst078g",
+            "qst078h"
+          ],
+          "actual": [
+            "qst078c",
+            "qst078d",
+            "qst078e",
+            "qst078f",
+            "qst078i"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst078c",
+            "qst078d",
+            "qst078e",
+            "qst078f",
+            "qst078i"
+          ],
+          "missing": [
+            "qst078a",
+            "qst078b",
+            "qst078g",
+            "qst078h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_079",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst079f",
+            "qst079d",
+            "qst079e",
+            "qst079b",
+            "qst079c",
+            "qst079a",
+            "qst079i",
+            "qst079g",
+            "qst079h"
+          ],
+          "actual": [
+            "qst079b",
+            "qst079c",
+            "qst079d",
+            "qst079f",
+            "qst079e"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst079b",
+            "qst079c",
+            "qst079d",
+            "qst079e",
+            "qst079f"
+          ],
+          "missing": [
+            "qst079a",
+            "qst079g",
+            "qst079h",
+            "qst079i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_080",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst080f",
+            "qst080d",
+            "qst080b",
+            "qst080e",
+            "qst080c",
+            "qst080a",
+            "qst080g",
+            "qst080i",
+            "qst080h"
+          ],
+          "actual": [
+            "qst080b",
+            "qst080d",
+            "qst080f",
+            "qst080e",
+            "qst080g"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst080b",
+            "qst080d",
+            "qst080e",
+            "qst080f",
+            "qst080g"
+          ],
+          "missing": [
+            "qst080a",
+            "qst080c",
+            "qst080h",
+            "qst080i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_081",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst081e",
+            "qst081f",
+            "qst081c",
+            "qst081d",
+            "qst081a",
+            "qst081b",
+            "qst081h",
+            "qst081g",
+            "qst081i"
+          ],
+          "actual": [
+            "qst081c",
+            "qst081e",
+            "qst081b",
+            "qst081d",
+            "qst081f"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst081b",
+            "qst081c",
+            "qst081d",
+            "qst081e",
+            "qst081f"
+          ],
+          "missing": [
+            "qst081a",
+            "qst081g",
+            "qst081h",
+            "qst081i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_082",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst082f",
+            "qst082d",
+            "qst082e",
+            "qst082c",
+            "qst082b",
+            "qst082a",
+            "qst082i",
+            "qst082g",
+            "qst082h"
+          ],
+          "actual": [
+            "qst082d",
+            "qst082f",
+            "qst082e",
+            "qst082i",
+            "qst082g"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst082d",
+            "qst082e",
+            "qst082f",
+            "qst082g",
+            "qst082i"
+          ],
+          "missing": [
+            "qst082a",
+            "qst082b",
+            "qst082c",
+            "qst082h"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_083",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst083f",
+            "qst083e",
+            "qst083d",
+            "qst083c",
+            "qst083b",
+            "qst083a",
+            "qst083g",
+            "qst083i",
+            "qst083h"
+          ],
+          "actual": [
+            "qst083c",
+            "qst083d",
+            "qst083e",
+            "qst083f",
+            "qst083g"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst083c",
+            "qst083d",
+            "qst083e",
+            "qst083f",
+            "qst083g"
+          ],
+          "missing": [
+            "qst083a",
+            "qst083b",
+            "qst083h",
+            "qst083i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_084",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst084e",
+            "qst084f",
+            "qst084c",
+            "qst084d",
+            "qst084a",
+            "qst084b",
+            "qst084i",
+            "qst084h",
+            "qst084g"
+          ],
+          "actual": [
+            "qst084a",
+            "qst084c",
+            "qst084b",
+            "qst084e",
+            "qst084d"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst084a",
+            "qst084b",
+            "qst084c",
+            "qst084d",
+            "qst084e"
+          ],
+          "missing": [
+            "qst084f",
+            "qst084g",
+            "qst084h",
+            "qst084i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_085",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst085e",
+            "qst085c",
+            "qst085a",
+            "qst085f",
+            "qst085d",
+            "qst085b",
+            "qst085i",
+            "qst085h",
+            "qst085g"
+          ],
+          "actual": [
+            "qst085a",
+            "qst085c",
+            "qst085e",
+            "qst085d",
+            "qst085f"
+          ],
+          "precision": 1.0,
+          "recall": 0.5556,
+          "f1": 0.7143,
+          "matched": [
+            "qst085a",
+            "qst085c",
+            "qst085d",
+            "qst085e",
+            "qst085f"
+          ],
+          "missing": [
+            "qst085b",
+            "qst085g",
+            "qst085h",
+            "qst085i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_086",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": false,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst086h",
+            "qst086e",
+            "qst086g",
+            "qst086b",
+            "qst086d",
+            "qst086a",
+            "qst086i",
+            "qst086f"
+          ],
+          "actual": [
+            "qst086a",
+            "qst086d",
+            "qst086e",
+            "qst086b",
+            "qst086g"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst086a",
+            "qst086b",
+            "qst086d",
+            "qst086e",
+            "qst086g"
+          ],
+          "missing": [
+            "qst086f",
+            "qst086h",
+            "qst086i"
+          ],
+          "extra": []
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "beginner",
+              "pass": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_087",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": false,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst087h",
+            "qst087e",
+            "qst087b",
+            "qst087g",
+            "qst087d",
+            "qst087a",
+            "qst087i",
+            "qst087f"
+          ],
+          "actual": [
+            "qst087b",
+            "qst087a",
+            "qst087e",
+            "qst087d",
+            "qst087h"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst087a",
+            "qst087b",
+            "qst087d",
+            "qst087e",
+            "qst087h"
+          ],
+          "missing": [
+            "qst087f",
+            "qst087g",
+            "qst087i"
+          ],
+          "extra": []
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "beginner",
+              "pass": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_088",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst088e",
+            "qst088h",
+            "qst088b",
+            "qst088d",
+            "qst088g",
+            "qst088a",
+            "qst088i",
+            "qst088f"
+          ],
+          "actual": [
+            "qst088e",
+            "qst088b",
+            "qst088g",
+            "qst088h",
+            "qst088i"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst088b",
+            "qst088e",
+            "qst088g",
+            "qst088h",
+            "qst088i"
+          ],
+          "missing": [
+            "qst088a",
+            "qst088d",
+            "qst088f"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_089",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": false,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst089g",
+            "qst089h",
+            "qst089d",
+            "qst089e",
+            "qst089a",
+            "qst089b",
+            "qst089i",
+            "qst089f"
+          ],
+          "actual": [
+            "qst089a",
+            "qst089d",
+            "qst089g",
+            "qst089b",
+            "qst089e"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst089a",
+            "qst089b",
+            "qst089d",
+            "qst089e",
+            "qst089g"
+          ],
+          "missing": [
+            "qst089f",
+            "qst089h",
+            "qst089i"
+          ],
+          "extra": []
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "beginner",
+              "pass": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_090",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst090h",
+            "qst090g",
+            "qst090e",
+            "qst090d",
+            "qst090b",
+            "qst090a",
+            "qst090i",
+            "qst090f"
+          ],
+          "actual": [
+            "qst090d",
+            "qst090g",
+            "qst090b",
+            "qst090e",
+            "qst090h"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst090b",
+            "qst090d",
+            "qst090e",
+            "qst090g",
+            "qst090h"
+          ],
+          "missing": [
+            "qst090a",
+            "qst090f",
+            "qst090i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_091",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst091h",
+            "qst091g",
+            "qst091e",
+            "qst091d",
+            "qst091b",
+            "qst091a",
+            "qst091i",
+            "qst091f"
+          ],
+          "actual": [
+            "qst091d",
+            "qst091g",
+            "qst091b",
+            "qst091h",
+            "qst091e"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst091b",
+            "qst091d",
+            "qst091e",
+            "qst091g",
+            "qst091h"
+          ],
+          "missing": [
+            "qst091a",
+            "qst091f",
+            "qst091i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_092",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst092h",
+            "qst092e",
+            "qst092b",
+            "qst092g",
+            "qst092d",
+            "qst092a",
+            "qst092i",
+            "qst092f"
+          ],
+          "actual": [
+            "qst092b",
+            "qst092e",
+            "qst092d",
+            "qst092h",
+            "qst092g"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst092b",
+            "qst092d",
+            "qst092e",
+            "qst092g",
+            "qst092h"
+          ],
+          "missing": [
+            "qst092a",
+            "qst092f",
+            "qst092i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_093",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst093h",
+            "qst093e",
+            "qst093b",
+            "qst093g",
+            "qst093d",
+            "qst093a",
+            "qst093f",
+            "qst093i"
+          ],
+          "actual": [
+            "qst093b",
+            "qst093e",
+            "qst093d",
+            "qst093h",
+            "qst093g"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst093b",
+            "qst093d",
+            "qst093e",
+            "qst093g",
+            "qst093h"
+          ],
+          "missing": [
+            "qst093a",
+            "qst093f",
+            "qst093i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_094",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst094h",
+            "qst094e",
+            "qst094g",
+            "qst094b",
+            "qst094d",
+            "qst094a",
+            "qst094i",
+            "qst094f"
+          ],
+          "actual": [
+            "qst094b",
+            "qst094d",
+            "qst094e",
+            "qst094g",
+            "qst094h"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst094b",
+            "qst094d",
+            "qst094e",
+            "qst094g",
+            "qst094h"
+          ],
+          "missing": [
+            "qst094a",
+            "qst094f",
+            "qst094i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_095",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": false,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst095h",
+            "qst095g",
+            "qst095e",
+            "qst095d",
+            "qst095b",
+            "qst095a",
+            "qst095i",
+            "qst095f"
+          ],
+          "actual": [
+            "qst095a",
+            "qst095d",
+            "qst095g",
+            "qst095b",
+            "qst095e"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst095a",
+            "qst095b",
+            "qst095d",
+            "qst095e",
+            "qst095g"
+          ],
+          "missing": [
+            "qst095f",
+            "qst095h",
+            "qst095i"
+          ],
+          "extra": []
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "beginner",
+              "pass": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_096",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": false,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst096h",
+            "qst096e",
+            "qst096g",
+            "qst096b",
+            "qst096d",
+            "qst096a",
+            "qst096i",
+            "qst096f"
+          ],
+          "actual": [
+            "qst096a",
+            "qst096d",
+            "qst096b",
+            "qst096g",
+            "qst096e"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst096a",
+            "qst096b",
+            "qst096d",
+            "qst096e",
+            "qst096g"
+          ],
+          "missing": [
+            "qst096f",
+            "qst096h",
+            "qst096i"
+          ],
+          "extra": []
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "beginner",
+              "pass": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_097",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": false,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst097h",
+            "qst097g",
+            "qst097e",
+            "qst097d",
+            "qst097b",
+            "qst097a",
+            "qst097i",
+            "qst097f"
+          ],
+          "actual": [
+            "qst097d",
+            "qst097a",
+            "qst097g",
+            "qst097b",
+            "qst097e"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst097a",
+            "qst097b",
+            "qst097d",
+            "qst097e",
+            "qst097g"
+          ],
+          "missing": [
+            "qst097f",
+            "qst097h",
+            "qst097i"
+          ],
+          "extra": []
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "beginner",
+              "pass": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_098",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst098h",
+            "qst098e",
+            "qst098g",
+            "qst098b",
+            "qst098d",
+            "qst098a",
+            "qst098i",
+            "qst098f"
+          ],
+          "actual": [
+            "qst098b",
+            "qst098d",
+            "qst098e",
+            "qst098g",
+            "qst098h"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst098b",
+            "qst098d",
+            "qst098e",
+            "qst098g",
+            "qst098h"
+          ],
+          "missing": [
+            "qst098a",
+            "qst098f",
+            "qst098i"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_099",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": true,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst099e",
+            "qst099h",
+            "qst099d",
+            "qst099b",
+            "qst099g",
+            "qst099a",
+            "qst099i",
+            "qst099f"
+          ],
+          "actual": [
+            "qst099e",
+            "qst099b",
+            "qst099g",
+            "qst099h",
+            "qst099i"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst099b",
+            "qst099e",
+            "qst099g",
+            "qst099h",
+            "qst099i"
+          ],
+          "missing": [
+            "qst099a",
+            "qst099d",
+            "qst099f"
+          ],
+          "extra": []
+        }
+      }
+    },
+    {
+      "case_id": "adaptive_st_100",
+      "execution_success": true,
+      "semantic_pass": false,
+      "dimension_passes": {
+        "memory": false,
+        "diagnosis": true,
+        "strategy": false,
+        "response": true
+      },
+      "failures": {
+        "memory": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {},
+          "expected": [
+            "qst100g",
+            "qst100h",
+            "qst100d",
+            "qst100e",
+            "qst100a",
+            "qst100b",
+            "qst100i",
+            "qst100f"
+          ],
+          "actual": [
+            "qst100a",
+            "qst100d",
+            "qst100g",
+            "qst100b",
+            "qst100e"
+          ],
+          "precision": 1.0,
+          "recall": 0.625,
+          "f1": 0.7692,
+          "matched": [
+            "qst100a",
+            "qst100b",
+            "qst100d",
+            "qst100e",
+            "qst100g"
+          ],
+          "missing": [
+            "qst100f",
+            "qst100h",
+            "qst100i"
+          ],
+          "extra": []
+        },
+        "strategy": {
+          "status": "evaluated",
+          "pass": false,
+          "fields": {
+            "difficulty": {
+              "expected": "medium",
+              "actual": "beginner",
+              "pass": false
+            }
+          }
+        }
+      }
+    }
+  ]
+}

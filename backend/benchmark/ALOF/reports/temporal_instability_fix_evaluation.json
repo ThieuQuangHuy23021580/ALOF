@@ -1,0 +1,210 @@
+{
+  "candidate_fix": "Replace the normalised transition-entropy instability signal with the alternation rate (share of adjacent observations that flip), keeping the same 0.65 threshold and the same precedence order in _classify.",
+  "root_cause": "Normalised entropy over {CC,CW,WC,WW} measures how evenly the four transition types are spread, not how often the learner flips. A block sequence uses three types with skewed counts and scores ~0.73, while pure alternation uses only two types and scores exactly 0.50. Because _classify tests instability first, block sequences are labelled 'unstable' and pure alternation is never labelled 'unstable'.",
+  "probe": {
+    "rows": [
+      {
+        "intended": "persistent",
+        "sequence": "CCCWWWW",
+        "entropy_instability": 0.7296,
+        "alternation": 0.1667,
+        "persistence": 0.609,
+        "recovery": 0.0,
+        "recent_error_pressure": 0.6549,
+        "current_label": "unstable",
+        "fixed_label": "persistent",
+        "current_ok": false,
+        "fixed_ok": true
+      },
+      {
+        "intended": "recovering",
+        "sequence": "WWWCCCC",
+        "entropy_instability": 0.7296,
+        "alternation": 0.1667,
+        "persistence": 0.391,
+        "recovery": 0.5667,
+        "recent_error_pressure": 0.3451,
+        "current_label": "unstable",
+        "fixed_label": "recovering",
+        "current_ok": false,
+        "fixed_ok": true
+      },
+      {
+        "intended": "unstable",
+        "sequence": "CWCWCWC",
+        "entropy_instability": 0.5,
+        "alternation": 1.0,
+        "persistence": 0.2702,
+        "recovery": 0.7667,
+        "recent_error_pressure": 0.4257,
+        "current_label": "recovering",
+        "fixed_label": "unstable",
+        "current_ok": false,
+        "fixed_ok": true
+      },
+      {
+        "intended": "stable",
+        "sequence": "CCCCCCC",
+        "entropy_instability": 0.0,
+        "alternation": 0.0,
+        "persistence": 0.0,
+        "recovery": 0.0,
+        "recent_error_pressure": 0.0,
+        "current_label": "stable",
+        "fixed_label": "stable",
+        "current_ok": true,
+        "fixed_ok": true
+      }
+    ],
+    "current_accuracy": 0.25,
+    "fixed_accuracy": 1.0
+  },
+  "benchmark": {
+    "n_concept_observations": 1432,
+    "current_counts": {
+      "stable": 1337,
+      "recovering": 35,
+      "unstable": 20,
+      "persistent": 40
+    },
+    "current_share": {
+      "stable": 0.9337,
+      "recovering": 0.0244,
+      "unstable": 0.014,
+      "persistent": 0.0279
+    },
+    "fixed_counts": {
+      "stable": 1337,
+      "recovering": 30,
+      "unstable": 21,
+      "persistent": 44
+    },
+    "fixed_share": {
+      "stable": 0.9337,
+      "recovering": 0.0209,
+      "unstable": 0.0147,
+      "persistent": 0.0307
+    },
+    "n_labels_changed": 13,
+    "share_labels_changed": 0.0091,
+    "examples": [
+      {
+        "concept": "sql_query",
+        "n_obs": 4,
+        "sequence": "WCCCCC",
+        "entropy_instability": 0.361,
+        "alternation": 0.2,
+        "current": "unstable",
+        "fixed": "recovering"
+      },
+      {
+        "concept": "latitude_longitude",
+        "n_obs": 4,
+        "sequence": "WCCCC",
+        "entropy_instability": 0.4056,
+        "alternation": 0.25,
+        "current": "unstable",
+        "fixed": "recovering"
+      },
+      {
+        "concept": "ohms_law",
+        "n_obs": 3,
+        "sequence": "WCCWC",
+        "entropy_instability": 0.75,
+        "alternation": 0.75,
+        "current": "recovering",
+        "fixed": "unstable"
+      },
+      {
+        "concept": "market_equilibrium",
+        "n_obs": 3,
+        "sequence": "WCWC",
+        "entropy_instability": 0.4591,
+        "alternation": 1.0,
+        "current": "recovering",
+        "fixed": "unstable"
+      },
+      {
+        "concept": "equivalent_fractions",
+        "n_obs": 3,
+        "sequence": "WCWC",
+        "entropy_instability": 0.4591,
+        "alternation": 1.0,
+        "current": "recovering",
+        "fixed": "unstable"
+      },
+      {
+        "concept": "proportion",
+        "n_obs": 3,
+        "sequence": "WCWC",
+        "entropy_instability": 0.4591,
+        "alternation": 1.0,
+        "current": "recovering",
+        "fixed": "unstable"
+      },
+      {
+        "concept": "reaction_balancing",
+        "n_obs": 3,
+        "sequence": "WCWC",
+        "entropy_instability": 0.4591,
+        "alternation": 1.0,
+        "current": "recovering",
+        "fixed": "unstable"
+      },
+      {
+        "concept": "cellular_transport",
+        "n_obs": 3,
+        "sequence": "WCWC",
+        "entropy_instability": 0.4591,
+        "alternation": 1.0,
+        "current": "recovering",
+        "fixed": "unstable"
+      },
+      {
+        "concept": "genetics",
+        "n_obs": 3,
+        "sequence": "WCWC",
+        "entropy_instability": 0.4591,
+        "alternation": 1.0,
+        "current": "recovering",
+        "fixed": "unstable"
+      },
+      {
+        "concept": "supply_demand",
+        "n_obs": 5,
+        "sequence": "WWWCCWWW",
+        "entropy_instability": 0.8322,
+        "alternation": 0.2857,
+        "current": "unstable",
+        "fixed": "persistent"
+      },
+      {
+        "concept": "reaction_balancing",
+        "n_obs": 5,
+        "sequence": "WWWCCWWW",
+        "entropy_instability": 0.8322,
+        "alternation": 0.2857,
+        "current": "unstable",
+        "fixed": "persistent"
+      },
+      {
+        "concept": "acceleration",
+        "n_obs": 5,
+        "sequence": "WWWCCWWW",
+        "entropy_instability": 0.8322,
+        "alternation": 0.2857,
+        "current": "unstable",
+        "fixed": "persistent"
+      },
+      {
+        "concept": "opportunity_cost",
+        "n_obs": 5,
+        "sequence": "WWWCCWWW",
+        "entropy_instability": 0.8322,
+        "alternation": 0.2857,
+        "current": "unstable",
+        "fixed": "persistent"
+      }
+    ]
+  }
+}

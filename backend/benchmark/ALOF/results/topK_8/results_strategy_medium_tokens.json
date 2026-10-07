@@ -1,0 +1,23 @@
+{
+  "results_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\results\\topK_8\\results_strategy_medium.jsonl",
+  "executed_cases": 50,
+  "skipped_cases": 0,
+  "success_cases": 50,
+  "failed_cases": 0,
+  "aggregate_tokens": {
+    "input_tokens": 166913,
+    "output_tokens": 22388,
+    "total_tokens": 189301,
+    "call_count": 50,
+    "duration_seconds": 26117.127893599798,
+    "per_stage": {
+      "runtime": {
+        "input_tokens": 166913,
+        "output_tokens": 22388,
+        "total_tokens": 189301,
+        "call_count": 50,
+        "duration_seconds": 26117.127893599798
+      }
+    }
+  }
+}

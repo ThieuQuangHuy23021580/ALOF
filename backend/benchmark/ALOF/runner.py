@@ -2,15 +2,29 @@ from __future__ import annotations
 from datetime import datetime
 import argparse
 import json
+import os
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from dotenv import load_dotenv
+
+# Load .env from repo root so API keys and config are visible to
+# pydantic Settings and to os.environ.get() in providers.
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+load_dotenv(_REPO_ROOT / ".env", override=False)
 
 from backend.application.orchestration.execution_request import (
     ExecutionRequest,
 )
 from backend.application.orchestration.orchestrator_factory import (
     create_learning_orchestrator,
+)
+from backend.application.services.llm_service import (
+    LLMService,
+)
+from backend.application.services.llm_call_metrics import (
+    LLMCallMetrics,
 )
 from backend.domain.learning.learning_interaction import (
     LearningInteraction,
@@ -35,6 +49,18 @@ class ALOFBenchmarkRunner:
     ) -> None:
         self.adapter = ALOFDatasetAdapter(dataset_path)
         self.orchestrator = create_learning_orchestrator()
+
+        # ----------------------------------------------
+        # Capture reference to LLMService for token
+        # tracking per benchmark case.
+        # ----------------------------------------------
+
+        self._llm_service: LLMService | None = (
+            self.orchestrator
+            ._runtime
+            ._dependencies
+            .get("llm")
+        )
 
     # ======================================================
     # Dataset -> LearningState
@@ -190,6 +216,113 @@ class ALOFBenchmarkRunner:
         )
 
     # ======================================================
+    # Token tracking
+    # ======================================================
+
+    def _capture_token_usage(
+        self,
+    ) -> dict[str, Any]:
+        """
+        Read LLMService token metrics accumulated since
+        the previous capture. Resets the per-case counter
+        so the next case starts with a clean baseline.
+
+        Returns:
+            {
+                "input_tokens": int,
+                "output_tokens": int,
+                "total_tokens": int,
+                "call_count": int,
+                "duration_seconds": float,
+                "per_stage": {
+                    "stage_name": {
+                        "input_tokens": int,
+                        "output_tokens": int,
+                        "total_tokens": int,
+                        "call_count": int,
+                        "duration_seconds": float,
+                    },
+                    ...
+                },
+            }
+        """
+
+        if self._llm_service is None:
+            return {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0,
+                "call_count": 0,
+                "duration_seconds": 0.0,
+                "per_stage": {},
+            }
+
+        call_metrics = (
+            self._llm_service.call_metrics
+        )
+
+        per_stage: dict[
+            str,
+            dict[str, Any],
+        ] = {}
+
+        for metric in call_metrics:
+
+            stage = metric.stage or "unknown"
+
+            entry = per_stage.setdefault(
+                stage,
+                {
+                    "input_tokens": 0,
+                    "output_tokens": 0,
+                    "total_tokens": 0,
+                    "call_count": 0,
+                    "duration_seconds": 0.0,
+                },
+            )
+
+            entry["input_tokens"] += (
+                metric.input_tokens
+            )
+            entry["output_tokens"] += (
+                metric.output_tokens
+            )
+            entry["total_tokens"] += (
+                metric.total_tokens
+            )
+            entry["call_count"] += 1
+            entry["duration_seconds"] += (
+                metric.duration
+            )
+
+        # Reset for next case
+        self._llm_service.reset_call_count()
+
+        return {
+            "input_tokens": sum(
+                e["input_tokens"]
+                for e in per_stage.values()
+            ),
+            "output_tokens": sum(
+                e["output_tokens"]
+                for e in per_stage.values()
+            ),
+            "total_tokens": sum(
+                e["total_tokens"]
+                for e in per_stage.values()
+            ),
+            "call_count": sum(
+                e["call_count"]
+                for e in per_stage.values()
+            ),
+            "duration_seconds": sum(
+                e["duration_seconds"]
+                for e in per_stage.values()
+            ),
+            "per_stage": per_stage,
+        }
+
+    # ======================================================
     # Single case
     # ======================================================
 
@@ -197,6 +330,11 @@ class ALOFBenchmarkRunner:
         self,
         sample: dict[str, Any],
     ) -> dict[str, Any]:
+
+        # Reset metrics baseline before the case.
+        if self._llm_service is not None:
+            self._llm_service.reset_call_count()
+
         request = self.build_request(sample)
 
         result = self.orchestrator.execute(
@@ -214,10 +352,13 @@ class ALOFBenchmarkRunner:
                 None,
             )
 
+        token_usage = self._capture_token_usage()
+
         return {
             "case_id": sample["case_id"],
             "prediction": prediction,
             "runtime_metadata": result.metadata,
+            "token_usage": token_usage,
         }
 
     # ======================================================
@@ -479,6 +620,71 @@ class ALOFBenchmarkRunner:
         skipped = 0
         stopped_reason: str | None = None
 
+        # --------------------------------------------------
+        # Aggregated token usage across all executed cases
+        # --------------------------------------------------
+
+        aggregate_tokens = {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "total_tokens": 0,
+            "call_count": 0,
+            "duration_seconds": 0.0,
+            "per_stage": {},
+        }
+
+        def accumulate(
+            usage: dict[str, Any],
+        ) -> None:
+            aggregate_tokens["input_tokens"] += (
+                usage["input_tokens"]
+            )
+            aggregate_tokens["output_tokens"] += (
+                usage["output_tokens"]
+            )
+            aggregate_tokens["total_tokens"] += (
+                usage["total_tokens"]
+            )
+            aggregate_tokens["call_count"] += (
+                usage["call_count"]
+            )
+            aggregate_tokens["duration_seconds"] += (
+                usage["duration_seconds"]
+            )
+
+            for stage, entry in (
+                usage.get("per_stage", {}).items()
+            ):
+                agg_stage = (
+                    aggregate_tokens[
+                        "per_stage"
+                    ].setdefault(
+                        stage,
+                        {
+                            "input_tokens": 0,
+                            "output_tokens": 0,
+                            "total_tokens": 0,
+                            "call_count": 0,
+                            "duration_seconds": 0.0,
+                        },
+                    )
+                )
+                agg_stage["input_tokens"] += (
+                    entry["input_tokens"]
+                )
+                agg_stage["output_tokens"] += (
+                    entry["output_tokens"]
+                )
+                agg_stage["total_tokens"] += (
+                    entry["total_tokens"]
+                )
+                agg_stage["call_count"] += (
+                    entry["call_count"]
+                )
+                agg_stage["duration_seconds"] += (
+                    entry["duration_seconds"]
+                )
+
         for local_index, sample in enumerate(
             selected_samples
         ):
@@ -525,6 +731,13 @@ class ALOFBenchmarkRunner:
                     sample
                 )
 
+                accumulate(
+                    result.get(
+                        "token_usage",
+                        {},
+                    )
+                )
+
                 result["success"] = True
 
             except Exception as exc:
@@ -540,6 +753,14 @@ class ALOFBenchmarkRunner:
                         f"{exc}"
                     ),
                     "quota_error": quota_error,
+                    "token_usage": {
+                        "input_tokens": 0,
+                        "output_tokens": 0,
+                        "total_tokens": 0,
+                        "call_count": 0,
+                        "duration_seconds": 0.0,
+                        "per_stage": {},
+                    },
                 }
 
             result["index"] = index
@@ -651,9 +872,92 @@ class ALOFBenchmarkRunner:
                 f"Stopped:  {stopped_reason}"
             )
 
-        if output_path is not None:
+        # --------------------------------------------------
+        # Token usage summary
+        # --------------------------------------------------
+
+        print()
+        print("=" * 60)
+        print("Token usage summary (executed cases only)")
+        print("-" * 60)
+        print(
+            f"  LLM calls   : "
+            f"{aggregate_tokens['call_count']}"
+        )
+        print(
+            f"  Input tokens: "
+            f"{aggregate_tokens['input_tokens']:,}"
+        )
+        print(
+            f"  Output tokens:"
+            f" {aggregate_tokens['output_tokens']:,}"
+        )
+        print(
+            f"  Total tokens: "
+            f"{aggregate_tokens['total_tokens']:,}"
+        )
+        print(
+            f"  LLM time    : "
+            f"{aggregate_tokens['duration_seconds']:.2f} s"
+        )
+
+        executed_n = len(executed_results)
+        if executed_n > 0:
+            per_case = (
+                aggregate_tokens["total_tokens"]
+                / executed_n
+            )
             print(
-                f"Results:  {output_path}"
+                f"  Per-case avg: {per_case:,.1f} tokens"
+            )
+
+        if aggregate_tokens["per_stage"]:
+            print("-" * 60)
+            print("  Per stage:")
+            for stage, entry in sorted(
+                aggregate_tokens["per_stage"].items()
+            ):
+                print(
+                    f"    {stage:<24} "
+                    f"calls={entry['call_count']:<3} "
+                    f"in={entry['input_tokens']:<6,} "
+                    f"out={entry['output_tokens']:<6,} "
+                    f"total={entry['total_tokens']:<7,} "
+                    f"({entry['duration_seconds']:.2f}s)"
+                )
+
+        print("=" * 60)
+
+        if output_path is not None:
+            # Append aggregate token stats to a sidecar
+            # JSON for later analysis.
+            token_sidecar = (
+                Path(output_path)
+                .with_name(
+                    Path(output_path).stem
+                    + "_tokens.json"
+                )
+            )
+            token_sidecar.write_text(
+                json.dumps(
+                    {
+                        "results_path": str(output_path),
+                        "executed_cases": executed_n,
+                        "skipped_cases": skipped,
+                        "success_cases": success,
+                        "failed_cases": failed,
+                        "aggregate_tokens": aggregate_tokens,
+                    },
+                    indent=2,
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            print(
+                f"Token stats: {token_sidecar}"
+            )
+            print(
+                f"Results:     {output_path}"
             )
 
         print(

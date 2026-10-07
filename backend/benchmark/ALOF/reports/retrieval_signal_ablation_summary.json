@@ -1,0 +1,198 @@
+{
+  "k": 5,
+  "gold": "concept-overlap relevant set (independent of ranking)",
+  "gold_definition_note": "top_k_interactions gold is runtime-derived and holds 8 ids after the topK=8 sweep; it is NOT used here.",
+  "total_cases": 400,
+  "total_elapsed_seconds": null,
+  "sanity_check": {
+    "cases": 400,
+    "mismatch": 0
+  },
+  "macro": [
+    {
+      "label": "ALOF (đa tín hiệu)",
+      "key": "ALOF-full",
+      "kind": "ablation",
+      "P": 0.765,
+      "R": 0.9576,
+      "F1": 0.8161,
+      "nDCG": 0.995,
+      "exact": 0.3175
+    },
+    {
+      "label": "w/o concept",
+      "key": "w/o-concept",
+      "kind": "ablation",
+      "P": 0.7325,
+      "R": 0.9123,
+      "F1": 0.7795,
+      "nDCG": 0.9002,
+      "exact": 0.26
+    },
+    {
+      "label": "w/o error",
+      "key": "w/o-error",
+      "kind": "ablation",
+      "P": 0.765,
+      "R": 0.9576,
+      "F1": 0.8161,
+      "nDCG": 0.995,
+      "exact": 0.3175
+    },
+    {
+      "label": "w/o recency",
+      "key": "w/o-recency",
+      "kind": "ablation",
+      "P": 0.765,
+      "R": 0.9576,
+      "F1": 0.8161,
+      "nDCG": 0.995,
+      "exact": 0.3175
+    },
+    {
+      "label": "w/o semantic (lexical)",
+      "key": "w/o-semantic",
+      "kind": "ablation",
+      "P": 0.765,
+      "R": 0.9576,
+      "F1": 0.8161,
+      "nDCG": 0.995,
+      "exact": 0.3175
+    },
+    {
+      "label": "w/o date",
+      "key": "w/o-date",
+      "kind": "ablation",
+      "P": 0.765,
+      "R": 0.9576,
+      "F1": 0.8161,
+      "nDCG": 0.995,
+      "exact": 0.3175
+    },
+    {
+      "label": "recency-only",
+      "key": "recency-only",
+      "kind": "single",
+      "P": 0.598,
+      "R": 0.6602,
+      "F1": 0.6106,
+      "nDCG": 0.5942,
+      "exact": 0.25
+    },
+    {
+      "label": "concept-only",
+      "key": "concept-only",
+      "kind": "ablation",
+      "P": 0.765,
+      "R": 0.9576,
+      "F1": 0.8161,
+      "nDCG": 0.995,
+      "exact": 0.3175
+    },
+    {
+      "label": "single lexical",
+      "key": "lexical-only",
+      "kind": "single",
+      "P": 0.7415,
+      "R": 0.9222,
+      "F1": 0.7891,
+      "nDCG": 0.9342,
+      "exact": 0.2925
+    },
+    {
+      "label": "recency baseline (full history)",
+      "key": "recency-baseline",
+      "kind": "baseline",
+      "P": 0.598,
+      "R": 0.6602,
+      "F1": 0.6106,
+      "nDCG": 0.6565,
+      "exact": 0.25
+    }
+  ],
+  "per_dataset": {
+    "split": [
+      {
+        "split": "longcontext",
+        "difficulty": "easy",
+        "n": 50,
+        "mean_gold_size": 3,
+        "ALOF-full__F1": 0.75,
+        "recency-only__F1": 0.6,
+        "concept-only__F1": 0.75,
+        "lexical-only__F1": 0.75
+      },
+      {
+        "split": "longcontext",
+        "difficulty": "medium",
+        "n": 50,
+        "mean_gold_size": 2.72,
+        "ALOF-full__F1": 0.6741,
+        "recency-only__F1": 0.3456,
+        "concept-only__F1": 0.6741,
+        "lexical-only__F1": 0.6551
+      },
+      {
+        "split": "multiconcept",
+        "difficulty": "easy",
+        "n": 50,
+        "mean_gold_size": 5.28,
+        "ALOF-full__F1": 0.9322,
+        "recency-only__F1": 0.79,
+        "concept-only__F1": 0.9322,
+        "lexical-only__F1": 0.8878
+      },
+      {
+        "split": "multiconcept",
+        "difficulty": "medium",
+        "n": 50,
+        "mean_gold_size": 5.38,
+        "ALOF-full__F1": 0.9661,
+        "recency-only__F1": 0.9661,
+        "concept-only__F1": 0.9661,
+        "lexical-only__F1": 0.9661
+      },
+      {
+        "split": "multiconcept",
+        "difficulty": "hard",
+        "n": 50,
+        "mean_gold_size": 4.74,
+        "ALOF-full__F1": 0.9687,
+        "recency-only__F1": 0.9687,
+        "concept-only__F1": 0.9687,
+        "lexical-only__F1": 0.9687
+      },
+      {
+        "split": "strategy",
+        "difficulty": "easy",
+        "n": 50,
+        "mean_gold_size": 1.72,
+        "ALOF-full__F1": 0.501,
+        "recency-only__F1": 0.1371,
+        "concept-only__F1": 0.501,
+        "lexical-only__F1": 0.4952
+      },
+      {
+        "split": "strategy",
+        "difficulty": "medium",
+        "n": 50,
+        "mean_gold_size": 4.28,
+        "ALOF-full__F1": 0.9144,
+        "recency-only__F1": 0.4278,
+        "concept-only__F1": 0.9144,
+        "lexical-only__F1": 0.7836
+      },
+      {
+        "split": "strategy",
+        "difficulty": "hard",
+        "n": 50,
+        "mean_gold_size": 5.28,
+        "ALOF-full__F1": 0.8226,
+        "recency-only__F1": 0.6497,
+        "concept-only__F1": 0.8226,
+        "lexical-only__F1": 0.8061
+      }
+    ],
+    "note": "Gold is the concept-overlap relevant set, independent of the ranking function. K = 5."
+  }
+}

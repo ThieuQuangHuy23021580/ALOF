@@ -297,6 +297,44 @@ class TemporalErrorPatternDetector:
             confidence=confidence,
         )
 
+    def _classify(
+        self,
+        *,
+        observation_count: int,
+        persistence_score: float,
+        recovery_score: float,
+        instability_score: float,
+        recent_error_pressure: float,
+    ) -> str:
+        """
+        Combine detector signals into a coarse temporal pattern label.
+
+        Order of precedence (highest first):
+            1. unstable        — high transition entropy
+            2. persistent      — high persistence + recent pressure
+            3. recovering      — recovery dominates persistence
+            5. stable          — default fallback
+        """
+        if observation_count < self._minimum_observations:
+            return "stable"
+
+        if instability_score >= self._instability_threshold:
+            return "unstable"
+
+        if (
+            persistence_score >= self._persistence_threshold
+            and recent_error_pressure >= self._persistence_threshold
+        ):
+            return "persistent"
+
+        if (
+            recovery_score >= self._recovery_threshold
+            and recovery_score > persistence_score
+        ):
+            return "recovering"
+
+        return "stable"
+
     def _prepare_observations(
         self,
         concept_id: str,
@@ -327,17 +365,27 @@ class TemporalErrorPatternDetector:
         return result
 
     @staticmethod
+    def _clamp(
+        value: float,
+        minimum: float = 0.0,
+        maximum: float = 1.0,
+    ) -> float:
+        return min(max(value, minimum), maximum)
+
+    @staticmethod
+    def _normalize_datetime(value: datetime) -> datetime:
+        if value.tzinfo is None:
+            return value.replace(tzinfo=UTC)
+        return value.astimezone(UTC)
+
+    @staticmethod
     def _reference_time(
         interactions: list[LearningInteraction],
     ) -> datetime:
         latest = max(
             interaction.timestamp for interaction in interactions
         )
-
-        if latest.tzinfo is None:
-            return latest.replace(tzinfo=UTC)
-
-        return latest
+        return TemporalErrorPatternDetector._normalize_datetime(latest)
 
     def _recent_error_pressure(
         self,
@@ -626,7 +674,6 @@ class TemporalErrorPatternDetector:
             last_success_time = self._normalize_datetime(
                 last_success.timestamp,
             )
-
             time_since_success_days = max(
                 0.0,
                 (
@@ -635,4 +682,31 @@ class TemporalErrorPatternDetector:
             )
         else:
             last_interaction = observations[-1]
-            last_interaction_time = self._normalize_datetime
+            last_interaction_time = self._normalize_datetime(
+                last_interaction.timestamp,
+            )
+            time_since_success_days = max(
+                0.0,
+                (
+                    reference_time - last_interaction_time
+                ).total_seconds() / 86400.0,
+            )
+
+        retention_strength = exp(
+            -log(2.0) * time_since_success_days / max(half_life_days, 1e-6)
+        )
+        forgetting = 1.0 - retention_strength
+        retention_risk = self._clamp(
+            forgetting
+            * (
+                0.55
+                + 0.20 * error_amplification / (1.0 + error_amplification)
+                + 0.15 * persistence_score
+                + 0.10 * instability_score
+            )
+        )
+        return (
+            retention_risk,
+            self._clamp(retention_strength),
+            time_since_success_days,
+        )

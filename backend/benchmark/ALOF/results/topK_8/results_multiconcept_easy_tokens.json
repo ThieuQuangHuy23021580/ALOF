@@ -1,0 +1,15 @@
+{
+  "results_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\results\\topK_8\\results_multiconcept_easy.jsonl",
+  "executed_cases": 50,
+  "skipped_cases": 0,
+  "success_cases": 0,
+  "failed_cases": 50,
+  "aggregate_tokens": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "call_count": 0,
+    "duration_seconds": 0.0,
+    "per_stage": {}
+  }
+}

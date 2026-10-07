@@ -3,9 +3,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
+
+from dotenv import load_dotenv
+
+# Load .env from repo root so config (CONCEPT_*, etc.) is visible.
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+load_dotenv(_REPO_ROOT / ".env", override=False)
 
 from .adapter import ALOFDatasetAdapter
 

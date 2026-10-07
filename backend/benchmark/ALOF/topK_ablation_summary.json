@@ -1,0 +1,88 @@
+{
+  "topks_run": [
+    8
+  ],
+  "total_cases_per_topK": 400,
+  "total_elapsed_seconds": 51562.7,
+  "results": [
+    {
+      "topK": 8,
+      "datasets": [
+        {
+          "split": "longcontext",
+          "difficulty": "easy",
+          "n_cases": 50,
+          "results_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\results\\topK_8\\results_longcontext_easy.jsonl",
+          "report_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\reports\\topK_8\\report_longcontext_easy.json",
+          "failure_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\failure_reports\\topK_8\\failure_report_longcontext_easy.json",
+          "runner_ok": true
+        },
+        {
+          "split": "longcontext",
+          "difficulty": "medium",
+          "n_cases": 50,
+          "results_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\results\\topK_8\\results_longcontext_medium.jsonl",
+          "report_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\reports\\topK_8\\report_longcontext_medium.json",
+          "failure_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\failure_reports\\topK_8\\failure_report_longcontext_medium.json",
+          "runner_ok": true
+        },
+        {
+          "split": "multiconcept",
+          "difficulty": "easy",
+          "n_cases": 50,
+          "results_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\results\\topK_8\\results_multiconcept_easy.jsonl",
+          "report_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\reports\\topK_8\\report_multiconcept_easy.json",
+          "failure_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\failure_reports\\topK_8\\failure_report_multiconcept_easy.json",
+          "runner_ok": true
+        },
+        {
+          "split": "multiconcept",
+          "difficulty": "medium",
+          "n_cases": 50,
+          "results_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\results\\topK_8\\results_multiconcept_medium.jsonl",
+          "report_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\reports\\topK_8\\report_multiconcept_medium.json",
+          "failure_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\failure_reports\\topK_8\\failure_report_multiconcept_medium.json",
+          "runner_ok": true
+        },
+        {
+          "split": "multiconcept",
+          "difficulty": "hard",
+          "n_cases": 50,
+          "results_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\results\\topK_8\\results_multiconcept_hard.jsonl",
+          "report_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\reports\\topK_8\\report_multiconcept_hard.json",
+          "failure_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\failure_reports\\topK_8\\failure_report_multiconcept_hard.json",
+          "runner_ok": true
+        },
+        {
+          "split": "strategy",
+          "difficulty": "easy",
+          "n_cases": 50,
+          "results_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\results\\topK_8\\results_strategy_easy.jsonl",
+          "report_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\reports\\topK_8\\report_strategy_easy.json",
+          "failure_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\failure_reports\\topK_8\\failure_report_strategy_easy.json",
+          "runner_ok": true
+        },
+        {
+          "split": "strategy",
+          "difficulty": "medium",
+          "n_cases": 50,
+          "results_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\results\\topK_8\\results_strategy_medium.jsonl",
+          "report_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\reports\\topK_8\\report_strategy_medium.json",
+          "failure_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\failure_reports\\topK_8\\failure_report_strategy_medium.json",
+          "runner_ok": true
+        },
+        {
+          "split": "strategy",
+          "difficulty": "hard",
+          "n_cases": 50,
+          "results_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\results\\topK_8\\results_strategy_hard.jsonl",
+          "report_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\reports\\topK_8\\report_strategy_hard.json",
+          "failure_path": "D:\\MOBILE\\FLUTTER\\ALOF\\backend\\benchmark\\ALOF\\failure_reports\\topK_8\\failure_report_strategy_hard.json",
+          "runner_ok": true
+        }
+      ],
+      "total_cases": 400,
+      "duration_seconds": 51562.7
+    }
+  ]
+}
